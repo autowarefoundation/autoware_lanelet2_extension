@@ -5,6 +5,7 @@
   <version>0.1.0</version>
   <description>The lanelet2_extension_python package contains Python bindings for lanelet2_extension package</description>
   <maintainer email="mamoru.sobue@tier4.jp">Mamoru Sobue</maintainer>
+  <maintainer email="yutaka.kondo@tier4.jp">Kosuke Takeuchi</maintainer>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
