@@ -5,7 +5,7 @@
 About the basics of the default format, please refer to main [Lanelet2 repository](https://github.com/fzi-forschungszentrum-informatik/Lanelet2). (see [here](https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/LaneletPrimitives.md) about primitives)
 
 In addition to default Lanelet2 Format, users should add following mandatory/optional tags to their osm lanelet files as explained in reset of this document.
-Users may use `autoware_lanelet2_validation` [node](../README.md#nodes) to check if their maps are valid.
+Users may use `autoware_lanelet2_validation` [node](../../README.md#nodes) to check if their maps are valid.
 
 The following is the extra format added for Autoware:
 
