@@ -4,7 +4,7 @@ This package contains external library for Lanelet2 and is meant to ease the use
 
 ## Lanelet Format for Autoware
 
-Autoware uses extended Lanelet2 Format for Autoware, which means you need to add some tags to default OSM file if you want to fully use Lanelet2 maps. For details about custom tags, please refer to this [document](lanelet2_extension/docs/lanelet2_format_extension.md).
+Autoware uses extended Lanelet2 Format for Autoware, which means you need to add some tags to default OSM file if you want to fully use Lanelet2 maps. For details about custom tags, please refer to this [document](./lanelet2_extension/docs/lanelet2_format_extension.md).
 
 ## Code API
 
