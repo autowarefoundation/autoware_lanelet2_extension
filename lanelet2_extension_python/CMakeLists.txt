@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(lanelet2_extension_python)
+project(autoware_lanelet2_extension_python)
 
 find_package(autoware_cmake REQUIRED)
 find_package(python_cmake_module REQUIRED)
