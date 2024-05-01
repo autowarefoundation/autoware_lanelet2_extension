@@ -2,9 +2,9 @@ from geometry_msgs.msg import Point
 from geometry_msgs.msg import Pose
 import lanelet2
 import lanelet2.geometry
-from lanelet2_extension_python.projection import MGRSProjector
-import lanelet2_extension_python.utility.query as query
-import lanelet2_extension_python.utility.utilities as utilities
+from autoware_lanelet2_extension_python.projection import MGRSProjector
+import autoware_lanelet2_extension_python.utility.query as query
+import autoware_lanelet2_extension_python.utility.utilities as utilities
 import matplotlib.pyplot as plt
 import numpy as np
 
