@@ -16,8 +16,8 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include <lanelet2_extension/utility/query.hpp>
-#include <lanelet2_extension/utility/utilities.hpp>
+#include <autoware_lanelet2_extension/utility/query.hpp>
+#include <autoware_lanelet2_extension/utility/utilities.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/serialization.hpp>
 
@@ -388,7 +388,7 @@ BOOST_PYTHON_FUNCTION_OVERLOADS(
 BOOST_PYTHON_FUNCTION_OVERLOADS(
   getPrecedingLaneletSequences_overload, lanelet::utils::query::getPrecedingLaneletSequences, 3, 4)
 
-BOOST_PYTHON_MODULE(_lanelet2_extension_python_boost_python_utility)
+BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
 {
   /*
    * utilities.cpp

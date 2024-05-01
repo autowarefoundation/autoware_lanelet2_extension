@@ -16,8 +16,8 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include <lanelet2_extension/projection/mgrs_projector.hpp>
-#include <lanelet2_extension/projection/transverse_mercator_projector.hpp>
+#include <autoware_lanelet2_extension/projection/mgrs_projector.hpp>
+#include <autoware_lanelet2_extension/projection/transverse_mercator_projector.hpp>
 
 #include <boost/python.hpp>
 
@@ -25,7 +25,7 @@
 
 #include <memory>
 
-BOOST_PYTHON_MODULE(_lanelet2_extension_python_boost_python_projection)
+BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_projection)
 {
   namespace bp = boost::python;
 
