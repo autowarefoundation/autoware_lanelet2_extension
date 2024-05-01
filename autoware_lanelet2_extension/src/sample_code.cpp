@@ -14,8 +14,8 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/projection/mgrs_projector.hpp"
-#include "lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
+#include "autoware_lanelet2_extension/projection/mgrs_projector.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
 
 #include <rclcpp/rclcpp.hpp>
 

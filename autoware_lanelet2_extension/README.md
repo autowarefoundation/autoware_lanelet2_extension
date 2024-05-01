@@ -1,4 +1,4 @@
-# lanelet2_extension package
+# autoware_lanelet2_extension package
 
 This package contains external library for Lanelet2 and is meant to ease the use of Lanelet2 in Autoware.
 

@@ -16,9 +16,9 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/utility/message_conversion.hpp"
+#include "autoware_lanelet2_extension/utility/message_conversion.hpp"
 
-#include "lanelet2_extension/projection/mgrs_projector.hpp"
+#include "autoware_lanelet2_extension/projection/mgrs_projector.hpp"
 
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>

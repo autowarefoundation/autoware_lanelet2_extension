@@ -16,7 +16,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/regulatory_elements/detection_area.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/detection_area.hpp"
 
 #include <boost/variant.hpp>
 

@@ -16,7 +16,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/projection/mgrs_projector.hpp"
+#include "autoware_lanelet2_extension/projection/mgrs_projector.hpp"
 
 #include <iostream>
 #include <set>

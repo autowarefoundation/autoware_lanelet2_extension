@@ -16,10 +16,10 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/utility/utilities.hpp"
+#include "autoware_lanelet2_extension/utility/utilities.hpp"
 
-#include "lanelet2_extension/utility/message_conversion.hpp"
-#include "lanelet2_extension/utility/query.hpp"
+#include "autoware_lanelet2_extension/utility/message_conversion.hpp"
+#include "autoware_lanelet2_extension/utility/query.hpp"
 
 #include <lanelet2_core/geometry/Lanelet.h>
 #include <lanelet2_core/geometry/LineString.h>
@@ -435,7 +435,7 @@ lanelet::ConstLanelet getExpandedLanelet(
     checkForInversion(orig_right_bound_2d, expanded_right_bound_2d, right_offset);
   } catch (const lanelet::GeometryError & e) {
     RCLCPP_ERROR_THROTTLE(
-      rclcpp::get_logger("lanelet2_extension"), clock, 1000,
+      rclcpp::get_logger("autoware_lanelet2_extension"), clock, 1000,
       "Fail to expand lanelet. output may be undesired. Lanelet points interval in map data could "
       "be too narrow.");
   }
@@ -572,14 +572,14 @@ bool lineStringToPolygon(
 {
   if (polygon == nullptr) {
     RCLCPP_ERROR_STREAM(
-      rclcpp::get_logger("lanelet2_extension.visualization"),
+      rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
       __func__ << ": polygon is null pointer! Failed to convert to polygon.");
     return false;
   }
   if (linestring.size() < 4) {
     if (linestring.size() < 3 || linestring.front().id() == linestring.back().id()) {
       RCLCPP_WARN_STREAM(
-        rclcpp::get_logger("lanelet2_extension.visualization"),
+        rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
         __func__ << ": linestring" << linestring.id()
                  << " must have more than different 3 points! (size is " << linestring.size()
                  << "). Failed to convert to polygon.");

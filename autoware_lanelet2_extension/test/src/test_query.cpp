@@ -14,8 +14,8 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
-#include "lanelet2_extension/utility/query.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
+#include "autoware_lanelet2_extension/utility/query.hpp"
 
 #include <gtest/gtest.h>
 #include <lanelet2_core/LaneletMap.h>

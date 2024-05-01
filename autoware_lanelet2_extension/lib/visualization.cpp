@@ -16,14 +16,14 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/visualization/visualization.hpp"
+#include "autoware_lanelet2_extension/visualization/visualization.hpp"
 
-#include "lanelet2_extension/regulatory_elements/crosswalk.hpp"
-#include "lanelet2_extension/regulatory_elements/detection_area.hpp"
-#include "lanelet2_extension/regulatory_elements/speed_bump.hpp"
-#include "lanelet2_extension/utility/message_conversion.hpp"
-#include "lanelet2_extension/utility/query.hpp"
-#include "lanelet2_extension/utility/utilities.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/crosswalk.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/detection_area.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/speed_bump.hpp"
+#include "autoware_lanelet2_extension/utility/message_conversion.hpp"
+#include "autoware_lanelet2_extension/utility/query.hpp"
+#include "autoware_lanelet2_extension/utility/utilities.hpp"
 
 #include <Eigen/Eigen>
 
@@ -991,7 +991,7 @@ visualization_msgs::msg::MarkerArray visualization::pedestrianPolygonMarkingsAsM
       pushPolygonMarker(&polygon_marker, polygon, c);
     } else {
       RCLCPP_WARN_STREAM(
-        rclcpp::get_logger("lanelet2_extension.visualization"),
+        rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
         "pedestrian marking " << linestring.id() << " failed conversion.");
     }
   }
@@ -1387,7 +1387,7 @@ void visualization::initLineStringMarker(
 {
   if (marker == nullptr) {
     RCLCPP_ERROR_STREAM(
-      rclcpp::get_logger("lanelet2_extension.visualization"),
+      rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
       __FUNCTION__ << ": marker is null pointer!");
     return;
   }
@@ -1416,7 +1416,7 @@ void visualization::pushLineStringMarker(
 {
   if (marker == nullptr) {
     RCLCPP_ERROR_STREAM(
-      rclcpp::get_logger("lanelet2_extension.visualization"),
+      rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
       __FUNCTION__ << ": marker is null pointer!");
     return;
   }
@@ -1424,7 +1424,7 @@ void visualization::pushLineStringMarker(
   // fill out lane line
   if (ls.size() < 2) {
     RCLCPP_ERROR_STREAM(
-      rclcpp::get_logger("lanelet2_extension.visualization"),
+      rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
       __FUNCTION__ << ": marker line size is 1 or 0!");
     return;
   }
@@ -1471,7 +1471,7 @@ void visualization::initArrowsMarker(
 {
   if (marker == nullptr) {
     RCLCPP_ERROR_STREAM(
-      rclcpp::get_logger("lanelet2_extension.visualization"),
+      rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
       __FUNCTION__ << ": marker is null pointer!");
     return;
   }
@@ -1500,7 +1500,7 @@ void visualization::pushArrowsMarker(
 {
   if (marker == nullptr) {
     RCLCPP_ERROR_STREAM(
-      rclcpp::get_logger("lanelet2_extension.visualization"),
+      rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
       __FUNCTION__ << ": marker is null pointer!");
     return;
   }
@@ -1508,7 +1508,7 @@ void visualization::pushArrowsMarker(
   // fill out lane line
   if (ls.size() < 2) {
     RCLCPP_ERROR_STREAM(
-      rclcpp::get_logger("lanelet2_extension.visualization"),
+      rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
       __FUNCTION__ << ": marker line size is 1 or 0!");
     return;
   }

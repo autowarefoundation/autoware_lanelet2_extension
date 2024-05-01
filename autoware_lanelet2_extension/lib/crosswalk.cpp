@@ -14,7 +14,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/regulatory_elements/crosswalk.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/crosswalk.hpp"
 
 #include <boost/variant.hpp>
 

@@ -14,7 +14,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming, cppcoreguidelines-pro-type-member-init)
 
-#include "lanelet2_extension/projection/transverse_mercator_projector.hpp"
+#include "autoware_lanelet2_extension/projection/transverse_mercator_projector.hpp"
 
 #include <iostream>
 #include <set>

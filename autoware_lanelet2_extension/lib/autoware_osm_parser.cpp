@@ -16,7 +16,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/io/autoware_osm_parser.hpp"
+#include "autoware_lanelet2_extension/io/autoware_osm_parser.hpp"
 
 #include <lanelet2_core/geometry/LineString.h>
 #include <lanelet2_io/io_handlers/Factory.h>

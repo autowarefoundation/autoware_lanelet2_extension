@@ -14,8 +14,8 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/projection/mgrs_projector.hpp"
-#include "lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
+#include "autoware_lanelet2_extension/projection/mgrs_projector.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
 
 #include <pugixml.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -47,7 +47,7 @@ constexpr const char * Elevation = "ele";
 void printUsage()
 {
   std::cout << "Usage:" << std::endl
-            << "ros2 run lanelet2_extension autoware_lanelet2_validation"
+            << "ros2 run autoware_lanelet2_extension autoware_lanelet2_validation"
                " --ros-args -p map_file:=<path to osm file>"
             << std::endl;
 }

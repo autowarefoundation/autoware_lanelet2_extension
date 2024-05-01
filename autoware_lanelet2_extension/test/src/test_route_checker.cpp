@@ -14,8 +14,8 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/utility/message_conversion.hpp"
-#include "lanelet2_extension/utility/route_checker.hpp"
+#include "autoware_lanelet2_extension/utility/message_conversion.hpp"
+#include "autoware_lanelet2_extension/utility/route_checker.hpp"
 
 #include <autoware_auto_mapping_msgs/msg/had_map_bin.hpp>
 #include <autoware_planning_msgs/msg/lanelet_route.hpp>

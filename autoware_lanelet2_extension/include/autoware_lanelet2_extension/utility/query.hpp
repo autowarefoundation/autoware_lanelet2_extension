@@ -19,12 +19,12 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
-#include "lanelet2_extension/regulatory_elements/crosswalk.hpp"
-#include "lanelet2_extension/regulatory_elements/detection_area.hpp"
-#include "lanelet2_extension/regulatory_elements/no_parking_area.hpp"
-#include "lanelet2_extension/regulatory_elements/no_stopping_area.hpp"
-#include "lanelet2_extension/regulatory_elements/speed_bump.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/crosswalk.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/detection_area.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/no_parking_area.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/no_stopping_area.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/speed_bump.hpp"
 
 #include <geometry_msgs/msg/point.hpp>
 #include <geometry_msgs/msg/pose.hpp>

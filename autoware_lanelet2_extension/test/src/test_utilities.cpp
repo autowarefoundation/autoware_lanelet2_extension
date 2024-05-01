@@ -14,7 +14,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming, cppcoreguidelines-avoid-goto)
 
-#include "lanelet2_extension/utility/utilities.hpp"
+#include "autoware_lanelet2_extension/utility/utilities.hpp"
 
 #include <gtest/gtest.h>
 #include <lanelet2_core/primitives/Point.h>

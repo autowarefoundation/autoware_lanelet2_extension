@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <lanelet2_extension/projection/mgrs_projector.hpp>
-#include <lanelet2_extension/utility/query.hpp>
-#include <lanelet2_extension/utility/utilities.hpp>
+#include <autoware_lanelet2_extension/projection/mgrs_projector.hpp>
+#include <autoware_lanelet2_extension/utility/query.hpp>
+#include <autoware_lanelet2_extension/utility/utilities.hpp>
 #include <range/v3/algorithm/move.hpp>
 #include <range/v3/core.hpp>
 #include <range/v3/functional/overload.hpp>
@@ -38,7 +38,7 @@
 int main(int argc, char ** argv)
 {
   if (argc < 2) {
-    std::cout << "usage: ros2 run lanelet2_extension check_right_of_way <map_path>";
+    std::cout << "usage: ros2 run autoware_lanelet2_extension check_right_of_way <map_path>";
     return 0;
   }
 

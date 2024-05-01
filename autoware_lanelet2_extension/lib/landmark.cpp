@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "lanelet2_extension/localization/landmark.hpp"
+#include "autoware_lanelet2_extension/localization/landmark.hpp"
 
-#include "lanelet2_extension/utility/message_conversion.hpp"
+#include "autoware_lanelet2_extension/utility/message_conversion.hpp"
 
 #include <Eigen/Core>
 
