@@ -1,0 +1,5 @@
+### Copied from .github/CODEOWNERS-manual ###
+
+### Automatically generated from package.xml ###
+lanelet2_extension/** kosuke.takeuchi@tier4.jp mamoru.sobue@tier4.jp masahiro.sakamoto@tier4.jp ryohsuke.mitsudome@tier4.jp takayuki.murooka@tier4.jp yutaka.kondo@tier4.jp
+lanelet2_extension_python/** kosuke.takeuchi@tier4.jp mamoru.sobue@tier4.jp masahiro.sakamoto@tier4.jp ryohsuke.mitsudome@tier4.jp takayuki.murooka@tier4.jp yutaka.kondo@tier4.jp
