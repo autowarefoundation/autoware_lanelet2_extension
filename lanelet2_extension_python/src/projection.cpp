@@ -31,12 +31,14 @@ BOOST_PYTHON_MODULE(_lanelet2_extension_python_boost_python_projection)
 
   bp::class_<
     lanelet::projection::MGRSProjector, std::shared_ptr<lanelet::projection::MGRSProjector>,
-    bp::bases<lanelet::Projector>>("MGRSProjector", bp::init<lanelet::Origin>("origin"));
+    bp::bases<lanelet::Projector>>
+    mgrs_projector("MGRSProjector", bp::init<lanelet::Origin>("origin"));
   bp::class_<
     lanelet::projection::TransverseMercatorProjector,
     std::shared_ptr<lanelet::projection::TransverseMercatorProjector>,
-    bp::bases<lanelet::Projector>>(
-    "TransverseMercatorProjector", bp::init<lanelet::Origin>("origin"));
+    bp::bases<lanelet::Projector>>
+    transverse_mercator_projector(
+      "TransverseMercatorProjector", bp::init<lanelet::Origin>("origin"));
 }
 
 // NOLINTEND(readability-identifier-naming)
