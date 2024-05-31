@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.0 (2024-05-31)
+------------------
 * Merge remote-tracking branch 'upstream/main' into rolling
 * Merge pull request `#6 <https://github.com/youtalk/autoware_lanelet2_extension/issues/6>`_ from youtalk/autoware-msgs-migration
   feat: `autoware_msgs` migration
