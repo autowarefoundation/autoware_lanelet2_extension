@@ -2,6 +2,19 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge remote-tracking branch 'upstream/main' into rolling
+* Merge pull request `#6 <https://github.com/youtalk/autoware_lanelet2_extension/issues/6>`_ from youtalk/autoware-msgs-migration
+  feat: `autoware_msgs` migration
+* feat(autoware_common): update and replace autoware_auto_msg
+* feat(lanelet2_extension): replace autoware_auto_mapping_msg with autoware_map_msg (`#216 <https://github.com/youtalk/autoware_lanelet2_extension/issues/216>`_)
+  * feat(lanelet2_extension): replace autoware-auto-mapping-msg to autoware-map-msg
+  * style(pre-commit): autofix
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+* Contributors: Yutaka Kondo, cyn-liu, liu cui
+
 0.2.0 (2024-05-07)
 ------------------
 * refactor: add `autoware\_` prefix to package names and namespaces (`#3 <https://github.com/youtalk/autoware_lanelet2_extension/issues/3>`_)
