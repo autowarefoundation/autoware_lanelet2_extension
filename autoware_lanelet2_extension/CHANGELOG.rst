@@ -2,6 +2,31 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#11 <https://github.com/youtalk/autoware_lanelet2_extension/issues/11>`_ from youtalk/import-update
+  feat: import updates from `autoware_common`
+* fix link
+* feat(lanelet2_extension): overwriteLaneletsCenterline supports "waypoints" (`#252 <https://github.com/youtalk/autoware_lanelet2_extension/issues/252>`_)
+  * feat(lanelet2_extension): centerline is converted to waypoints
+  * fix lanelet2_extension_python
+  * update README
+  * fix
+  * fix
+  * early return
+  * fix clang-tidy
+  * Update tmp/lanelet2_extension/lib/utilities.cpp
+  Co-authored-by: Ryohsuke Mitsudome <43976834+mitsudome-r@users.noreply.github.com>
+  * style(pre-commit): autofix
+  * fix
+  ---------
+  Co-authored-by: Ryohsuke Mitsudome <43976834+mitsudome-r@users.noreply.github.com>
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+* fix: boost optional build error on rolling environment (`#241 <https://github.com/youtalk/autoware_lanelet2_extension/issues/241>`_)
+* perf(lanelet2_extension): use std::unordered_set<>::find instead of std::find (`#244 <https://github.com/youtalk/autoware_lanelet2_extension/issues/244>`_)
+  perf(exists): use std::unordered_set<>::find instead of std::find
+* Contributors: Maxime CLEMENT, Takayuki Murooka, Yutaka Kondo, ぐるぐる
+
 0.3.0 (2024-05-31)
 ------------------
 * Merge remote-tracking branch 'upstream/main' into rolling
