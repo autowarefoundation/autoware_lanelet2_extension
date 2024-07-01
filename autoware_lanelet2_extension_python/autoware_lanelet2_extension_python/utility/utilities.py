@@ -1,8 +1,8 @@
+import autoware_lanelet2_extension_python._autoware_lanelet2_extension_python_boost_python_utility as _utility_cpp
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Quaternion
 import lanelet2
-import autoware_lanelet2_extension_python._autoware_lanelet2_extension_python_boost_python_utility as _utility_cpp
 from rclpy.serialization import serialize_message
 
 combineLaneletsShape = _utility_cpp.combineLaneletsShape

@@ -14,8 +14,8 @@
 //
 // Authors: Simon Thompson, Ryohsuke Mitsudome
 
-#ifndef LANELET2_EXTENSION__UTILITY__MESSAGE_CONVERSION_HPP_
-#define LANELET2_EXTENSION__UTILITY__MESSAGE_CONVERSION_HPP_
+#ifndef AUTOWARE_LANELET2_EXTENSION__UTILITY__MESSAGE_CONVERSION_HPP_
+#define AUTOWARE_LANELET2_EXTENSION__UTILITY__MESSAGE_CONVERSION_HPP_
 
 // NOLINTBEGIN(readability-identifier-naming)
 
@@ -95,4 +95,4 @@ void toGeomMsgPt32(const Eigen::Vector3d & src, geometry_msgs::msg::Point32 * ds
 
 // NOLINTEND(readability-identifier-naming)
 
-#endif  // LANELET2_EXTENSION__UTILITY__MESSAGE_CONVERSION_HPP_
+#endif  // AUTOWARE_LANELET2_EXTENSION__UTILITY__MESSAGE_CONVERSION_HPP_

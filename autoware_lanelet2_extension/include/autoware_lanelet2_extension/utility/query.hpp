@@ -14,8 +14,8 @@
 //
 // Authors: Simon Thompson, Ryohsuke Mitsudome
 
-#ifndef LANELET2_EXTENSION__UTILITY__QUERY_HPP_
-#define LANELET2_EXTENSION__UTILITY__QUERY_HPP_
+#ifndef AUTOWARE_LANELET2_EXTENSION__UTILITY__QUERY_HPP_
+#define AUTOWARE_LANELET2_EXTENSION__UTILITY__QUERY_HPP_
 
 // NOLINTBEGIN(readability-identifier-naming)
 
@@ -298,4 +298,4 @@ std::vector<lanelet::ConstLanelets> getPrecedingLaneletSequences(
 
 // NOLINTEND(readability-identifier-naming)
 
-#endif  // LANELET2_EXTENSION__UTILITY__QUERY_HPP_
+#endif  // AUTOWARE_LANELET2_EXTENSION__UTILITY__QUERY_HPP_

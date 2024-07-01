@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LANELET2_EXTENSION__UTILITY__ROUTE_CHECKER_HPP_
-#define LANELET2_EXTENSION__UTILITY__ROUTE_CHECKER_HPP_
+#ifndef AUTOWARE_LANELET2_EXTENSION__UTILITY__ROUTE_CHECKER_HPP_
+#define AUTOWARE_LANELET2_EXTENSION__UTILITY__ROUTE_CHECKER_HPP_
 
 // NOLINTBEGIN(readability-identifier-naming)
 
@@ -30,4 +30,4 @@ bool isRouteValid(const LaneletRoute & route, const lanelet::LaneletMapPtr lanel
 
 // NOLINTEND(readability-identifier-naming)
 
-#endif  // LANELET2_EXTENSION__UTILITY__ROUTE_CHECKER_HPP_
+#endif  // AUTOWARE_LANELET2_EXTENSION__UTILITY__ROUTE_CHECKER_HPP_
