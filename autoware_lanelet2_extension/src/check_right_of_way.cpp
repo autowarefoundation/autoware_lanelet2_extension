@@ -65,7 +65,7 @@ int main(int argc, char ** argv)
                 return it != attrs.end() && it->second == lanelet::AttributeValueString::RightOfWay;
               })  // transform to lanelet::RightOfWay
               | ranges::views::transform([](auto && elem) {
-                  return std::move(std::dynamic_pointer_cast<lanelet::RightOfWay>(elem));
+                  return std::dynamic_pointer_cast<lanelet::RightOfWay>(elem);
                 });
 
   for (auto && row : rows) {
