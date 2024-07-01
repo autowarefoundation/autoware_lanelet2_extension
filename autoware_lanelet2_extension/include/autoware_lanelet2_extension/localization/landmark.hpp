@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LANELET2_EXTENSION__LOCALIZATION__LANDMARK_HPP_
-#define LANELET2_EXTENSION__LOCALIZATION__LANDMARK_HPP_
+#ifndef AUTOWARE_LANELET2_EXTENSION__LOCALIZATION__LANDMARK_HPP_
+#define AUTOWARE_LANELET2_EXTENSION__LOCALIZATION__LANDMARK_HPP_
 
 #include <autoware_map_msgs/msg/lanelet_map_bin.hpp>
 
@@ -35,4 +35,4 @@ std::vector<lanelet::Polygon3d> parseLandmarkPolygons(
 
 // NOLINTEND(readability-identifier-naming)
 
-#endif  // LANELET2_EXTENSION__LOCALIZATION__LANDMARK_HPP_
+#endif  // AUTOWARE_LANELET2_EXTENSION__LOCALIZATION__LANDMARK_HPP_

@@ -14,8 +14,8 @@
 //
 // Authors: Kenji Miyake, Ryohsuke Mitsudome
 
-#ifndef LANELET2_EXTENSION__UTILITY__UTILITIES_HPP_
-#define LANELET2_EXTENSION__UTILITY__UTILITIES_HPP_
+#ifndef AUTOWARE_LANELET2_EXTENSION__UTILITY__UTILITIES_HPP_
+#define AUTOWARE_LANELET2_EXTENSION__UTILITY__UTILITIES_HPP_
 
 // NOLINTBEGIN(readability-identifier-naming)
 
@@ -106,4 +106,4 @@ double getLateralDistanceToClosestLanelet(
 
 // NOLINTEND(readability-identifier-naming)
 
-#endif  // LANELET2_EXTENSION__UTILITY__UTILITIES_HPP_
+#endif  // AUTOWARE_LANELET2_EXTENSION__UTILITY__UTILITIES_HPP_
