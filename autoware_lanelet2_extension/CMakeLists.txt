@@ -4,32 +4,6 @@ project(autoware_lanelet2_extension)
 find_package(autoware_cmake REQUIRED)
 autoware_package()
 
-find_package(PkgConfig)
-find_path(GeographicLib_INCLUDE_DIR GeographicLib/Config.h
-  PATH_SUFFIXES GeographicLib
-)
-set(GeographicLib_INCLUDE_DIRS ${GeographicLib_INCLUDE_DIR})
-
-find_library(GeographicLib_LIBRARIES
-  NAMES Geographic
-)
-
-find_library(PUGIXML_LIBRARIES
-  NAMES pugixml
-)
-
-find_path(PUGIXML_INCLUDE_DIRS
-  NAMES pugixml.hpp
-  PATH_SUFFIXES pugixml
-)
-
-include_directories(
-  ${GeographicLib_INCLUDE_DIRS}
-  ${PUGIXML_INCLUDE_DIRS}
-)
-
-add_definitions(${GeographicLib_DEFINITIONS})
-
 ament_auto_add_library(${PROJECT_NAME}_lib SHARED
   lib/autoware_osm_parser.cpp
   lib/autoware_traffic_light.cpp
@@ -49,34 +23,19 @@ ament_auto_add_library(${PROJECT_NAME}_lib SHARED
   lib/visualization.cpp
   lib/route_checker.cpp
 )
-target_link_libraries(${PROJECT_NAME}_lib
-  ${GeographicLib_LIBRARIES}
-)
-get_target_property(lanelet2_core_INCLUDE_DIRECTORIES lanelet2_core::lanelet2_core INTERFACE_INCLUDE_DIRECTORIES)
-target_include_directories(${PROJECT_NAME}_lib
-  SYSTEM PRIVATE
-    ${lanelet2_core_INCLUDE_DIRECTORIES}
-)
 
 ament_auto_add_executable(${PROJECT_NAME}_sample src/sample_code.cpp)
-add_dependencies(${PROJECT_NAME}_sample ${PROJECT_NAME}_lib)
 target_link_libraries(${PROJECT_NAME}_sample
   ${PROJECT_NAME}_lib
 )
 
 ament_auto_add_executable(autoware_lanelet2_validation src/validation.cpp)
-add_dependencies(autoware_lanelet2_validation ${PROJECT_NAME}_lib)
 target_link_libraries(autoware_lanelet2_validation
-  ${catkin_LIBRARIES}
-  ${PUGIXML_LIBRARIES}
   ${PROJECT_NAME}_lib
 )
 
 ament_auto_add_executable(check_right_of_way src/check_right_of_way.cpp)
-add_dependencies(check_right_of_way ${PROJECT_NAME}_lib)
 target_link_libraries(check_right_of_way
-  ${catkin_LIBRARIES}
-  ${PUGIXML_LIBRARIES}
   ${PROJECT_NAME}_lib
 )
 
@@ -91,10 +50,6 @@ if(BUILD_TESTING)
   target_link_libraries(regulatory_elements-test ${PROJECT_NAME}_lib)
   ament_add_ros_isolated_gtest(utilities-test test/src/test_utilities.cpp)
   target_link_libraries(utilities-test ${PROJECT_NAME}_lib)
-  target_include_directories(utilities-test
-  SYSTEM PRIVATE
-    ${lanelet2_core_INCLUDE_DIRECTORIES}
-  )
   ament_add_ros_isolated_gtest(route-test test/src/test_route_checker.cpp)
   target_link_libraries(route-test ${PROJECT_NAME}_lib)
 endif()
