@@ -287,7 +287,7 @@ lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanele
   const auto center_line = lanelet::LineString3d(lanelet::InvalId, centers);
   auto combined_lanelet = lanelet::Lanelet(lanelet::InvalId, left_bound, right_bound);
   combined_lanelet.setCenterline(center_line);
-  return std::move(combined_lanelet);
+  return combined_lanelet;
 }
 
 lanelet::LineString3d generateFineCenterline(
