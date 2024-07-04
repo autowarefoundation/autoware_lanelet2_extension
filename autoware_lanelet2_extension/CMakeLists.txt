@@ -6,6 +6,7 @@ autoware_package()
 
 ament_auto_add_library(${PROJECT_NAME}_lib SHARED
   lib/autoware_osm_parser.cpp
+  lib/autoware_multi_osm_parser.cpp
   lib/autoware_traffic_light.cpp
   lib/crosswalk.cpp
   lib/detection_area.cpp
