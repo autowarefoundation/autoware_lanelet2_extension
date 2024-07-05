@@ -50,64 +50,27 @@
 
 using lanelet::utils::to2D;
 
-namespace lanelet::utils
+namespace lanelet::utils::query
 {
-// returns all lanelets in laneletLayer - don't know how to convert
-// PrimitiveLayer<Lanelets> -> std::vector<Lanelets>
-lanelet::ConstLanelets query::laneletLayer(const lanelet::LaneletMapConstPtr & ll_map)
+
+inline namespace v1
 {
-  lanelet::ConstLanelets lanelets;
-  if (!ll_map) {
-    std::cerr << "No map received!";
-    return lanelets;
-  }
-
-  for (const auto & li : ll_map->laneletLayer) {
-    lanelets.push_back(li);
-  }
-
-  return lanelets;
+lanelet::ConstLanelets crosswalkLanelets(const lanelet::ConstLanelets & lls)
+{
+  return subtypeLanelets(lls, lanelet::AttributeValueString::Crosswalk);
 }
 
-lanelet::ConstLanelets query::subtypeLanelets(
-  const lanelet::ConstLanelets & lls, const char subtype[])
+lanelet::ConstLanelets walkwayLanelets(const lanelet::ConstLanelets & lls)
 {
-  lanelet::ConstLanelets subtype_lanelets;
-
-  for (const auto & ll : lls) {
-    if (ll.hasAttribute(lanelet::AttributeName::Subtype)) {
-      const lanelet::Attribute & attr = ll.attribute(lanelet::AttributeName::Subtype);
-      if (attr.value() == subtype) {
-        subtype_lanelets.push_back(ll);
-      }
-    }
-  }
-
-  return subtype_lanelets;
+  return subtypeLanelets(lls, lanelet::AttributeValueString::Walkway);
 }
 
-lanelet::ConstLanelets query::crosswalkLanelets(const lanelet::ConstLanelets & lls)
+lanelet::ConstLanelets shoulderLanelets(const lanelet::ConstLanelets & lls)
 {
-  return query::subtypeLanelets(lls, lanelet::AttributeValueString::Crosswalk);
+  return subtypeLanelets(lls, "road_shoulder");
 }
 
-lanelet::ConstLanelets query::walkwayLanelets(const lanelet::ConstLanelets & lls)
-{
-  return query::subtypeLanelets(lls, lanelet::AttributeValueString::Walkway);
-}
-
-lanelet::ConstLanelets query::roadLanelets(const lanelet::ConstLanelets & lls)
-{
-  return query::subtypeLanelets(lls, lanelet::AttributeValueString::Road);
-}
-
-lanelet::ConstLanelets query::shoulderLanelets(const lanelet::ConstLanelets & lls)
-{
-  return query::subtypeLanelets(lls, "road_shoulder");
-}
-
-std::vector<lanelet::TrafficLightConstPtr> query::trafficLights(
-  const lanelet::ConstLanelets & lanelets)
+std::vector<lanelet::TrafficLightConstPtr> trafficLights(const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::TrafficLightConstPtr> tl_reg_elems;
 
@@ -133,7 +96,7 @@ std::vector<lanelet::TrafficLightConstPtr> query::trafficLights(
   return tl_reg_elems;
 }
 
-std::vector<lanelet::AutowareTrafficLightConstPtr> query::autowareTrafficLights(
+std::vector<lanelet::AutowareTrafficLightConstPtr> autowareTrafficLights(
   const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::AutowareTrafficLightConstPtr> tl_reg_elems;
@@ -162,8 +125,7 @@ std::vector<lanelet::AutowareTrafficLightConstPtr> query::autowareTrafficLights(
   return tl_reg_elems;
 }
 
-std::vector<lanelet::DetectionAreaConstPtr> query::detectionAreas(
-  const lanelet::ConstLanelets & lanelets)
+std::vector<lanelet::DetectionAreaConstPtr> detectionAreas(const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::DetectionAreaConstPtr> da_reg_elems;
 
@@ -191,7 +153,7 @@ std::vector<lanelet::DetectionAreaConstPtr> query::detectionAreas(
   return da_reg_elems;
 }
 
-std::vector<lanelet::NoStoppingAreaConstPtr> query::noStoppingAreas(
+std::vector<lanelet::NoStoppingAreaConstPtr> noStoppingAreas(
   const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::NoStoppingAreaConstPtr> no_reg_elems;
@@ -220,8 +182,7 @@ std::vector<lanelet::NoStoppingAreaConstPtr> query::noStoppingAreas(
   return no_reg_elems;
 }
 
-std::vector<lanelet::NoParkingAreaConstPtr> query::noParkingAreas(
-  const lanelet::ConstLanelets & lanelets)
+std::vector<lanelet::NoParkingAreaConstPtr> noParkingAreas(const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::NoParkingAreaConstPtr> no_pa_reg_elems;
 
@@ -249,7 +210,7 @@ std::vector<lanelet::NoParkingAreaConstPtr> query::noParkingAreas(
   return no_pa_reg_elems;
 }
 
-std::vector<lanelet::SpeedBumpConstPtr> query::speedBumps(const lanelet::ConstLanelets & lanelets)
+std::vector<lanelet::SpeedBumpConstPtr> speedBumps(const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::SpeedBumpConstPtr> sb_reg_elems;
 
@@ -277,7 +238,7 @@ std::vector<lanelet::SpeedBumpConstPtr> query::speedBumps(const lanelet::ConstLa
   return sb_reg_elems;
 }
 
-std::vector<lanelet::CrosswalkConstPtr> query::crosswalks(const lanelet::ConstLanelets & lanelets)
+std::vector<lanelet::CrosswalkConstPtr> crosswalks(const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::CrosswalkConstPtr> cw_reg_elems;
 
@@ -305,7 +266,7 @@ std::vector<lanelet::CrosswalkConstPtr> query::crosswalks(const lanelet::ConstLa
   return cw_reg_elems;
 }
 
-lanelet::ConstLineStrings3d query::curbstones(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+lanelet::ConstLineStrings3d curbstones(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d curbstones;
   for (const auto & ls : lanelet_map_ptr->lineStringLayer) {
@@ -317,21 +278,7 @@ lanelet::ConstLineStrings3d query::curbstones(const lanelet::LaneletMapConstPtr 
   return curbstones;
 }
 
-lanelet::ConstPolygons3d query::getAllPolygonsByType(
-  const lanelet::LaneletMapConstPtr & lanelet_map_ptr, const std::string & polygon_type)
-{
-  lanelet::ConstPolygons3d polygons;
-  for (const auto & poly : lanelet_map_ptr->polygonLayer) {
-    const std::string type = poly.attributeOr(lanelet::AttributeName::Type, "none");
-    if (type == polygon_type) {
-      polygons.push_back(poly);
-    }
-  }
-  return polygons;
-}
-
-lanelet::ConstPolygons3d query::getAllObstaclePolygons(
-  const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+lanelet::ConstPolygons3d getAllObstaclePolygons(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstPolygons3d obstacle_polygons;
   for (const auto & poly : lanelet_map_ptr->polygonLayer) {
@@ -343,8 +290,7 @@ lanelet::ConstPolygons3d query::getAllObstaclePolygons(
   return obstacle_polygons;
 }
 
-lanelet::ConstPolygons3d query::getAllParkingLots(
-  const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+lanelet::ConstPolygons3d getAllParkingLots(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstPolygons3d parking_lots;
   for (const auto & poly : lanelet_map_ptr->polygonLayer) {
@@ -356,8 +302,7 @@ lanelet::ConstPolygons3d query::getAllParkingLots(
   return parking_lots;
 }
 
-lanelet::ConstLineStrings3d query::getAllPartitions(
-  const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+lanelet::ConstLineStrings3d getAllPartitions(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d partitions;
   for (const auto & ls : lanelet_map_ptr->lineStringLayer) {
@@ -369,7 +314,7 @@ lanelet::ConstLineStrings3d query::getAllPartitions(
   return partitions;
 }
 
-lanelet::ConstLineStrings3d query::getAllFences(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+lanelet::ConstLineStrings3d getAllFences(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d fences;
   for (const auto & ls : lanelet_map_ptr->lineStringLayer) {
@@ -381,7 +326,7 @@ lanelet::ConstLineStrings3d query::getAllFences(const lanelet::LaneletMapConstPt
   return fences;
 }
 
-lanelet::ConstLineStrings3d query::getAllPedestrianPolygonMarkings(
+lanelet::ConstLineStrings3d getAllPedestrianPolygonMarkings(
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d pedestrian_polygon_markings;
@@ -394,7 +339,7 @@ lanelet::ConstLineStrings3d query::getAllPedestrianPolygonMarkings(
   return pedestrian_polygon_markings;
 }
 
-lanelet::ConstLineStrings3d query::getAllPedestrianLineMarkings(
+lanelet::ConstLineStrings3d getAllPedestrianLineMarkings(
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d pedestrian_line_markings;
@@ -407,8 +352,7 @@ lanelet::ConstLineStrings3d query::getAllPedestrianLineMarkings(
   return pedestrian_line_markings;
 }
 
-lanelet::ConstLineStrings3d query::getAllParkingSpaces(
-  const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+lanelet::ConstLineStrings3d getAllParkingSpaces(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d parking_spaces;
   for (const auto & ls : lanelet_map_ptr->lineStringLayer) {
@@ -420,18 +364,17 @@ lanelet::ConstLineStrings3d query::getAllParkingSpaces(
   return parking_spaces;
 }
 
-bool query::getLinkedLanelet(
+bool getLinkedLanelet(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr, lanelet::ConstLanelet * linked_lanelet)
 {
-  const auto & all_lanelets = query::laneletLayer(lanelet_map_ptr);
-  const auto & all_road_lanelets = query::roadLanelets(all_lanelets);
-  const auto & all_parking_lots = query::getAllParkingLots(lanelet_map_ptr);
-  return query::getLinkedLanelet(
-    parking_space, all_road_lanelets, all_parking_lots, linked_lanelet);
+  const auto & all_lanelets = laneletLayer(lanelet_map_ptr);
+  const auto & all_road_lanelets = roadLanelets(all_lanelets);
+  const auto & all_parking_lots = getAllParkingLots(lanelet_map_ptr);
+  return getLinkedLanelet(parking_space, all_road_lanelets, all_parking_lots, linked_lanelet);
 }
 
-bool query::getLinkedLanelet(
+bool getLinkedLanelet(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::ConstLanelets & all_road_lanelets,
   const lanelet::ConstPolygons3d & all_parking_lots, lanelet::ConstLanelet * linked_lanelet)
@@ -454,18 +397,18 @@ bool query::getLinkedLanelet(
   return true;
 }
 
-lanelet::ConstLanelets query::getLinkedLanelets(
+lanelet::ConstLanelets getLinkedLanelets(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
-  const auto & all_lanelets = query::laneletLayer(lanelet_map_ptr);
-  const auto & all_road_lanelets = query::roadLanelets(all_lanelets);
-  const auto & all_parking_lots = query::getAllParkingLots(lanelet_map_ptr);
+  const auto & all_lanelets = laneletLayer(lanelet_map_ptr);
+  const auto & all_road_lanelets = roadLanelets(all_lanelets);
+  const auto & all_parking_lots = getAllParkingLots(lanelet_map_ptr);
 
-  return query::getLinkedLanelets(parking_space, all_road_lanelets, all_parking_lots);
+  return getLinkedLanelets(parking_space, all_road_lanelets, all_parking_lots);
 }
 
-lanelet::ConstLanelets query::getLinkedLanelets(
+lanelet::ConstLanelets getLinkedLanelets(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::ConstLanelets & all_road_lanelets,
   const lanelet::ConstPolygons3d & all_parking_lots)
@@ -509,7 +452,7 @@ lanelet::ConstLanelets query::getLinkedLanelets(
 }
 
 // get overlapping lanelets
-lanelet::ConstLanelets query::getLinkedLanelets(
+lanelet::ConstLanelets getLinkedLanelets(
   const lanelet::ConstPolygon3d & parking_lot, const lanelet::ConstLanelets & all_road_lanelets)
 {
   lanelet::ConstLanelets linked_lanelets;
@@ -523,15 +466,15 @@ lanelet::ConstLanelets query::getLinkedLanelets(
   return linked_lanelets;
 }
 
-lanelet::ConstLineStrings3d query::getLinkedParkingSpaces(
+lanelet::ConstLineStrings3d getLinkedParkingSpaces(
   const lanelet::ConstLanelet & lanelet, const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
-  const auto & all_parking_spaces = query::getAllParkingSpaces(lanelet_map_ptr);
-  const auto & all_parking_lots = query::getAllParkingLots(lanelet_map_ptr);
+  const auto & all_parking_spaces = getAllParkingSpaces(lanelet_map_ptr);
+  const auto & all_parking_lots = getAllParkingLots(lanelet_map_ptr);
   return getLinkedParkingSpaces(lanelet, all_parking_spaces, all_parking_lots);
 }
 
-lanelet::ConstLineStrings3d query::getLinkedParkingSpaces(
+lanelet::ConstLineStrings3d getLinkedParkingSpaces(
   const lanelet::ConstLanelet & lanelet, const lanelet::ConstLineStrings3d & all_parking_spaces,
   const lanelet::ConstPolygons3d & all_parking_lots)
 {
@@ -574,7 +517,7 @@ lanelet::ConstLineStrings3d query::getLinkedParkingSpaces(
 }
 
 // get overlapping parking lot
-bool query::getLinkedParkingLot(
+bool getLinkedParkingLot(
   const lanelet::ConstLanelet & lanelet, const lanelet::ConstPolygons3d & all_parking_lots,
   lanelet::ConstPolygon3d * linked_parking_lot)
 {
@@ -590,7 +533,7 @@ bool query::getLinkedParkingLot(
 }
 
 // get overlapping parking lot
-bool query::getLinkedParkingLot(
+bool getLinkedParkingLot(
   const lanelet::BasicPoint2d & current_position, const lanelet::ConstPolygons3d & all_parking_lots,
   lanelet::ConstPolygon3d * linked_parking_lot)
 {
@@ -606,7 +549,7 @@ bool query::getLinkedParkingLot(
 }
 
 // get overlapping parking lot
-bool query::getLinkedParkingLot(
+bool getLinkedParkingLot(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::ConstPolygons3d & all_parking_lots, lanelet::ConstPolygon3d * linked_parking_lot)
 {
@@ -621,7 +564,7 @@ bool query::getLinkedParkingLot(
   return false;
 }
 
-lanelet::ConstLineStrings3d query::getLinkedParkingSpaces(
+lanelet::ConstLineStrings3d getLinkedParkingSpaces(
   const lanelet::ConstPolygon3d & parking_lot,
   const lanelet::ConstLineStrings3d & all_parking_spaces)
 {
@@ -637,14 +580,13 @@ lanelet::ConstLineStrings3d query::getLinkedParkingSpaces(
 }
 
 // return all stop lines and ref lines from a given set of lanelets
-std::vector<lanelet::ConstLineString3d> query::stopLinesLanelets(
-  const lanelet::ConstLanelets & lanelets)
+std::vector<lanelet::ConstLineString3d> stopLinesLanelets(const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::ConstLineString3d> stoplines;
 
   for (const auto & ll : lanelets) {
     std::vector<lanelet::ConstLineString3d> ll_stoplines;
-    ll_stoplines = query::stopLinesLanelet(ll);
+    ll_stoplines = stopLinesLanelet(ll);
     stoplines.insert(stoplines.end(), ll_stoplines.begin(), ll_stoplines.end());
   }
 
@@ -652,7 +594,7 @@ std::vector<lanelet::ConstLineString3d> query::stopLinesLanelets(
 }
 
 // return all stop and ref lines from a given lanelet
-std::vector<lanelet::ConstLineString3d> query::stopLinesLanelet(const lanelet::ConstLanelet & ll)
+std::vector<lanelet::ConstLineString3d> stopLinesLanelet(const lanelet::ConstLanelet & ll)
 {
   std::vector<lanelet::ConstLineString3d> stoplines;
 
@@ -703,7 +645,7 @@ std::vector<lanelet::ConstLineString3d> query::stopLinesLanelet(const lanelet::C
   return stoplines;
 }
 
-std::vector<lanelet::ConstLineString3d> query::stopSignStopLines(
+std::vector<lanelet::ConstLineString3d> stopSignStopLines(
   const lanelet::ConstLanelets & lanelets, const std::string & stop_sign_id)
 {
   std::vector<lanelet::ConstLineString3d> stoplines;
@@ -740,7 +682,60 @@ std::vector<lanelet::ConstLineString3d> query::stopSignStopLines(
   return stoplines;
 }
 
-ConstLanelets query::getLaneletsWithinRange(
+}  // namespace v1
+
+// returns all lanelets in laneletLayer - don't know how to convert
+// PrimitiveLayer<Lanelets> -> std::vector<Lanelets>
+lanelet::ConstLanelets laneletLayer(const lanelet::LaneletMapConstPtr & ll_map)
+{
+  lanelet::ConstLanelets lanelets;
+  if (!ll_map) {
+    std::cerr << "No map received!";
+    return lanelets;
+  }
+
+  for (const auto & li : ll_map->laneletLayer) {
+    lanelets.push_back(li);
+  }
+
+  return lanelets;
+}
+
+lanelet::ConstLanelets subtypeLanelets(const lanelet::ConstLanelets & lls, const char subtype[])
+{
+  lanelet::ConstLanelets subtype_lanelets;
+
+  for (const auto & ll : lls) {
+    if (ll.hasAttribute(lanelet::AttributeName::Subtype)) {
+      const lanelet::Attribute & attr = ll.attribute(lanelet::AttributeName::Subtype);
+      if (attr.value() == subtype) {
+        subtype_lanelets.push_back(ll);
+      }
+    }
+  }
+
+  return subtype_lanelets;
+}
+
+lanelet::ConstLanelets roadLanelets(const lanelet::ConstLanelets & lls)
+{
+  return subtypeLanelets(lls, lanelet::AttributeValueString::Road);
+}
+
+lanelet::ConstPolygons3d getAllPolygonsByType(
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr, const std::string & polygon_type)
+{
+  lanelet::ConstPolygons3d polygons;
+  for (const auto & poly : lanelet_map_ptr->polygonLayer) {
+    const std::string type = poly.attributeOr(lanelet::AttributeName::Type, "none");
+    if (type == polygon_type) {
+      polygons.push_back(poly);
+    }
+  }
+  return polygons;
+}
+
+ConstLanelets getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const lanelet::BasicPoint2d & search_point,
   const double range)
 {
@@ -755,7 +750,7 @@ ConstLanelets query::getLaneletsWithinRange(
   return near_lanelets;
 }
 
-ConstLanelets query::getLaneletsWithinRange(
+ConstLanelets getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   const double range)
 {
@@ -763,13 +758,13 @@ ConstLanelets query::getLaneletsWithinRange(
     lanelets, lanelet::BasicPoint2d(search_point.x, search_point.y), range);
 }
 
-ConstLanelets query::getLaneChangeableNeighbors(
+ConstLanelets getLaneChangeableNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet)
 {
   return graph->besides(lanelet);
 }
 
-ConstLanelets query::getLaneChangeableNeighbors(
+ConstLanelets getLaneChangeableNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point)
 {
@@ -783,8 +778,7 @@ ConstLanelets query::getLaneChangeableNeighbors(
   return road_slices;
 }
 
-ConstLanelets query::getAllNeighbors(
-  const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet)
+ConstLanelets getAllNeighbors(const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet)
 {
   ConstLanelets lanelets;
 
@@ -799,7 +793,7 @@ ConstLanelets query::getAllNeighbors(
   return lanelets;
 }
 
-ConstLanelets query::getAllNeighborsRight(
+ConstLanelets getAllNeighborsRight(
   const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet)
 {
   ConstLanelets lanelets;
@@ -813,7 +807,7 @@ ConstLanelets query::getAllNeighborsRight(
   return lanelets;
 }
 
-ConstLanelets query::getAllNeighborsLeft(
+ConstLanelets getAllNeighborsLeft(
   const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet)
 {
   ConstLanelets lanelets;
@@ -826,7 +820,7 @@ ConstLanelets query::getAllNeighborsLeft(
   return lanelets;
 }
 
-ConstLanelets query::getAllNeighbors(
+ConstLanelets getAllNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point)
 {
@@ -840,7 +834,7 @@ ConstLanelets query::getAllNeighbors(
   return road_slices;
 }
 
-bool query::getClosestLanelet(
+bool getClosestLanelet(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelet * closest_lanelet_ptr)
 {
@@ -904,7 +898,7 @@ bool query::getClosestLanelet(
   return found;
 }
 
-bool query::getClosestLaneletWithConstrains(
+bool getClosestLaneletWithConstrains(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelet * closest_lanelet_ptr, const double dist_threshold, const double yaw_threshold)
 {
@@ -971,7 +965,7 @@ bool query::getClosestLaneletWithConstrains(
   return found;
 }
 
-bool query::getCurrentLanelets(
+bool getCurrentLanelets(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   ConstLanelets * current_lanelets_ptr)
 {
@@ -995,7 +989,7 @@ bool query::getCurrentLanelets(
   return !current_lanelets_ptr->empty();  // return found
 }
 
-bool query::getCurrentLanelets(
+bool getCurrentLanelets(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelets * current_lanelets_ptr)
 {
@@ -1083,7 +1077,7 @@ std::vector<std::deque<lanelet::ConstLanelet>> getPrecedingLaneletSequencesRecur
   return preceding_lanelet_sequences;
 }
 
-std::vector<lanelet::ConstLanelets> query::getSucceedingLaneletSequences(
+std::vector<lanelet::ConstLanelets> getSucceedingLaneletSequences(
   const routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
   const double length)
 {
@@ -1099,7 +1093,7 @@ std::vector<lanelet::ConstLanelets> query::getSucceedingLaneletSequences(
   return lanelet_sequences_vec;
 }
 
-std::vector<lanelet::ConstLanelets> query::getPrecedingLaneletSequences(
+std::vector<lanelet::ConstLanelets> getPrecedingLaneletSequences(
   const routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
   const double length, const lanelet::ConstLanelets & exclude_lanelets)
 {
@@ -1120,6 +1114,6 @@ std::vector<lanelet::ConstLanelets> query::getPrecedingLaneletSequences(
   }
   return lanelet_sequences_vec;
 }
-}  // namespace lanelet::utils
+}  // namespace lanelet::utils::query
 
 // NOLINTEND(readability-identifier-naming)
