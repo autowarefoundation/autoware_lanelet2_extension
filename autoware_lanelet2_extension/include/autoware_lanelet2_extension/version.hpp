@@ -14,8 +14,8 @@
 //
 // Authors: Mamoru Sobue
 
-#ifndef LANELET2_EXTENSION__VERSION_HPP_
-#define LANELET2_EXTENSION__VERSION_HPP_
+#ifndef AUTOWARE_LANELET2_EXTENSION__VERSION_HPP_
+#define AUTOWARE_LANELET2_EXTENSION__VERSION_HPP_
 
 // NOLINTBEGIN(readability-identifier-naming)
 
@@ -33,4 +33,4 @@ enum class Version : int {
 static constexpr Version version = Version::v1;
 }  // namespace lanelet::autoware
 
-#endif  // LANELET2_EXTENSION__VERSION_HPP_
+#endif  // AUTOWARE_LANELET2_EXTENSION__VERSION_HPP_

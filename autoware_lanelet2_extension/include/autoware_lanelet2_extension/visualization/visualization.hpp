@@ -217,7 +217,6 @@ visualization_msgs::msg::MarkerArray noObstacleSegmentationAreaForRunOutAsMarker
 visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
   const lanelet::ConstPolygons3d & hatched_road_markings_area,
   const std_msgs::msg::ColorRGBA & area_color, const std_msgs::msg::ColorRGBA & line_color);
-
 }  // namespace v1
 
 /**

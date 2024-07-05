@@ -1073,7 +1073,6 @@ visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
 
   return marker_array;
 }
-
 }  // namespace v1
 
 void lanelet2Triangle(

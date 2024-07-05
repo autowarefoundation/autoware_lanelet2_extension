@@ -203,7 +203,6 @@ std::vector<lanelet::ConstLineString3d> stopLinesLanelet(const lanelet::ConstLan
  */
 std::vector<lanelet::ConstLineString3d> stopSignStopLines(
   const lanelet::ConstLanelets & lanelets, const std::string & stop_sign_id = "stop_sign");
-
 }  // namespace v1
 
 /**
