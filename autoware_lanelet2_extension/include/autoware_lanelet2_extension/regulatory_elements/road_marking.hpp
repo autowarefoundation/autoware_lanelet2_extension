@@ -26,7 +26,7 @@
 namespace lanelet::autoware
 {
 
-inline namespace v1
+inline namespace format_v1
 {
 class RoadMarking : public lanelet::RegulatoryElement
 {
@@ -67,7 +67,7 @@ private:
   friend class RegisterRegulatoryElement<RoadMarking>;
   explicit RoadMarking(const lanelet::RegulatoryElementDataPtr & data);
 };
-}  // namespace v1
+}  // namespace format_v1
 
 }  // namespace lanelet::autoware
 

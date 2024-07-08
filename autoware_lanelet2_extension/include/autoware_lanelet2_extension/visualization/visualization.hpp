@@ -38,7 +38,7 @@
 namespace lanelet::visualization
 {
 
-inline namespace v1
+inline namespace format_v1
 {
 /**
  * [autowareTrafficLightsAsMarkerArray creates marker array to visualize traffic
@@ -217,7 +217,7 @@ visualization_msgs::msg::MarkerArray noObstacleSegmentationAreaForRunOutAsMarker
 visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
   const lanelet::ConstPolygons3d & hatched_road_markings_area,
   const std_msgs::msg::ColorRGBA & area_color, const std_msgs::msg::ColorRGBA & line_color);
-}  // namespace v1
+}  // namespace format_v1
 
 /**
  * [lanelet2Triangle converts lanelet into vector of triangles. Used for

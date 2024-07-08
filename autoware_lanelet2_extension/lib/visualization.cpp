@@ -349,7 +349,7 @@ void pushPolygonMarker(
 namespace lanelet::visualization
 {
 
-inline namespace v1
+inline namespace format_v1
 {
 visualization_msgs::msg::MarkerArray autowareTrafficLightsAsMarkerArray(
   const std::vector<lanelet::AutowareTrafficLightConstPtr> & tl_reg_elems,
@@ -1073,7 +1073,7 @@ visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
 
   return marker_array;
 }
-}  // namespace v1
+}  // namespace format_v1
 
 void lanelet2Triangle(
   const lanelet::ConstLanelet & ll, std::vector<geometry_msgs::msg::Polygon> * triangles)

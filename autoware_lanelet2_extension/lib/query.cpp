@@ -53,7 +53,7 @@ using lanelet::utils::to2D;
 namespace lanelet::utils::query
 {
 
-inline namespace v1
+inline namespace format_v1
 {
 lanelet::ConstLanelets crosswalkLanelets(const lanelet::ConstLanelets & lls)
 {
@@ -681,7 +681,7 @@ std::vector<lanelet::ConstLineString3d> stopSignStopLines(
   }
   return stoplines;
 }
-}  // namespace v1
+}  // namespace format_v1
 
 // returns all lanelets in laneletLayer - don't know how to convert
 // PrimitiveLayer<Lanelets> -> std::vector<Lanelets>

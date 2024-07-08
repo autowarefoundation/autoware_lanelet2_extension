@@ -25,7 +25,7 @@
 namespace lanelet::autoware
 {
 
-inline namespace v1
+inline namespace format_v1
 {
 class AutowareTrafficLight;
 class Crosswalk;
@@ -35,13 +35,13 @@ class NoStoppingArea;
 class RoadMarking;
 class SpeedBump;
 class VirtualTrafficLight;
-}  // namespace v1
+}  // namespace format_v1
 
 }  // namespace lanelet::autoware
 
 namespace lanelet
 {
-inline namespace v1
+inline namespace format_v1
 {
 using TrafficSignConstPtr = std::shared_ptr<const lanelet::TrafficSign>;
 using TrafficLightConstPtr = std::shared_ptr<const lanelet::TrafficLight>;
@@ -52,7 +52,7 @@ using NoStoppingAreaConstPtr = std::shared_ptr<const lanelet::autoware::NoStoppi
 using NoParkingAreaConstPtr = std::shared_ptr<const lanelet::autoware::NoParkingArea>;
 using SpeedBumpConstPtr = std::shared_ptr<const lanelet::autoware::SpeedBump>;
 using CrosswalkConstPtr = std::shared_ptr<const lanelet::autoware::Crosswalk>;
-}  // namespace v1
+}  // namespace format_v1
 
 }  // namespace lanelet
 
