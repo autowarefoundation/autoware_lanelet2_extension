@@ -757,7 +757,7 @@ ConstLanelets query::getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   const double range)
 {
-  return query::getLaneletsWithinRange(
+  return getLaneletsWithinRange(
     lanelets, lanelet::BasicPoint2d(search_point.x, search_point.y), range);
 }
 
@@ -771,11 +771,11 @@ ConstLanelets query::getLaneChangeableNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point)
 {
-  const auto lanelets = query::getLaneletsWithinRange(
-    road_lanelets, search_point, std::numeric_limits<double>::epsilon());
+  const auto lanelets =
+    getLaneletsWithinRange(road_lanelets, search_point, std::numeric_limits<double>::epsilon());
   ConstLanelets road_slices;
   for (const auto & llt : lanelets) {
-    const auto tmp_road_slice = query::getLaneChangeableNeighbors(graph, llt);
+    const auto tmp_road_slice = getLaneChangeableNeighbors(graph, llt);
     road_slices.insert(road_slices.end(), tmp_road_slice.begin(), tmp_road_slice.end());
   }
   return road_slices;
@@ -786,8 +786,8 @@ ConstLanelets query::getAllNeighbors(
 {
   ConstLanelets lanelets;
 
-  ConstLanelets left_lanelets = query::getAllNeighborsLeft(graph, lanelet);
-  ConstLanelets right_lanelets = query::getAllNeighborsRight(graph, lanelet);
+  ConstLanelets left_lanelets = getAllNeighborsLeft(graph, lanelet);
+  ConstLanelets right_lanelets = getAllNeighborsRight(graph, lanelet);
 
   std::reverse(left_lanelets.begin(), left_lanelets.end());
   lanelets.insert(lanelets.end(), left_lanelets.begin(), left_lanelets.end());
@@ -828,8 +828,8 @@ ConstLanelets query::getAllNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point)
 {
-  const auto lanelets = query::getLaneletsWithinRange(
-    road_lanelets, search_point, std::numeric_limits<double>::epsilon());
+  const auto lanelets =
+    getLaneletsWithinRange(road_lanelets, search_point, std::numeric_limits<double>::epsilon());
   ConstLanelets road_slices;
   for (const auto & llt : lanelets) {
     const auto tmp_road_slice = getAllNeighbors(graph, llt);
