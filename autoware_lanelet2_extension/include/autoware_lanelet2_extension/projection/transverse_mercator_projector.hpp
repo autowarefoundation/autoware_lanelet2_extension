@@ -27,6 +27,9 @@
 
 namespace lanelet::projection
 {
+
+inline namespace format_v1
+{
 class TransverseMercatorProjector : public Projector
 {
 public:
@@ -53,6 +56,7 @@ private:
   double origin_y_;
   double central_meridian_;
 };
+}  // namespace format_v1
 
 }  // namespace lanelet::projection
 

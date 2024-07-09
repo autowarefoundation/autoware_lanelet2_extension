@@ -28,6 +28,9 @@
 
 namespace lanelet::autoware
 {
+
+inline namespace format_v1
+{
 class AutowareTrafficLight : public lanelet::TrafficLight
 {
 public:
@@ -83,6 +86,7 @@ private:
   friend class RegisterRegulatoryElement<AutowareTrafficLight>;
   explicit AutowareTrafficLight(const lanelet::RegulatoryElementDataPtr & data);
 };
+}  // namespace format_v1
 
 }  // namespace lanelet::autoware
 

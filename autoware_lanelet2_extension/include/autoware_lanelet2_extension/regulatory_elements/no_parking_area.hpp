@@ -25,6 +25,9 @@
 
 namespace lanelet::autoware
 {
+
+inline namespace format_v1
+{
 class NoParkingArea : public lanelet::RegulatoryElement
 {
 public:
@@ -64,6 +67,7 @@ private:
   friend class RegisterRegulatoryElement<NoParkingArea>;
   explicit NoParkingArea(const lanelet::RegulatoryElementDataPtr & data);
 };
+}  // namespace format_v1
 
 }  // namespace lanelet::autoware
 
