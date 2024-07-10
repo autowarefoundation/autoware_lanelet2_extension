@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.0 (2024-07-10)
+------------------
 * feat(lanelet2_extension)!: introduce API versioning along with format_version (`#18 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/18>`_)
 * build: remove redundant move for build on noble (`#12 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/12>`_)
   remove redundant move
