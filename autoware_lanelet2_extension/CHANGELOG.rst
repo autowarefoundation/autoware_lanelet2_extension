@@ -2,6 +2,21 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.0 (2024-07-10)
+------------------
+* feat(lanelet2_extension)!: introduce API versioning along with format_version (`#18 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/18>`_)
+* build: remove redundant move for build on noble (`#12 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/12>`_)
+  remove redundant move
+* refactor: remove redundant cmake definition (`#13 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/13>`_)
+  * remove redundant cmake definition
+  * style(pre-commit): autofix
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+  Co-authored-by: Yutaka Kondo <yutaka.kondo@youtalk.jp>
+* chore: apply pre-commit (`#14 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/14>`_)
+  apply pre-commit
+* Contributors: Daisuke Nishimatsu, Mamoru Sobue
+
 0.4.0 (2024-06-24)
 ------------------
 * Merge pull request `#11 <https://github.com/youtalk/autoware_lanelet2_extension/issues/11>`_ from youtalk/import-update
