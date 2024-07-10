@@ -2,6 +2,13 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* chore(ci): fix cpplint errors from pre-commit ci (`#15 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/15>`_)
+* chore: apply pre-commit (`#14 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/14>`_)
+  apply pre-commit
+* Contributors: Daisuke Nishimatsu, Ryohsuke Mitsudome
+
 0.4.0 (2024-06-24)
 ------------------
 
