@@ -549,6 +549,22 @@ bool getLinkedParkingLot(
   }
   return false;
 }
+bool getLinkedParkingLot(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr, lanelet::ConstPolygon3d * linked_parking_lot)
+{
+  auto candidates =
+    lanelet_map_ptr->polygonLayer.search(lanelet::geometry::boundingBox2d(current_position));
+  candidates.erase(
+    std::remove_if(
+      candidates.begin(), candidates.end(),
+      [](const auto & c) {
+        const std::string type = c.attributeOr(lanelet::AttributeName::Type, "none");
+        return type != "parking_lot";
+      }),
+    candidates.end());
+  return getLinkedParkingLot(current_position, candidates, linked_parking_lot);
+}
 
 // get overlapping parking lot
 bool getLinkedParkingLot(
