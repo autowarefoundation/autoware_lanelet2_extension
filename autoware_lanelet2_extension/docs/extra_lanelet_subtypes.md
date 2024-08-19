@@ -43,3 +43,27 @@ Sample pedestrian lane in .osm format is shown below:
     <tag k="one_way" v="yes"/>
   </relation>
 ```
+
+## Bicycle Lane (format_version >= 2)
+
+Although `bicycle_lane` subtype is already defined in the original [Lanelet2 documentation](https://github.com/fzi-forschungszentrum-informatik/Lanelet2/blob/master/lanelet2_core/doc/LaneletAndAreaTagging.md#subtype-and-location), Autoware compatible with `format_version>=2` supports `bicycle_lane` at component level.
+
+- refers: `road` lanelet adjacent to the objective `bicycle_lane` should share the same boundary LineString
+- specification:
+  - A `bicyle_lane` is connected to/from only `bicycle_lane` lanelets and is adjacent to a `road` lanelet. Namely in Left(Right) hand side traffic rules, it is on the left(right) side of `road` lanelet.
+  - A `road_shoulder` lanelet must not be adjacent to a `bicycle_lane` because pullover on `bicycle_lane` is prohibited. For simplifying planning/prediction component, at format_version 2, a `bicycle_lane` should cover the adjacent area corresponding to `road_shoulder` or `pedestrian_lane`.
+- The treatment of _navigation mark_, or the shift-arrow shaped painting on the side of the road without explicit separating line, is open to discussion. We can either identity them as part of the vehicle road or separate them as distinct bicycle lanes.
+
+Sample bicycle lane in .osm format is shown below:
+
+```xml
+  <relation id="3025302">
+    <member type="way" role="left" ref="3025301"/>
+    <member type="way" role="right" ref="3025111"/>
+    <tag k="type" v="lanelet"/>
+    <tag k="subtype" v="bicycle_lane"/>
+    <tag k="speed_limit" v="10"/>
+    <tag k="location" v="urban"/>
+    <tag k="one_way" v="yes"/>
+  </relation>
+```

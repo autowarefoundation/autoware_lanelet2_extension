@@ -1,5 +1,22 @@
 # Extra Regulatory Elements
 
+## Right Of Way
+
+Users must add `right_of_way` tag to intersection lanes, namely lanes with `turn_direction` attribute. Below image illustrates how to set yield lanes(orange) for the ego lane(blue).
+
+![RightOfWay tagging](right_of_way.drawio.svg)
+
+Basically intersection lanes which are:
+
+- left/right turn
+- straight and on the side of priority sign
+
+need this tag to know which lanes in their `conflicting lanes` can be ignored for object detection.
+
+left/right turning lane is often conflicting with lanes whose traffic lights are red when its traffic light is green, so **at least** those lanes should be registered as yield lanes.
+
+If ego car is going straight the intersection when the traffic light is green, then it does not need to care other lanes because it has the highest priority. But if the traffic lights do not exist and ego lane is on the side of priority road, then yield lanes should be set to explicitly ignore part of conflicting lanes.
+
 ## Detection Area
 
 This regulatory element specifies region of interest which vehicle must pay attention whenever it is driving along the associated lanelet. When there are any obstacle in the detection area, vehicle must stop at specified stopline.
