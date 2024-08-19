@@ -10,12 +10,41 @@ Users may use `autoware_lanelet2_validation` [node](../README.md#nodes) to check
 The following is the extra format added for Autoware:
 
 - [extra regulatory elements](extra_regulatory_elements.md)
+  - Right Of Way
   - Detection Area
   - Road Marking
+  - Speed Bump
+  - Crosswalk
+  - No Stopping Area
+  - No Parking Area
+  - Bus Stoop Area
 - [extra lanelet subtype](extra_lanelet_subtypes.md)
   - Roadside Lane
+  - Road Shoulder
+  - Pedestrian Lane
+  - Bicycle Lane
+
+Note that each `extra_regulatory_elements` and `extra_lanelet_subtypes` should faithfully represent the real world map primitives as-is for realizing appropriate behavior on public roads. Although they are not necessarily mandatory for running minimal Autoware, each ODD requires different set of `extra_regulatory_elements` and `extra_lanelet_subtypes` respectively.
+
+[Autoware Vector Map Requirements](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-architecture/map/map-requirements/vector-map-requirements-overview/) provides more details and guidelines for how to create the Lanelet2 maps without ambiguity while avoiding unintended behaviors due to invalid Lanelet2 map settings.
 
 ## Mandatory Tags
+
+### Meta Info
+
+Users may add the `MetaInfo` element to their OSM file to indicate format version and map version of their OSM file. This information is not meant to influence Autoware vehicle's behavior, but is published as ROS message so that developers could know which map was used from ROSBAG log files. MetaInfo elements exists in the same hierarchy with `node`, `way`, and `relation` elements, otherwise JOSM wouldn't be able to load the file correctly.
+
+Here is an example of MetaInfo in osm file:
+
+```xml
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <MetaInfo format_version='1.0' map_version='1.0'/>
+  <node>...</node>
+  <way>...</way>
+  <relation>...</relation>
+</osm>
+```
 
 ### Elevation Tags
 
@@ -77,42 +106,9 @@ Here is an example of osm syntax for lanelets in intersections.
 </relation>
 ```
 
-### Right Of Way
-
-Users must add `right_of_way` tag to intersection lanes, namely lanes with `turn_direction` attribute. Below image illustrates how to set yield lanes(orange) for the ego lane(blue).
-
-![RightOfWay tagging](right_of_way.drawio.svg)
-
-Basically intersection lanes which are:
-
-- left/right turn
-- straight and on the side of priority sign
-
-need this tag to know which lanes in their `conflicting lanes` can be ignored for object detection.
-
-left/right turning lane is often conflicting with lanes whose traffic lights are red when its traffic light is green, so **at least** those lanes should be registered as yield lanes.
-
-If ego car is going straight the intersection when the traffic light is green, then it does not need to care other lanes because it has the highest priority. But if the traffic lights do not exist and ego lane is on the side of priority road, then yield lanes should be set to explicitly ignore part of conflicting lanes.
-
 ## Optional Taggings
 
 Following tags are optional tags that you may want to add depending on how you want to use your map in Autoware.
-
-### Meta Info
-
-Users may add the `MetaInfo` element to their OSM file to indicate format version and map version of their OSM file. This information is not meant to influence Autoware vehicle's behavior, but is published as ROS message so that developers could know which map was used from ROSBAG log files. MetaInfo elements exists in the same hierarchy with `node`, `way`, and `relation` elements, otherwise JOSM wouldn't be able to load the file correctly.
-
-Here is an example of MetaInfo in osm file:
-
-```xml
-<?xml version='1.0' encoding='UTF-8'?>
-<osm version='0.6' generator='JOSM'>
-  <MetaInfo format_version='1.0' map_version='1.0'/>
-  <node>...</node>
-  <way>...</way>
-  <relation>...</relation>
-</osm>
-```
 
 ### Local Coordinate Expression
 
@@ -202,99 +198,25 @@ The following illustrates how light_bulbs are registered to traffic_light regula
 </relation>
 ```
 
-### Crosswalk
+### Centerline
 
-Original Lanelet2 format only requires `subtype=crosswalk` tag to be specified in the corresponding lanelet. However, Autoware requires a regulatory element to be defined on top of that in order to:
+Note that the following explanation is not related to the Lanelet2 map format but how the Autoware handles the centerline in the Lanelet2 map.
 
-- explicitly define the relevant driving lanes even in 3D environment
-- optionally define stop lines associated with the crosswalk
-- enable accurate definition of complex polygons for crosswalk
+Centerline is defined in Lanelet2 to guide the vehicle. By explicitly setting the centerline in the Lanelet2 map, the ego's planned path follows the centerline.
+However, based on the current Autoware's usage of the centerline, there are several limitations.
 
-For the details, refer to this [GitHub discussion](https://github.com/orgs/autowarefoundation/discussions/3036).
-Crosswalk regulatory element can be tied to `ref_line`, `crosswalk_polygon` and `refers`.
+- The object's predicted path also follows the centerline.
+  - This may adversely affect the decision making of planning modules since the centerline is supposed to be used only by the ego's path planning.
+- The coordinate transformation on the lane's frenet frame cannot be calculated correctly.
+- For example, when the lateral distance between the actual road's centerline and a parked vehicle is calculated, actually the result will be the lateral distance between the (explicit) centerline and the vehicle.
 
-![crosswalk_regulatory elements](crosswalk_regulatory_element.svg)
+To solve above limitations, the `overwriteLaneletsCenterlineWithWaypoints` was implemented in addition to `overwriteLaneletsCenterline` where the centerline in all the lanes is calculated.
 
-- `ref_line`: Stop line for the crosswalk.
-- `crosswalk_polygon`: Accurate area of the crosswalk.
-- `refers`: Lanelet that indicates the moving direction of crosswalk users.
-
-_An example:_
-
-```xml
-<relation id="10751">
-  <member type="way" role="ref_line" ref="8123"/>
-  <member type="way" role="crosswalk_polygon" ref="4047"/>
-  <member type="relation" role="refers" ref="2206"/>
-  <tag k="type" v="regulatory_element"/>
-  <tag k="subtype" v="crosswalk"/>
-</relation>
-```
-
-### Traffic Lights for Crosswalks
-
-It can define not only traffic lights for vehicles but also for crosswalk users by using regulatory element. In this case, the crosswalk lanelet needs to refer the traffic light regulatory element.
-
-![crosswalk_traffic_light](crosswalk_traffic_light.svg)
-
-_An example:_
-
-```xml
-<way id="179745">
-  <nd ref="179743"/>
-  <nd ref="179744"/>
-  <tag k="type" v="traffic_light"/>
-  <tag k="subtype" v="solid"/>
-  <tag k="height" v="0.5"/>
-</way>
-
-...
-
-<relation id="179750">
-  <member type="way" role="refers" ref="179745"/>
-  <member type="way" role="refers" ref="179756"/>
-  <tag k="type" v="regulatory_element"/>
-  <tag k="subtype" v="traffic_light"/>
-</relation>
-
-...
-
-<relation id="1556">
-  <member type="way" role="left" ref="1449"/>
-  <member type="way" role="right" ref="1450"/>
-  <member type="relation" role="regulatory_element" ref="179750"/>
-  <tag k="type" v="lanelet"/>
-  <tag k="subtype" v="crosswalk"/>
-  <tag k="speed_limit" v="10"/>
-  <tag k="location" v="urban"/>
-  <tag k="one_way" v="no"/>
-  <tag k="participant:pedestrian" v="yes"/>
-</relation>
-```
-
-### Safety Slow Down for Crosswalks
-
-If you wish ego vehicle to slow down to a certain speed from a certain distance while passing over a
-certain crosswalk _even though there are no target objects around it_, you can add following tags to
-the crosswalk definition on lanelet2 map:
-
-- `safety_slow_down_speed` **[m/s]**: The speed you want ego vehicle to drive at while passing over
-  the crosswalk
-- `safety_slow_down_distance` **[m]**: The distance between front bumper of ego vehicle and
-  closest point to the crosswalk when ego vehicle slows down and drives at specified speed
-
-_An example:_
-
-```xml
-<relation id='34378' visible='true' version='1'>
-  <member type='way' ref='34374' role='left' />
-  <member type='way' ref='34377' role='right' />
-  <tag k='subtype' v='crosswalk' />
-  <tag k='safety_slow_down_speed' v='3.0' />
-  <tag k='safety_slow_down_distance' v='2.0' />
-  <tag k='type' v='lanelet' />
-</relation>
-```
+- `overwriteLaneletsCenterlineWithWaypoints`
+  - The (explicit) centerline in the Lanelet2 map is converted to the new `waypoints` tag. This `waypoints` is only applied to the ego's path planning.
+  - Therefore, the above limitations can be solved, but the Autoware's usage of the centerline may be hard to understand.
+- `overwriteLaneletsCenterline`
+  - The (explicit) centerline in the Lanelet2 map is used as it is. Easy to understand the Autoware's usage of the centerline, but we still have above limitations.
 
 ### No Obstacle Segmentation Area
 
@@ -338,54 +260,6 @@ _An example:_
     <tag k="type" v="hatched_road_markings"/>
     <tag k="area" v="yes"/>
   </way>
-```
-
-### No Stopping Area
-
-The area with `no_stopping_area` tag can be used to prohibit even a few seconds of stopping, even for traffic jams or at traffic lights.
-The ref_line can be set arbitrarily, and the ego-vehicle should stop at this line if it cannot pass through the area.
-
-_An example:_
-
-```xml
-  <way id='9853' visible='true' version='1'>
-    <nd ref='9849' />
-    <nd ref='9850' />
-    <nd ref='9851' />
-    <nd ref='9852' />
-    <tag k='area' v='yes' />
-    <tag k='type' v='no_stopping_area' />
-  </way>
-
-  <relation id='9854' visible='true' version='1'>
-    <member type='way' ref='9853' role='refers' />
-    <member type='way' ref='9848' role='ref_line' />
-    <tag k='subtype' v='no_stopping_area' />
-    <tag k='type' v='regulatory_element' />
-  </relation>
-```
-
-### No Parking Area
-
-The area with `no_parking_area` tag can be used to prohibit parking. Stopping for a few seconds is allowed in this area.
-
-_An example:_
-
-```xml
-  <way id='9853' visible='true' version='1'>
-    <nd ref='9849' />
-    <nd ref='9850' />
-    <nd ref='9851' />
-    <nd ref='9852' />
-    <tag k='area' v='yes' />
-    <tag k='type' v='no_parking_area' />
-  </way>
-
-  <relation id='9854' visible='true' version='1'>
-    <member type='way' ref='9853' role='refers' />
-    <tag k='subtype' v='no_parking_area' />
-    <tag k='type' v='regulatory_element' />
-  </relation>
 ```
 
 ### No Drivable Lane
@@ -479,23 +353,3 @@ _An example:_
 ...
 
 ```
-
-### Centerline
-
-Note that the following explanation is not related to the Lanelet2 map format but how the Autoware handles the centerline in the Lanelet2 map.
-
-Centerline is defined in Lanelet2 to guide the vehicle. By explicitly setting the centerline in the Lanelet2 map, the ego's planned path follows the centerline.
-However, based on the current Autoware's usage of the centerline, there are several limitations.
-
-- The object's predicted path also follows the centerline.
-  - This may adversely affect the decision making of planning modules since the centerline is supposed to be used only by the ego's path planning.
-- The coordinate transformation on the lane's frenet frame cannot be calculated correctly.
-  - For example, when the lateral distance between the actual road's centerline and a parked vehicle is calculated, actually the result will be the lateral distance between the (explicit) centerline and the vehicle.
-
-To solve above limitations, the `overwriteLaneletsCenterlineWithWaypoints` was implemented in addition to `overwriteLaneletsCenterline` where the centerline in all the lanes is calculated.
-
-- `overwriteLaneletsCenterlineWithWaypoints`
-  - The (explicit) centerline in the Lanelet2 map is converted to the new `waypoints` tag. This `waypoints` is only applied to the ego's path planning.
-  - Therefore, the above limitations can be solved, but the Autoware's usage of the centerline may be hard to understand.
-- `overwriteLaneletsCenterline`
-  - The (explicit) centerline in the Lanelet2 map is used as it is. Easy to understand the Autoware's usage of the centerline, but we still have above limitations.

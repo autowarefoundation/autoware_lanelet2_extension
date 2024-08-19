@@ -1,5 +1,22 @@
 # Extra Regulatory Elements
 
+## Right Of Way
+
+Users must add `right_of_way` tag to intersection lanes, namely lanes with `turn_direction` attribute. Below image illustrates how to set yield lanes(orange) for the ego lane(blue).
+
+![RightOfWay tagging](right_of_way.drawio.svg)
+
+Basically intersection lanes which are:
+
+- left/right turn
+- straight and on the side of priority sign
+
+need this tag to know which lanes in their `conflicting lanes` can be ignored for object detection.
+
+left/right turning lane is often conflicting with lanes whose traffic lights are red when its traffic light is green, so **at least** those lanes should be registered as yield lanes.
+
+If ego car is going straight the intersection when the traffic light is green, then it does not need to care other lanes because it has the highest priority. But if the traffic lights do not exist and ego lane is on the side of priority road, then yield lanes should be set to explicitly ignore part of conflicting lanes.
+
 ## Detection Area
 
 This regulatory element specifies region of interest which vehicle must pay attention whenever it is driving along the associated lanelet. When there are any obstacle in the detection area, vehicle must stop at specified stopline.
@@ -146,4 +163,181 @@ An example annotation of speed_bump:
     <tag k='slow_down_speed' v='7.0' />
     <tag k='type' v='speed_bump' />
   </way>
+```
+
+### Crosswalk
+
+Original Lanelet2 format only requires `subtype=crosswalk` tag to be specified in the corresponding lanelet. However, Autoware requires a regulatory element to be defined on top of that in order to:
+
+- explicitly define the relevant driving lanes even in 3D environment
+- optionally define stop lines associated with the crosswalk
+- enable accurate definition of complex polygons for crosswalk
+
+For the details, refer to this [GitHub discussion](https://github.com/orgs/autowarefoundation/discussions/3036).
+Crosswalk regulatory element can be tied to `ref_line`, `crosswalk_polygon` and `refers`.
+
+![crosswalk_regulatory elements](crosswalk_regulatory_element.svg)
+
+- `ref_line`: Stop line for the crosswalk.
+- `crosswalk_polygon`: Accurate area of the crosswalk.
+- `refers`: Lanelet that indicates the moving direction of crosswalk users.
+
+_An example:_
+
+```xml
+<relation id="10751">
+  <member type="way" role="ref_line" ref="8123"/>
+  <member type="way" role="crosswalk_polygon" ref="4047"/>
+  <member type="relation" role="refers" ref="2206"/>
+  <tag k="type" v="regulatory_element"/>
+  <tag k="subtype" v="crosswalk"/>
+</relation>
+```
+
+#### Traffic Lights for Crosswalks
+
+It can define not only traffic lights for vehicles but also for crosswalk users by using regulatory element. In this case, the crosswalk lanelet needs to refer the traffic light regulatory element.
+
+![crosswalk_traffic_light](crosswalk_traffic_light.svg)
+
+_An example:_
+
+```xml
+<way id="179745">
+  <nd ref="179743"/>
+  <nd ref="179744"/>
+  <tag k="type" v="traffic_light"/>
+  <tag k="subtype" v="solid"/>
+  <tag k="height" v="0.5"/>
+</way>
+
+...
+
+<relation id="179750">
+  <member type="way" role="refers" ref="179745"/>
+  <member type="way" role="refers" ref="179756"/>
+  <tag k="type" v="regulatory_element"/>
+  <tag k="subtype" v="traffic_light"/>
+</relation>
+
+...
+
+<relation id="1556">
+  <member type="way" role="left" ref="1449"/>
+  <member type="way" role="right" ref="1450"/>
+  <member type="relation" role="regulatory_element" ref="179750"/>
+  <tag k="type" v="lanelet"/>
+  <tag k="subtype" v="crosswalk"/>
+  <tag k="speed_limit" v="10"/>
+  <tag k="location" v="urban"/>
+  <tag k="one_way" v="no"/>
+  <tag k="participant:pedestrian" v="yes"/>
+</relation>
+```
+
+#### Safety Slow Down for Crosswalks
+
+If you wish ego vehicle to slow down to a certain speed from a certain distance while passing over a
+certain crosswalk _even though there are no target objects around it_, you can add following tags to
+the crosswalk definition on lanelet2 map:
+
+- `safety_slow_down_speed` **[m/s]**: The speed you want ego vehicle to drive at while passing over
+  the crosswalk
+- `safety_slow_down_distance` **[m]**: The distance between front bumper of ego vehicle and
+  closest point to the crosswalk when ego vehicle slows down and drives at specified speed
+
+_An example:_
+
+```xml
+<relation id='34378' visible='true' version='1'>
+  <member type='way' ref='34374' role='left' />
+  <member type='way' ref='34377' role='right' />
+  <tag k='subtype' v='crosswalk' />
+  <tag k='safety_slow_down_speed' v='3.0' />
+  <tag k='safety_slow_down_distance' v='2.0' />
+  <tag k='type' v='lanelet' />
+</relation>
+```
+
+## No Stopping Area
+
+The area with `no_stopping_area` tag can be used to prohibit even a few seconds of stopping, even for traffic jams or at traffic lights.
+The ref_line can be set arbitrarily, and the ego-vehicle should stop at this line if it cannot pass through the area.
+
+_An example:_
+
+```xml
+  <way id='9853' visible='true' version='1'>
+    <nd ref='9849' />
+    <nd ref='9850' />
+    <nd ref='9851' />
+    <nd ref='9852' />
+    <tag k='area' v='yes' />
+    <tag k='type' v='no_stopping_area' />
+  </way>
+
+  <relation id='9854' visible='true' version='1'>
+    <member type='way' ref='9853' role='refers' />
+    <member type='way' ref='9848' role='ref_line' />
+    <tag k='subtype' v='no_stopping_area' />
+    <tag k='type' v='regulatory_element' />
+  </relation>
+```
+
+## No Parking Area
+
+The area with `no_parking_area` tag can be used to prohibit parking. Stopping for a few seconds is allowed in this area.
+
+_An example:_
+
+```xml
+  <way id='9853' visible='true' version='1'>
+    <nd ref='9849' />
+    <nd ref='9850' />
+    <nd ref='9851' />
+    <nd ref='9852' />
+    <tag k='area' v='yes' />
+    <tag k='type' v='no_parking_area' />
+  </way>
+
+  <relation id='9854' visible='true' version='1'>
+    <member type='way' ref='9853' role='refers' />
+    <tag k='subtype' v='no_parking_area' />
+    <tag k='type' v='regulatory_element' />
+  </relation>
+```
+
+## Bus Stop Area
+
+The area tagged with `bus_stop_area` can be used to limit the pullover space for bus-like vehicles. This area is referred from the road or road_shoulder subtype lanelets where the destination is positioned via the `BusStopArea` regulatory element.
+
+_An example:_
+
+```xml
+  <way id="18508">
+    <nd ref="18502"/>
+    <nd ref="18503"/>
+    <nd ref="18505"/>
+    <nd ref="18506"/>
+    <nd ref="18507"/>
+    <tag k="type" v="bus_stop_area"/>
+    <tag k="area" v="yes"/>
+  </way>
+
+  <relation id="18500">
+    <member type="way" role="left" ref="18491"/>
+    <member type="way" role="right" ref="18490"/>
+    <member type="relation" role="regulatory_element" ref="18512"/>
+    <tag k="type" v="lanelet"/>
+    <tag k="subtype" v="road_shoulder"/>
+    <tag k="speed_limit" v="20"/>
+    <tag k="location" v="urban"/>
+    <tag k="one_way" v="yes"/>
+  </relation>
+
+  <relation id="18512">
+    <member type="way" role="refers" ref="18508"/>
+    <tag k="type" v="regulatory_element"/>
+    <tag k="subtype" v="bus_stop_area"/>
+  </relation>
 ```
