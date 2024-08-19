@@ -12,6 +12,7 @@ ament_auto_add_library(${PROJECT_NAME}_lib SHARED
   lib/landmark.cpp
   lib/no_parking_area.cpp
   lib/no_stopping_area.cpp
+  lib/bus_stop_area.cpp
   lib/message_conversion.cpp
   lib/mgrs_projector.cpp
   lib/query.cpp
