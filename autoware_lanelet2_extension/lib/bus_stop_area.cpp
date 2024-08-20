@@ -1,4 +1,4 @@
-// Copyright 2024 Tier IV, Inc.
+// Copyright 2024 Autoware Foundation. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ template <typename T>
 bool findAndErase(const T & primitive, RuleParameters * member)
 {
   if (member == nullptr) {
-    std::cerr << __FUNCTION__ << ": member is null pointer";
     return false;
   }
   auto it = std::find(member->begin(), member->end(), RuleParameter(primitive));
@@ -95,7 +94,7 @@ RegulatoryElementDataPtr constructBusStopAreaData(
 }
 }  // namespace
 
-// TODO(Mamoru Sobue): remove this when format_v2 has been released
+// TODO(soblin): remove this when format_v2 has been released
 namespace format_v2
 {
 BusStopArea::BusStopArea(const RegulatoryElementDataPtr & data) : RegulatoryElement(data)

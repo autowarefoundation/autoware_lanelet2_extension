@@ -26,18 +26,18 @@
 namespace lanelet::autoware
 {
 
-// TODO(Mamoru Sobue): when updating existing elements from format_v1, prefix this with inline
+// TODO(soblin): when updating existing elements from format_v1, prefix this with inline
 namespace format_v2
 {
 class BusStopArea : public lanelet::RegulatoryElement
 {
 public:
-  using Ptr = std::shared_ptr<BusStopArea>;
+  using SharedPtr = std::shared_ptr<BusStopArea>;
   static constexpr char RuleName[] = "bus_stop_area";
 
-  static Ptr make(Id id, const AttributeMap & attributes, const Polygons3d & bus_stop_areas)
+  static SharedPtr make(Id id, const AttributeMap & attributes, const Polygons3d & bus_stop_areas)
   {
-    return Ptr{new BusStopArea(id, attributes, bus_stop_areas)};
+    return SharedPtr{new BusStopArea(id, attributes, bus_stop_areas)};
   }
 
   /**
