@@ -83,9 +83,9 @@ ConstPolygons3d getConstPoly(const RuleParameterMap & params, RoleName role)
 }
 
 RegulatoryElementDataPtr constructBusStopAreaData(
-  Id id, const AttributeMap & attributes, const Polygons3d & BusStopAreas)
+  Id id, const AttributeMap & attributes, const Polygons3d & bus_stop_areas)
 {
-  RuleParameterMap rpm = {{RoleNameString::Refers, toRuleParameters(BusStopAreas)}};
+  RuleParameterMap rpm = {{RoleNameString::Refers, toRuleParameters(bus_stop_areas)}};
 
   auto data = std::make_shared<RegulatoryElementData>(id, std::move(rpm), attributes);
   data->attributes[AttributeName::Type] = AttributeValueString::RegulatoryElement;
@@ -100,7 +100,7 @@ namespace format_v2
 BusStopArea::BusStopArea(const RegulatoryElementDataPtr & data) : RegulatoryElement(data)
 {
   if (getConstPoly(data->parameters, RoleName::Refers).empty()) {
-    throw InvalidInputError("no parking area defined!");
+    throw InvalidInputError("no bus stop area defined!");
   }
 }
 
@@ -109,11 +109,11 @@ BusStopArea::BusStopArea(Id id, const AttributeMap & attributes, const Polygons3
 {
 }
 
-ConstPolygons3d BusStopArea::BusStopAreas() const
+ConstPolygons3d BusStopArea::busStopAreas() const
 {
   return getConstPoly(parameters(), RoleName::Refers);
 }
-Polygons3d BusStopArea::BusStopAreas()
+Polygons3d BusStopArea::busStopAreas()
 {
   return getPoly(parameters(), RoleName::Refers);
 }

@@ -44,8 +44,8 @@ public:
    * @brief get the relevant bus stop area
    * @return bus stop area
    */
-  [[nodiscard]] ConstPolygons3d BusStopAreas() const;
-  [[nodiscard]] Polygons3d BusStopAreas();
+  [[nodiscard]] ConstPolygons3d busStopAreas() const;
+  [[nodiscard]] Polygons3d busStopAreas();
 
   /**
    * @brief add a new bus stop are
