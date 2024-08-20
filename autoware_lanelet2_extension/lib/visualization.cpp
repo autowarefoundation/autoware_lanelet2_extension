@@ -351,7 +351,7 @@ namespace lanelet
 
 namespace visualization
 {
-inline namespace format_v1
+inline namespace format_v2
 {
 visualization_msgs::msg::MarkerArray autowareTrafficLightsAsMarkerArray(
   const std::vector<lanelet::AutowareTrafficLightConstPtr> & tl_reg_elems,
@@ -1075,7 +1075,7 @@ visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
 
   return marker_array;
 }
-}  // namespace format_v1
+}  // namespace format_v2
 }  // namespace visualization
 
 void visualization::lanelet2Triangle(

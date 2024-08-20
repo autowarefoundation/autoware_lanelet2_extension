@@ -26,8 +26,7 @@
 namespace lanelet::autoware
 {
 
-// TODO(soblin): when updating existing elements from format_v1, prefix this with inline
-namespace format_v2
+inline namespace format_v2
 {
 class BusStopArea : public lanelet::RegulatoryElement
 {
