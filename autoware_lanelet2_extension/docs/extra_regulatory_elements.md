@@ -312,6 +312,8 @@ _An example:_
 The area tagged with `bus_stop_area` can be used to limit the pullover space for bus-like vehicles. This area is referred from the road or road_shoulder subtype lanelets where the destination is positioned via the `BusStopArea` regulatory element.
 >>>>>>> beac7ef (feat(lanelet2_extension): docuement for bus_stop_area and bicycle_lane(format_version2))
 
+![BusStopArea tagging](bus_stop_area.drawio.svg)
+
 _An example:_
 
 ```xml
