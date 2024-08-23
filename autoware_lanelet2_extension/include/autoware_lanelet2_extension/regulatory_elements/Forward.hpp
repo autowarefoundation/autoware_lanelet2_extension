@@ -37,6 +37,11 @@ class SpeedBump;
 class VirtualTrafficLight;
 }  // namespace format_v1
 
+namespace format_v2
+{
+class BusStopArea;
+}  // namespace format_v2
+
 }  // namespace lanelet::autoware
 
 namespace lanelet
@@ -53,6 +58,11 @@ using NoParkingAreaConstPtr = std::shared_ptr<const lanelet::autoware::NoParking
 using SpeedBumpConstPtr = std::shared_ptr<const lanelet::autoware::SpeedBump>;
 using CrosswalkConstPtr = std::shared_ptr<const lanelet::autoware::Crosswalk>;
 }  // namespace format_v1
+
+namespace format_v2
+{
+using BusStopAreaConstPtr = std::shared_ptr<const lanelet::autoware::format_v2::BusStopArea>;
+}  // namespace format_v2
 
 }  // namespace lanelet
 

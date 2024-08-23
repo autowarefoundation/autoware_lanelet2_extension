@@ -15,6 +15,7 @@
 // NOLINTBEGIN(readability-identifier-naming)
 
 #include "autoware_lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/bus_stop_area.hpp"
 
 #include <boost/optional/optional_io.hpp>
 
@@ -29,6 +30,7 @@ using lanelet::LineString3d;
 using lanelet::LineStringOrPolygon3d;
 using lanelet::Point3d;
 using lanelet::Points3d;
+using lanelet::Polygon3d;
 using lanelet::utils::getId;
 
 namespace
@@ -136,6 +138,27 @@ TEST(TestSuite, TrafficLightWorksAsExpected)  // NOLINT for gtest
   EXPECT_EQ(2ul, tl->lightBulbs().size());
   tl->removeLightBulbs(traffic_light_bulbs);
   EXPECT_EQ(1ul, tl->lightBulbs().size());
+}
+
+TEST(TestSuite, BusStopAreInstantiation)  // NOLINT for gtest
+{
+  /*
+    p4 <---- p3
+     |       ^
+     |       |
+     V       |
+    p1 ----> p2
+   */
+  const Point3d p1{getId(), 0, 0, 0};
+  const Point3d p2{getId(), 3, 0, 0};
+  const Point3d p3{getId(), 3, 3, 0};
+  const Point3d p4{getId(), 0, 3, 0};
+  const Polygon3d polygon{LineString3d{getId(), Points3d{p1, p2, p3, p4}}};
+  auto bus_stop_area_reg_elem = lanelet::autoware::format_v2::BusStopArea::make(
+    getId(), lanelet::AttributeMap(), convertToVector(polygon));
+  EXPECT_EQ(bus_stop_area_reg_elem->busStopAreas().size(), 1);
+  EXPECT_NO_THROW(bus_stop_area_reg_elem->busStopAreas().at(0));
+  const auto bus_stop_area = bus_stop_area_reg_elem->busStopAreas().at(0);
 }
 
 int main(int argc, char ** argv)
