@@ -16,13 +16,7 @@ The following is the extra format added for Autoware:
   - Bus Stop Area
 - [extra lanelet subtype](extra_lanelet_subtypes.md)
   - Roadside Lane
-  - Road Shoulder
-  - Pedestrian Lane
   - Bicycle Lane
-
-Note that each `extra_regulatory_elements` and `extra_lanelet_subtypes` should faithfully represent the real world map primitives as-is for realizing appropriate behavior on public roads. Although they are not necessarily mandatory for running minimal Autoware, each ODD requires different set of `extra_regulatory_elements` and `extra_lanelet_subtypes` respectively.
-
-[Autoware Vector Map Requirements](https://autowarefoundation.github.io/autoware-documentation/main/design/autoware-architecture/map/map-requirements/vector-map-requirements-overview/) provides more details and guidelines for how to create the Lanelet2 maps without ambiguity while avoiding unintended behaviors due to invalid Lanelet2 map settings.
 
 ## Mandatory Tags
 
