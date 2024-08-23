@@ -171,8 +171,6 @@ The `BusStopArea` regulatory element can be used to specify the available space 
 
 ![BusStopArea tagging](bus_stop_area.drawio.svg)
 
-![BusStopArea tagging](bus_stop_area.drawio.svg)
-
 _An example:_
 
 ```xml

@@ -51,7 +51,7 @@ Although `bicycle_lane` subtype is already defined in the original [Lanelet2 doc
 - refers: `road` lanelet adjacent to the objective `bicycle_lane` should share the same boundary LineString
 - specification:
   - A `bicycle_lane` is connected to/from only `bicycle_lane` lanelets and is adjacent to a `road` lanelet. Namely in Left(Right) hand side traffic rules, it is on the left(right) side of `road` lanelet.
-  - A `road_shoulder` lanelet must not be adjacent to a `bicycle_lane` because pullover on `bicycle_lane` is prohibited. For simplifying planning/prediction component, at format_version 2, a `bicycle_lane` should cover the adjacent area corresponding to `road_shoulder` or `pedestrian_lane` and therefore should have `road_border` as either of its boundary.
+- Although pullover on `bicycle_lane` is normally prohibited by the law, it is allowed to place a `road_shoulder` adjacent to a `bicycle_lane`. However the autoware implementation may not fully support appropriate behavior in such cases.
 - The treatment of _bicycle guide painting_, or the shift-arrow shaped painting on the side of the road without explicit separating line, is open to discussion. We can either identity them as part of the vehicle road or separate them as distinct bicycle lanes.
 
 ![Bicycle lane](bicycle_lane.svg)
