@@ -12,6 +12,7 @@ The following is the extra format added for Autoware:
 - [extra regulatory elements](extra_regulatory_elements.md)
   - Detection Area
   - Road Marking
+  - Bus Stop Area
 - [extra lanelet subtype](extra_lanelet_subtypes.md)
   - Roadside Lane
 
