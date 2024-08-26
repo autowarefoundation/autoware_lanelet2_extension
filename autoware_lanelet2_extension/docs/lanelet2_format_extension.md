@@ -15,6 +15,7 @@ The following is the extra format added for Autoware:
   - Bus Stop Area
 - [extra lanelet subtype](extra_lanelet_subtypes.md)
   - Roadside Lane
+  - Bicycle Lane
 
 ## Mandatory Tags
 
