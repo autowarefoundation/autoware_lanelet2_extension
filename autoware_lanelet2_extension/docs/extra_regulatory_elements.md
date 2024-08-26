@@ -147,3 +147,40 @@ An example annotation of speed_bump:
     <tag k='type' v='speed_bump' />
   </way>
 ```
+
+## Bus Stop Area
+
+The `BusStopArea` regulatory element can be used to specify the available space for bus-like vehicles to stop at a bus stop. The regulatory element should refer to a polygon with the `bus_stop_area` type and should be referred by the `road` or `road_shoulder` subtype lanelets that overlaps with the target `bus_stop_area` polygon.
+
+![BusStopArea tagging](bus_stop_area.drawio.svg)
+
+_An example:_
+
+```xml
+  <way id="18508">
+    <nd ref="18502"/>
+    <nd ref="18503"/>
+    <nd ref="18505"/>
+    <nd ref="18506"/>
+    <nd ref="18507"/>
+    <tag k="type" v="bus_stop_area"/>
+    <tag k="area" v="yes"/>
+  </way>
+
+  <relation id="18500">
+    <member type="way" role="left" ref="18491"/>
+    <member type="way" role="right" ref="18490"/>
+    <member type="relation" role="regulatory_element" ref="18512"/>
+    <tag k="type" v="lanelet"/>
+    <tag k="subtype" v="road_shoulder"/>
+    <tag k="speed_limit" v="20"/>
+    <tag k="location" v="urban"/>
+    <tag k="one_way" v="yes"/>
+  </relation>
+
+  <relation id="18512">
+    <member type="way" role="refers" ref="18508"/>
+    <tag k="type" v="regulatory_element"/>
+    <tag k="subtype" v="bus_stop_area"/>
+  </relation>
+```
