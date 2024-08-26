@@ -26,6 +26,7 @@ namespace lanelet::autoware
  */
 enum class Version : int {
   none = 0,
+  format_v1,
   format_v2,
 };
 

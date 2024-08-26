@@ -17,7 +17,7 @@ The following is the extra format added for Autoware:
   - Crosswalk
   - No Stopping Area
   - No Parking Area
-  - Bus Stoop Area
+  - Bus Stop Area
 - [extra lanelet subtype](extra_lanelet_subtypes.md)
   - Roadside Lane
   - Road Shoulder

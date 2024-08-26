@@ -309,8 +309,7 @@ _An example:_
 
 ## Bus Stop Area
 
-The area tagged with `bus_stop_area` can be used to limit the pullover space for bus-like vehicles. This area is referred from the road or road_shoulder subtype lanelets where the destination is positioned via the `BusStopArea` regulatory element.
->>>>>>> beac7ef (feat(lanelet2_extension): docuement for bus_stop_area and bicycle_lane(format_version2))
+The `BusStopArea` regulatory element can be used to specify the available space for bus-like vehicles to stop at a bus stop. The regulatory element should refer to a polygon with the `bus_stop_area` type and should be referred by the `road` or `road_shoulder` subtype lanelets that overlaps with the target `bus_stop_area` polygon.
 
 ![BusStopArea tagging](bus_stop_area.drawio.svg)
 
