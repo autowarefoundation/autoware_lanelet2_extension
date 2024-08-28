@@ -2,6 +2,20 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* feat(lanelet2_extension)!: release format_v2 (`#26 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/26>`_)
+* docs(autoware_lanelet2_extension): refactor document (`#25 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/25>`_)
+  * refactor doc
+  * Update autoware_lanelet2_extension/docs/lanelet2_format_extension.md
+  Co-authored-by: Ryohsuke Mitsudome <43976834+mitsudome-r@users.noreply.github.com>
+  ---------
+  Co-authored-by: Ryohsuke Mitsudome <43976834+mitsudome-r@users.noreply.github.com>
+* feat(lanelet2_extension): format v2 bicycle lane doc (`#24 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/24>`_)
+* feat(lanelet2_extension): update documentation for bus_stop_area to be introduced in format_version2 (`#21 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/21>`_)
+* feat(lanelet2_extension): add bus_stop_area implementation (`#22 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/22>`_)
+* Contributors: Mamoru Sobue
+
 0.5.0 (2024-07-10)
 ------------------
 * feat(lanelet2_extension)!: introduce API versioning along with format_version (`#18 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/18>`_)
