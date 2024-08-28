@@ -40,7 +40,7 @@
 namespace lanelet::utils::query
 {
 
-inline namespace format_v1
+inline namespace format_v2
 {
 /**
  * [crosswalkLanelets extracts crosswalk lanelets]
@@ -207,7 +207,7 @@ std::vector<lanelet::ConstLineString3d> stopLinesLanelet(const lanelet::ConstLan
  */
 std::vector<lanelet::ConstLineString3d> stopSignStopLines(
   const lanelet::ConstLanelets & lanelets, const std::string & stop_sign_id = "stop_sign");
-}  // namespace format_v1
+}  // namespace format_v2
 
 /**
  * [laneletLayer converts laneletLayer into lanelet vector]

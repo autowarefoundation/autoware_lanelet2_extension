@@ -94,9 +94,6 @@ RegulatoryElementDataPtr constructBusStopAreaData(
 }
 }  // namespace
 
-// TODO(soblin): remove this when format_v2 has been released
-namespace format_v2
-{
 BusStopArea::BusStopArea(const RegulatoryElementDataPtr & data) : RegulatoryElement(data)
 {
   if (getConstPoly(data->parameters, RoleName::Refers).empty()) {
@@ -129,7 +126,6 @@ bool BusStopArea::removeBusStopArea(const Polygon3d & primitive)
 }
 
 RegisterRegulatoryElement<BusStopArea> regBusStopArea;
-}  // namespace format_v2
 
 }  // namespace lanelet::autoware
 

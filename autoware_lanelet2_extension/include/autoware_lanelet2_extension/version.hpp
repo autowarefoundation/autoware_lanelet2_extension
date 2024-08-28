@@ -27,10 +27,11 @@ namespace lanelet::autoware
 enum class Version : int {
   none = 0,
   format_v1,
+  format_v2,
 };
 
 // current format_version
-static constexpr Version version = Version::format_v1;
+static constexpr Version version = Version::format_v2;
 }  // namespace lanelet::autoware
 
 #endif  // AUTOWARE_LANELET2_EXTENSION__VERSION_HPP_

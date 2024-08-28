@@ -55,7 +55,7 @@ namespace lanelet::utils
 
 namespace query
 {
-inline namespace format_v1
+inline namespace format_v2
 {
 lanelet::ConstLanelets crosswalkLanelets(const lanelet::ConstLanelets & lls)
 {
@@ -699,7 +699,7 @@ std::vector<lanelet::ConstLineString3d> stopSignStopLines(
   }
   return stoplines;
 }
-}  // namespace format_v1
+}  // namespace format_v2
 }  // namespace query
 
 // returns all lanelets in laneletLayer - don't know how to convert
