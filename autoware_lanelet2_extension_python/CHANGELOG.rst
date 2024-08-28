@@ -2,6 +2,9 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.0 (2024-08-28)
+------------------
+
 0.5.0 (2024-07-10)
 ------------------
 * chore(ci): fix cpplint errors from pre-commit ci (`#15 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/15>`_)
