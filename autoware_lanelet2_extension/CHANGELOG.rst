@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.0 (2024-08-28)
+------------------
 * feat(lanelet2_extension)!: release format_v2 (`#26 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/26>`_)
 * docs(autoware_lanelet2_extension): refactor document (`#25 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/25>`_)
   * refactor doc
