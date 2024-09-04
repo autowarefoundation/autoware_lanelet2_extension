@@ -19,6 +19,7 @@
 #include "autoware_lanelet2_extension/utility/query.hpp"
 
 #include "autoware_lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/bus_stop_area.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/crosswalk.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/detection_area.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/no_parking_area.hpp"
@@ -210,6 +211,25 @@ std::vector<lanelet::NoParkingAreaConstPtr> noParkingAreas(const lanelet::ConstL
     }
   }
   return no_pa_reg_elems;
+}
+
+std::vector<lanelet::BusStopAreaConstPtr> busStopAreas(const lanelet::ConstLanelets & lanelets)
+{
+  std::vector<lanelet::BusStopAreaConstPtr> bus_stop_area_reg_elems;
+  std::set<lanelet::Id> found_ids;
+
+  for (const auto & ll : lanelets) {
+    std::vector<lanelet::BusStopAreaConstPtr> reg_elems =
+      ll.regulatoryElementsAs<lanelet::autoware::BusStopArea>();
+    for (const auto & reg_elem : reg_elems) {
+      const auto id = reg_elem->id();
+      if (found_ids.find(id) == found_ids.end()) {
+        found_ids.insert(id);
+        bus_stop_area_reg_elems.push_back(reg_elem);
+      }
+    }
+  }
+  return bus_stop_area_reg_elems;
 }
 
 std::vector<lanelet::SpeedBumpConstPtr> speedBumps(const lanelet::ConstLanelets & lanelets)

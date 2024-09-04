@@ -20,6 +20,7 @@
 // NOLINTBEGIN(readability-identifier-naming)
 
 #include "autoware_lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
+#include "autoware_lanelet2_extension/regulatory_elements/bus_stop_area.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/no_parking_area.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/no_stopping_area.hpp"
 #include "autoware_lanelet2_extension/utility/query.hpp"
@@ -109,6 +110,16 @@ visualization_msgs::msg::MarkerArray detectionAreasAsMarkerArray(
  */
 visualization_msgs::msg::MarkerArray noParkingAreasAsMarkerArray(
   const std::vector<lanelet::NoParkingAreaConstPtr> & no_reg_elems,
+  const std_msgs::msg::ColorRGBA & c, const rclcpp::Duration & duration = rclcpp::Duration(0, 0));
+
+/**
+ * [busStopAreasAsMarkerArray creates marker array to visualize bus stop areas]
+ * @param  no_reg_elems [bus stop area regulatory elements]
+ * @param  c            [color of the marker]
+ * @param  duration     [lifetime of the marker]
+ */
+visualization_msgs::msg::MarkerArray busStopAreasAsMarkerArray(
+  const std::vector<lanelet::BusStopAreaConstPtr> & no_reg_elems,
   const std_msgs::msg::ColorRGBA & c, const rclcpp::Duration & duration = rclcpp::Duration(0, 0));
 
 /**
