@@ -104,6 +104,13 @@ std::vector<lanelet::NoStoppingAreaConstPtr> noStoppingAreas(
 std::vector<lanelet::NoParkingAreaConstPtr> noParkingAreas(const lanelet::ConstLanelets & lanelets);
 
 /**
+ * [busStopArea extracts BusStop Area regulatory elements from lanelets]
+ * @param lanelets [input lanelets]
+ * @return         [bus stop areas that are associated with input lanelets]
+ */
+std::vector<lanelet::BusStopAreaConstPtr> busStopAreas(const lanelet::ConstLanelets & lanelets);
+
+/**
  * [speedBumps extracts Speed Bump regulatory elements from lanelets]
  * @param lanelets [input lanelets]
  * @return         [speed bumps that are associated with input lanelets]
