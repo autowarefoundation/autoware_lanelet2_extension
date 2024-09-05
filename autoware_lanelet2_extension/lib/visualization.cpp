@@ -698,7 +698,7 @@ visualization_msgs::msg::MarkerArray busStopAreasAsMarkerArray(
       std::vector<geometry_msgs::msg::Polygon> triangles;
       polygon2Triangle(geom_poly, &triangles);
 
-      for (auto tri : triangles) {
+      for (const auto & tri : triangles) {
         geometry_msgs::msg::Point tri0[3];
 
         for (int i = 0; i < 3; i++) {
