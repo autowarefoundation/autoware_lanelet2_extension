@@ -72,6 +72,11 @@ lanelet::ConstLanelets shoulderLanelets(const lanelet::ConstLanelets & lls)
   return subtypeLanelets(lls, "road_shoulder");
 }
 
+lanelet::ConstLanelets bicycleLaneLanelets(const lanelet::ConstLanelets & lls)
+{
+  return subtypeLanelets(lls, "bicycle_lane");
+}
+
 std::vector<lanelet::TrafficLightConstPtr> trafficLights(const lanelet::ConstLanelets & lanelets)
 {
   std::vector<lanelet::TrafficLightConstPtr> tl_reg_elems;
