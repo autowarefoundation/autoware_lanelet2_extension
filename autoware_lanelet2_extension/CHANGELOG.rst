@@ -2,6 +2,13 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.1 (2024-09-06)
+------------------
+* feat(lanelet2_extension): add util/visualization of BusStopArea (`#28 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/28>`_)
+* feat(lanelet2_extension): add query for bicycle_lane (`#29 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/29>`_)
+  add bicycle_lane query
+* Contributors: Mamoru Sobue
+
 0.6.0 (2024-08-28)
 ------------------
 * feat(lanelet2_extension)!: release format_v2 (`#26 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/26>`_)
