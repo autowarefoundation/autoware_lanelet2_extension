@@ -2,6 +2,9 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.0 (2024-08-28)
 ------------------
 
