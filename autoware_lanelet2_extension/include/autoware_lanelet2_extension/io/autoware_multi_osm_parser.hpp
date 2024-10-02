@@ -47,12 +47,12 @@ public:
   std::unique_ptr<LaneletMap> parse(
     const std::string & lanelet2_filename, ErrorMessages & errors) const override;
 
-  std::unique_ptr<LaneletMap> parse(
+  lanelet::LaneletMapPtr parse(
     const std::vector<std::string> & lanelet2_filenames, ErrorMessages & errors) const;
 
-  std::unique_ptr<LaneletMap> fromOsmFile(const osm::File & file, ErrorMessages & errors) const;
+  lanelet::LaneletMapPtr fromOsmFile(const osm::File & file, ErrorMessages & errors) const;
 
-  std::unique_ptr<LaneletMap> fromOsmFile(
+  lanelet::LaneletMapPtr fromOsmFile(
     const std::map<std::string, osm::File> & files_map, ErrorMessages & errors) const;
 
   static void parseVersions(
@@ -70,7 +70,7 @@ RegisterParser<MultiOsmParser> regParser;
 class MultiFileLoader
 {
 public:
-  static std::unique_ptr<LaneletMap> loadMap(
+  static lanelet::LaneletMapPtr loadMap(
     const osm::File & file, const Projector & projector, ErrorMessages & errors)
   {
     MultiFileLoader loader;
@@ -88,7 +88,7 @@ public:
       loader.lineStrings_, loader.points_);
   }
 
-  static std::unique_ptr<LaneletMap> loadMap(
+  static lanelet::LaneletMapPtr loadMap(
     const std::map<std::string, osm::File> & files_map, const Projector & projector,
     ErrorMessages & errors)
   {

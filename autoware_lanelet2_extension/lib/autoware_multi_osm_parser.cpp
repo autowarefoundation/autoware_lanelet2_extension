@@ -445,7 +445,7 @@ void testAndPrintLocaleWarning(ErrorMessages & errors)
   }
 }
 
-std::unique_ptr<LaneletMap> MultiOsmParser::parse(
+lanelet::LaneletMapPtr MultiOsmParser::parse(
   const std::vector<std::string> & lanelet2_filenames, lanelet::ErrorMessages & errors) const
 {
   std::map<std::string, osm::File> files;
@@ -506,16 +506,16 @@ std::unique_ptr<LaneletMap> MultiOsmParser::parse(
   registerIds(file.relations);
   errors = buildErrorMessage(
     "Errors ocurred while parsing Lanelet Map:", utils::concatenate({osmReadErrors, errors}));
-  return map;
+  return std::unique_ptr<LaneletMap>(map.get());
 }
 
-std::unique_ptr<LaneletMap> MultiOsmParser::fromOsmFile(
+lanelet::LaneletMapPtr MultiOsmParser::fromOsmFile(
   const std::map<std::string, osm::File> & files_map, ErrorMessages & errors) const
 {
   return MultiFileLoader::loadMap(files_map, projector(), errors);
 }
 
-std::unique_ptr<LaneletMap> MultiOsmParser::fromOsmFile(
+lanelet::LaneletMapPtr MultiOsmParser::fromOsmFile(
   const osm::File & file, lanelet::ErrorMessages & errors) const
 {
   return MultiFileLoader::loadMap(file, projector(), errors);
