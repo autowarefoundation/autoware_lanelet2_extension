@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>autoware_lanelet2_extension</name>
-  <version>0.6.1</version>
+  <version>0.6.2</version>
   <description>The autoware_lanelet2_extension package contains libraries to handle Lanelet2 format data.</description>
   <maintainer email="ryohsuke.mitsudome@tier4.jp">mitsudome-r</maintainer>
   <maintainer email="masahiro.sakamoto@tier4.jp">Masahiro Sakamoto</maintainer>

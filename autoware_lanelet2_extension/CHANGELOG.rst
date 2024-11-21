@@ -2,6 +2,12 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.2 (2024-11-21)
+------------------
+* fix: update the github link of map_loader (`#31 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/31>`_)
+  add autoware prefix to map_loader
+* Contributors: Masaki Baba
+
 0.6.1 (2024-09-06)
 ------------------
 * feat(lanelet2_extension): add util/visualization of BusStopArea (`#28 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/28>`_)
