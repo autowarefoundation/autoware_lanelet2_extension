@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.2 (2024-11-21)
+------------------
 * fix(Python bindings): add missing dependency to lanelet2 (`#32 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/32>`_)
 * Contributors: Kenji Miyake
 

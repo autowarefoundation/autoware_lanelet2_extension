@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>autoware_lanelet2_extension_python</name>
-  <version>0.6.1</version>
+  <version>0.6.2</version>
   <description>The autoware_lanelet2_extension_python package contains Python bindings for lanelet2_extension package</description>
   <maintainer email="mamoru.sobue@tier4.jp">Mamoru Sobue</maintainer>
   <maintainer email="yutaka.kondo@tier4.jp">Yutaka Kondo</maintainer>
