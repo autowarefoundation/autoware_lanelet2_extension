@@ -114,7 +114,7 @@ Following tags are optional tags that you may want to add depending on how you w
 
 Sometimes users might want to create Lanelet2 maps that are not georeferenced.
 In such a case, users may use "local_x", "local_y" taggings to express local positions instead of latitude and longitude.
-You will need to `lanelet2_map_projector_type` to `local`, then [autoware map loader](https://github.com/autowarefoundation/autoware.universe/tree/main/map/map_loader#lanelet2_map_loader) will overwrite x,y positions with these tags when they are present.
+You will need to `lanelet2_map_projector_type` to `local`, then [autoware map loader](https://github.com/autowarefoundation/autoware.universe/tree/main/map/autoware_map_loader#lanelet2_map_loader) will overwrite x,y positions with these tags when they are present.
 For z values, use "ele" tags as default Lanelet2 Format.
 You would still need to fill in lat and lon attributes so that parser does not crush, but their values could be anything.
 
