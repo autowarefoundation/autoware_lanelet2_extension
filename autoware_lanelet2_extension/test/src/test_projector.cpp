@@ -33,7 +33,8 @@ TEST(TestSuite, ForwardMGRSProjection)  // NOLINT for gtest
 {
   lanelet::projection::MGRSProjector projector;
   // different elevation values
-  std::vector<double> elevation_values = {0.0, -50.0, 1000.0};  // sea level, below sea level, very high
+  std::vector<double> elevation_values = {
+    0.0, -50.0, 1000.0};  // sea level, below sea level, very high
   for (const double ele : elevation_values) {
     lanelet::GPSPoint gps_point;
     gps_point.lat = 35.652832;
@@ -50,7 +51,8 @@ TEST(TestSuite, ForwardMGRSProjection)  // NOLINT for gtest
 TEST(TestSuite, ReverseMGRSProjection)  // NOLINT for gtest
 {
   lanelet::projection::MGRSProjector projector;
-  std::vector<double> elevation_values = {0.0, -50.0, 1000.0};  // sea level, below sea level, very high
+  std::vector<double> elevation_values = {
+    0.0, -50.0, 1000.0};  // sea level, below sea level, very high
 
   for (const double ele : elevation_values) {
     lanelet::BasicPoint3d mgrs_point;
