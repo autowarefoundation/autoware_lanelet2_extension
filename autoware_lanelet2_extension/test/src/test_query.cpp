@@ -128,7 +128,8 @@ TEST_F(TestSuite, NoTrafficLightsTest)  // NOLINT for gtest
   auto traffic_lights = lanelet::utils::query::trafficLights(map_without_tl->laneletLayer);
   ASSERT_EQ(0U, traffic_lights.size()) << "No traffic lights should be retrieved";
 
-  auto autoware_traffic_lights = lanelet::utils::query::autowareTrafficLights(map_without_tl->laneletLayer);
+  auto autoware_traffic_lights =
+    lanelet::utils::query::autowareTrafficLights(map_without_tl->laneletLayer);
   ASSERT_EQ(0U, autoware_traffic_lights.size()) << "No Autoware traffic lights should be retrieved";
 }
 
