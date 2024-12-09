@@ -117,6 +117,21 @@ TEST_F(TestSuite, QueryLanelets)  // NOLINT for gtest
   ASSERT_EQ(1U, crosswalk_lanelets.size()) << "failed to retrieve crosswalk lanelets";
 }
 
+TEST_F(TestSuite, NoTrafficLightsTest)  // NOLINT for gtest
+{
+  // create a map without traffic lights
+  lanelet::LaneletMapPtr map_without_tl = std::make_shared<lanelet::LaneletMap>();
+
+  // add road lanelet to the map
+  map_without_tl->add(sample_map_ptr->laneletLayer.front());  // no traffic light
+
+  auto traffic_lights = lanelet::utils::query::trafficLights(map_without_tl->laneletLayer);
+  ASSERT_EQ(0U, traffic_lights.size()) << "No traffic lights should be retrieved";
+
+  auto autoware_traffic_lights = lanelet::utils::query::autowareTrafficLights(map_without_tl->laneletLayer);
+  ASSERT_EQ(0U, autoware_traffic_lights.size()) << "No Autoware traffic lights should be retrieved";
+}
+
 TEST_F(TestSuite, QueryTrafficLights)  // NOLINT for gtest
 {
   lanelet::ConstLanelets all_lanelets = lanelet::utils::query::laneletLayer(sample_map_ptr);
