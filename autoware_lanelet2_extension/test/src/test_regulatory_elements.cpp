@@ -50,6 +50,17 @@ public:
   ~TestSuite() override = default;
 };
 
+TEST(TestSuite, InvalidIdTrafficLight) {  // NOLINT for gtest
+  int invalid_id = -1;
+
+  // create a traffic light with an invalid ID
+  auto invalid_tl = lanelet::autoware::AutowareTrafficLight::make(
+    invalid_id, lanelet::AttributeMap(), convertToVector(LineString3d()), LineString3d(),
+    convertToVector(LineString3d()));
+
+  EXPECT_EQ(invalid_tl->id(), invalid_id);
+}
+
 TEST(TestSuite, FactoryConstructsTrafficLight)  // NOLINT for gtest
 {
   Point3d p1;
