@@ -50,7 +50,8 @@ public:
   ~TestSuite() override = default;
 };
 
-TEST(TestSuite, InvalidIdTrafficLight) {  // NOLINT for gtest
+TEST(TestSuite, InvalidIdTrafficLight)
+{  // NOLINT for gtest
   int invalid_id = -1;
 
   // create a traffic light with an invalid ID
