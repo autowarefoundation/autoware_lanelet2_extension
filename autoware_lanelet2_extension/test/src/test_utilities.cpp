@@ -158,7 +158,7 @@ TEST_F(TestSuite, OverwriteLaneletsCenterline)  // NOLINT for gtest
   }
 }
 
-TEST_F(TestSuite, GetLaneletLength) // NOLINT for gtest
+TEST_F(TestSuite, GetLaneletLength)  // NOLINT for gtest
 {
   double length_2d = lanelet::utils::getLaneletLength2d(road_lanelet);
   double length_3d = lanelet::utils::getLaneletLength3d(road_lanelet);
