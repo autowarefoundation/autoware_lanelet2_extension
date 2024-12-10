@@ -91,6 +91,24 @@ TEST_F(TestSuite, isRouteValid)  // NOLINT for gtest
        "one";
 }
 
+TEST_F(TestSuite, isRouteInvalidWithEmptyRoute)  // NOLINT for gtest
+{
+  // create empty route
+  autoware_planning_msgs::msg::LaneletRoute empty_route;
+
+  ASSERT_FALSE(lanelet::utils::route::isRouteValid(empty_route, sample_map_ptr))
+    << "The route should be invalid because it is empty.";
+}
+
+TEST_F(TestSuite, isRouteInvalidWithEmptyMap)  // NOLINT for gtest
+{
+  // create empty map
+  auto empty_map_ptr = std::make_shared<lanelet::LaneletMap>();
+
+  ASSERT_FALSE(lanelet::utils::route::isRouteValid(sample_route1, empty_map_ptr))
+    << "The route should be invalid because the map is empty.";
+}
+
 int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);
