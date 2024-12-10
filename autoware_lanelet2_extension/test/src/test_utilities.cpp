@@ -158,6 +158,15 @@ TEST_F(TestSuite, OverwriteLaneletsCenterline)  // NOLINT for gtest
   }
 }
 
+TEST_F(TestSuite, GetLaneletLength) // NOLINT for gtest
+{
+  double length_2d = lanelet::utils::getLaneletLength2d(road_lanelet);
+  double length_3d = lanelet::utils::getLaneletLength3d(road_lanelet);
+
+  EXPECT_GT(length_2d, 0.0);
+  EXPECT_GT(length_3d, 0.0);
+}
+
 /*
 TEST(Utilities, copyZ)  // NOLINT for gtest
 {
