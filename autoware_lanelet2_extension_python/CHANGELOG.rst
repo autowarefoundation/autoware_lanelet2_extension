@@ -10,7 +10,7 @@ Changelog for package autoware_lanelet2_extension_python
 
 0.2.0 (2024-05-07)
 ------------------
-* refactor: add `autoware\_` prefix to package names and namespaces (`#3 <https://github.com/youtalk/autoware_lanelet2_extension/issues/3>`_)
+* refactor: add `autoware\_` prefix to package names and namespaces (`#3 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/3>`_)
   * fix readme
   * fix link
   * fix link
