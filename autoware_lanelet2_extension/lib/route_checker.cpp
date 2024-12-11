@@ -26,6 +26,10 @@ namespace lanelet::utils
 bool route::isRouteValid(
   const LaneletRoute & route_msg, const lanelet::LaneletMapPtr lanelet_map_ptr_)
 {
+  if (route_msg.segments.empty()) {
+    std::cerr << "Route is empty, returning false." << std::endl;
+    return false;
+  }
   for (const auto & route_section : route_msg.segments) {
     for (const auto & primitive : route_section.primitives) {
       const auto id = primitive.id;
