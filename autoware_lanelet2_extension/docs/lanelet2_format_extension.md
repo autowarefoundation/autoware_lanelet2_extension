@@ -114,7 +114,7 @@ Following tags are optional tags that you may want to add depending on how you w
 
 Sometimes users might want to create Lanelet2 maps that are not georeferenced.
 In such a case, users may use "local_x", "local_y" taggings to express local positions instead of latitude and longitude.
-You will need to `lanelet2_map_projector_type` to `local`, then [autoware map loader](https://github.com/autowarefoundation/autoware.universe/tree/main/map/autoware_map_loader#lanelet2_map_loader) will overwrite x,y positions with these tags when they are present.
+You will need to `lanelet2_map_projector_type` to `Local`, then [autoware map loader](https://github.com/autowarefoundation/autoware.universe/tree/main/map/autoware_map_loader#lanelet2_map_loader) will overwrite x,y positions with these tags when they are present.
 For z values, use "ele" tags as default Lanelet2 Format.
 You would still need to fill in lat and lon attributes so that parser does not crush, but their values could be anything.
 
@@ -264,7 +264,7 @@ _An example:_
 
 ### No Drivable Lane
 
-A no drivable lane is a lanelet or more that are out of operation design domain (ODD), i.e., the vehicle **must not** drive autonomously in this/these lanelet/s.  
+A no drivable lane is a lanelet or more that are out of operation design domain (ODD), i.e., the vehicle **must not** drive autonomously in this/these lanelet/s.
 A lanelet becomes no drivable by adding an optional tag under the relevant lanelet in the map file `<tag k="no_drivable_lane" v="yes"/>`.
 
 _An example:_
