@@ -29,4 +29,6 @@
     - source: .prettierrc.yaml
     - source: .yamllint.yaml
     - source: CPPLINT.cfg
+      pre-commands: |
+        sd 'filter=-whitespace/braces.*' '\n# https://github.com/cpplint/cpplint/issues/298 for the next filter\nfilter=-readability/nolint        # NOLINTBEGIN(*) and NOLINTEND(*) conflict with clang-tidy\n\nfilter=-whitespace/braces         # we wrap open curly braces for namespaces, classes and functions' {source}
     - source: setup.cfg
