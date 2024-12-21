@@ -21,6 +21,7 @@
 #include <lanelet2_core/primitives/RegulatoryElement.h>
 
 #include <algorithm>
+#include <iostream>
 #include <memory>
 #include <utility>
 #include <vector>
