@@ -23,6 +23,8 @@
 #include <gtest/gtest.h>
 #include <lanelet2_core/LaneletMap.h>
 
+#include <memory>
+
 using lanelet::Lanelet;
 using lanelet::LineString3d;
 using lanelet::Point3d;

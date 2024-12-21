@@ -33,6 +33,7 @@
 #include <lanelet2_projection/UTM.h>
 #include <lanelet2_routing/RoutingGraph.h>
 
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <utility>

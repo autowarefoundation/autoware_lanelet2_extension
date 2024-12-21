@@ -22,6 +22,7 @@
 #include <lanelet2_traffic_rules/TrafficRulesFactory.h>
 
 #include <map>
+#include <unordered_map>
 
 using lanelet::Lanelet;
 using lanelet::LineString3d;
