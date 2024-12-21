@@ -1,4 +1,5 @@
-- repository: autowarefoundation/autoware
+- repository: autowarefoundation/sync-file-templates
+  source-dir: sources
   files:
     - source: CODE_OF_CONDUCT.md
     - source: CONTRIBUTING.md
@@ -7,14 +8,12 @@
     - source: .github/ISSUE_TEMPLATE/bug.yaml
     - source: .github/ISSUE_TEMPLATE/config.yml
     - source: .github/ISSUE_TEMPLATE/task.yaml
-    - source: .github/PULL_REQUEST_TEMPLATE.md
-    - source: .github/PULL_REQUEST_TEMPLATE/small-change.md
-    - source: .github/PULL_REQUEST_TEMPLATE/standard-change.md
     - source: .github/dependabot.yaml
+    - source: .github/pull_request_template.md
     - source: .github/stale.yml
+    - source: .github/workflows/comment-on-pr.yaml
     - source: .github/workflows/cancel-previous-workflows.yaml
     - source: .github/workflows/github-release.yaml
-    - source: .github/workflows/pre-commit.yaml
     - source: .github/workflows/pre-commit-autoupdate.yaml
     - source: .github/workflows/pre-commit-optional.yaml
     - source: .github/workflows/semantic-pull-request.yaml
@@ -24,9 +23,12 @@
     - source: .clang-tidy
     - source: .markdown-link-check.json
     - source: .markdownlint.yaml
+    - source: .pre-commit-config.yaml
     - source: .pre-commit-config-optional.yaml
     - source: .prettierignore
     - source: .prettierrc.yaml
     - source: .yamllint.yaml
     - source: CPPLINT.cfg
+      pre-commands: |
+        sd 'filter=-whitespace/braces.*' '\n# https://github.com/cpplint/cpplint/issues/298 for the next filter\nfilter=-readability/nolint        # NOLINTBEGIN(*) and NOLINTEND(*) conflict with clang-tidy\n\nfilter=-whitespace/braces         # we wrap open curly braces for namespaces, classes and functions' {source}
     - source: setup.cfg
