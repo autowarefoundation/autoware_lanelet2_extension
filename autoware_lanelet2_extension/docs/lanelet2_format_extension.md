@@ -264,7 +264,7 @@ _An example:_
 
 ### No Drivable Lane
 
-A no drivable lane is a lanelet or more that are out of operation design domain (ODD), i.e., the vehicle **must not** drive autonomously in this/these lanelet/s.  
+A no drivable lane is a lanelet or more that are out of operation design domain (ODD), i.e., the vehicle **must not** drive autonomously in this/these lanelet/s.
 A lanelet becomes no drivable by adding an optional tag under the relevant lanelet in the map file `<tag k="no_drivable_lane" v="yes"/>`.
 
 _An example:_
