@@ -29,7 +29,9 @@
 #include <lanelet2_python/internal/converter.h>
 
 #include <iostream>
+#include <limits>
 #include <string>
+#include <vector>
 
 namespace bp = boost::python;
 

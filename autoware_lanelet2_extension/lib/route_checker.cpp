@@ -21,6 +21,8 @@
 
 #include <lanelet2_core/LaneletMap.h>
 
+#include <iostream>
+
 namespace lanelet::utils
 {
 bool route::isRouteValid(

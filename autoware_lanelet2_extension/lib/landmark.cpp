@@ -20,6 +20,9 @@
 
 #include <lanelet2_core/LaneletMap.h>
 
+#include <string>
+#include <vector>
+
 namespace lanelet::localization
 {
 

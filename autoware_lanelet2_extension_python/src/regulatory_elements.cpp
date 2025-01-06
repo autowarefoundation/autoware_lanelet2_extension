@@ -27,6 +27,9 @@
 
 #include <boost/python.hpp>
 
+#include <memory>
+#include <string>
+
 namespace bp = boost::python;
 
 // from lanelet2_python/src/core.cpp

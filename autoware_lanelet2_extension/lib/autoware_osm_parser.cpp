@@ -23,6 +23,7 @@
 #include <lanelet2_io/io_handlers/OsmFile.h>
 #include <lanelet2_io/io_handlers/OsmHandler.h>
 
+#include <iostream>
 #include <memory>
 #include <regex>
 #include <string>

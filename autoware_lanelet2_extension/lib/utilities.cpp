@@ -30,6 +30,8 @@
 #include <lanelet2_traffic_rules/TrafficRules.h>
 #include <lanelet2_traffic_rules/TrafficRulesFactory.h>
 
+#include <iostream>
+
 #ifdef ROS_DISTRO_GALACTIC
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #else
