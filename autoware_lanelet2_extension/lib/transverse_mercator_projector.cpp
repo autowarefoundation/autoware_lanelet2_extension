@@ -24,13 +24,13 @@
 
 namespace lanelet::projection
 {
-TransverseMercatorProjector::TransverseMercatorProjector(Origin origin) : Projector(origin)
+TransverseMercatorProjector::TransverseMercatorProjector(Origin origin, const double scale_factor) : Projector(origin)
 {
   central_meridian_ = origin.position.lon;
-
+  scale_factor_ = scale_factor;
   // Calculate origin in Transverse Mercator coordinate
   const GeographicLib::TransverseMercatorExact & proj =
-    GeographicLib::TransverseMercatorExact::UTM();
+    GeographicLib::TransverseMercatorExact(GeographicLib::Constants::WGS84_a(), GeographicLib::Constants::WGS84_f(), scale_factor_);
   proj.Forward(central_meridian_, origin.position.lat, origin.position.lon, origin_x_, origin_y_);
 }
 
@@ -38,7 +38,7 @@ BasicPoint3d TransverseMercatorProjector::forward(const GPSPoint & gps) const
 {
   BasicPoint3d tm_point{0., 0., gps.ele};
   const GeographicLib::TransverseMercatorExact & proj =
-    GeographicLib::TransverseMercatorExact::UTM();
+    GeographicLib::TransverseMercatorExact(GeographicLib::Constants::WGS84_a(), GeographicLib::Constants::WGS84_f(), scale_factor_);
   proj.Forward(central_meridian_, gps.lat, gps.lon, tm_point.x(), tm_point.y());
 
   // x is already aligned with origin as it is projected in transverse mercator
@@ -51,7 +51,7 @@ GPSPoint TransverseMercatorProjector::reverse(const BasicPoint3d & local_point) 
 {
   GPSPoint gps{0.0, 0.0, local_point.z()};
   const GeographicLib::TransverseMercatorExact & proj =
-    GeographicLib::TransverseMercatorExact::UTM();
+    GeographicLib::TransverseMercatorExact(GeographicLib::Constants::WGS84_a(), GeographicLib::Constants::WGS84_f(), scale_factor_);
 
   BasicPoint3d local_point_copy = local_point;
   local_point_copy.y() = local_point.y() + origin_y_;
