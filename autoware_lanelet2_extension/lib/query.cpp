@@ -42,6 +42,8 @@
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #endif
 
+#include "./normalize_radian.hpp"
+
 #include <deque>
 #include <limits>
 #include <memory>
@@ -50,24 +52,6 @@
 #include <vector>
 
 using lanelet::utils::to2D;
-
-namespace
-{
-
-inline double normalize_radian(const double rad)
-{
-  constexpr double pi = 3.14159265358979323846;  // To be replaced by std::numbers::pi in C++20
-  constexpr double min_rad = -pi;
-  const auto max_rad = min_rad + 2 * pi;
-
-  const auto value = std::fmod(rad, 2 * pi);
-  if (min_rad <= value && value < max_rad) {
-    return value;
-  }
-
-  return value - std::copysign(2 * pi, value);
-}
-}  // namespace
 
 namespace lanelet::utils
 {
@@ -949,7 +933,7 @@ bool query::getClosestLanelet(
       if (!segment.empty()) {
         double segment_angle = std::atan2(
           segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
-        angle_diff = std::abs(::normalize_radian(segment_angle - pose_yaw));
+        angle_diff = std::abs(impl::normalize_radian(segment_angle - pose_yaw));
       }
       if (angle_diff < min_angle) {
         min_angle = angle_diff;
@@ -1011,7 +995,7 @@ bool query::getClosestLaneletWithConstrains(
       const auto & distance = llt_pair.second;
 
       double lanelet_angle = getLaneletAngle(llt_pair.first, search_pose.position);
-      double angle_diff = std::abs(::normalize_radian(lanelet_angle - pose_yaw));
+      double angle_diff = std::abs(impl::normalize_radian(lanelet_angle - pose_yaw));
 
       if (angle_diff > std::abs(yaw_threshold)) continue;
       if (min_distance < distance) break;
