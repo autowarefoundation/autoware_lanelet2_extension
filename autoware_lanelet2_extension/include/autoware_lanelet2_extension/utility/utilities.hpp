@@ -86,6 +86,14 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence);
 lanelet::ArcCoordinates getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 
+/**
+ * @brief  This function uses custom centerline for the lanelet if exists defined with the attribute
+ * "waypoints" instead of centerline associated to the lanelet
+ */
+lanelet::ArcCoordinates getArcCoordinatesConsideringWaypoints(
+  const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
+
 lanelet::ConstLineString3d getClosestSegment(
   const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
 
