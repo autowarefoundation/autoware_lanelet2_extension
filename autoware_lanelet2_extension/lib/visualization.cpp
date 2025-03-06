@@ -1004,6 +1004,26 @@ visualization_msgs::msg::MarkerArray parkingLotsAsMarkerArray(
   }
   return marker_array;
 }
+
+visualization_msgs::msg::MarkerArray waypointZonesAsMarkerArray(
+  const lanelet::ConstPolygons3d & waypoint_zones, const std_msgs::msg::ColorRGBA & c)
+{
+  visualization_msgs::msg::MarkerArray marker_array;
+  if (waypoint_zones.empty()) {
+    return marker_array;
+  }
+
+  visualization_msgs::msg::Marker marker = createPolygonMarker("waypoint_zones", c);
+  for (const auto & polygon : waypoint_zones) {
+    pushPolygonMarker(&marker, polygon, c);
+  }
+
+  if (!marker.points.empty()) {
+    marker_array.markers.push_back(marker);
+  }
+  return marker_array;
+}
+
 visualization_msgs::msg::MarkerArray parkingSpacesAsMarkerArray(
   const lanelet::ConstLineStrings3d & parking_spaces, const std_msgs::msg::ColorRGBA & c)
 {
