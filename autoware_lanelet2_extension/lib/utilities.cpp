@@ -675,6 +675,36 @@ lanelet::ArcCoordinates getArcCoordinates(
   return arc_coordinates;
 }
 
+lanelet::ArcCoordinates getArcCoordinatesConsideringWaypoints(
+  const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+{
+  lanelet::ConstLanelet closest_lanelet;
+  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+
+  double length = 0;
+  lanelet::ArcCoordinates arc_coordinates;
+  for (const auto & llt : lanelet_sequence) {
+    ConstLineString2d centerline_2d;
+    if (llt.hasAttribute("waypoints")) {
+      const auto waypoints_id = llt.attribute("waypoints").asId().value();
+      centerline_2d = lanelet::utils::to2D(lanelet_map_ptr->lineStringLayer.get(waypoints_id));
+    } else {
+      centerline_2d = lanelet::utils::to2D(llt.centerline());
+    }
+
+    if (llt == closest_lanelet) {
+      const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+      arc_coordinates = lanelet::geometry::toArcCoordinates(
+        centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
+      arc_coordinates.length += length;
+      break;
+    }
+    length += static_cast<double>(boost::geometry::length(centerline_2d));
+  }
+  return arc_coordinates;
+}
+
 lanelet::ConstLineString3d getClosestSegment(
   const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring)
 {
