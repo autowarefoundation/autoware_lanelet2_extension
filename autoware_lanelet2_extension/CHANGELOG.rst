@@ -2,6 +2,23 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.3 (2025-03-17)
+------------------
+* docs(localization_landmarks): add localization reflector subtype (`#44 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/44>`_)
+  doc: add localization reflector subtype
+* feat: add the lanelet length test (`#39 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/39>`_)
+  * lanelet length test added.
+  * style(pre-commit): autofix
+  * compare the precise values
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+  Co-authored-by: Yutaka Kondo <yutaka.kondo@youtalk.jp>
+* docs: update projection type from "local" to "Local" (`#34 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/34>`_)
+* chore: sync files (`#42 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/42>`_)
+  Co-authored-by: M. Fatih Cırıt <mfc@autoware.org>
+* fix(autoware_lanelet2_extension): fix links to issues in CHANGELOG.rst files (`#40 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/40>`_)
+* Contributors: Esteve Fernandez, Hans Oersted, Motz, Ryohsuke Mitsudome, awf-autoware-bot[bot]
+
 0.6.2 (2024-11-21)
 ------------------
 * fix: update the github link of map_loader (`#31 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/31>`_)

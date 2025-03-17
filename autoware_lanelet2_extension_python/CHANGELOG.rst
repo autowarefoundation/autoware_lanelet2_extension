@@ -2,6 +2,13 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.3 (2025-03-17)
+------------------
+* chore: sync files (`#42 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/42>`_)
+  Co-authored-by: M. Fatih Cırıt <mfc@autoware.org>
+* fix(autoware_lanelet2_extension): fix links to issues in CHANGELOG.rst files (`#40 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/40>`_)
+* Contributors: Esteve Fernandez, awf-autoware-bot[bot]
+
 0.6.2 (2024-11-21)
 ------------------
 * fix(Python bindings): add missing dependency to lanelet2 (`#32 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/32>`_)
