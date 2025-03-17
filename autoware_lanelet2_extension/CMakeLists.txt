@@ -2,6 +2,22 @@ cmake_minimum_required(VERSION 3.14)
 project(autoware_lanelet2_extension)
 
 find_package(autoware_cmake REQUIRED)
+
+find_package(TinyXML2 CONFIG QUIET)
+if(NOT TinyXML2_FOUND)
+  find_path(TINYXML2_INCLUDE_DIR NAMES tinyxml2.h)
+  find_library(TINYXML2_LIBRARY tinyxml2)
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(TinyXML2 DEFAULT_MSG TINYXML2_LIBRARY TINYXML2_INCLUDE_DIR)
+  mark_as_advanced(TINYXML2_INCLUDE_DIR TINYXML2_LIBRARY)
+  if(NOT TARGET tinyxml2::tinyxml2)
+    add_library(tinyxml2::tinyxml2 UNKNOWN IMPORTED)
+    set_property(TARGET tinyxml2::tinyxml2 PROPERTY IMPORTED_LOCATION ${TINYXML2_LIBRARY})
+    set_property(TARGET tinyxml2::tinyxml2 PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${TINYXML2_INCLUDE_DIR})
+    list(APPEND TinyXML2_TARGETS tinyxml2::tinyxml2)
+  endif()
+endif()
+
 autoware_package()
 
 ament_auto_add_library(${PROJECT_NAME}_lib SHARED
@@ -53,6 +69,8 @@ if(BUILD_TESTING)
   target_link_libraries(utilities-test ${PROJECT_NAME}_lib)
   ament_add_ros_isolated_gtest(route-test test/src/test_route_checker.cpp)
   target_link_libraries(route-test ${PROJECT_NAME}_lib)
+  ament_add_ros_isolated_gtest(normalize-radian test/src/test_normalize_radian.cpp)
+  target_link_libraries(normalize-radian ${PROJECT_NAME}_lib)
 endif()
 
 ament_auto_package()
