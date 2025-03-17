@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.3 (2025-03-17)
+------------------
 * docs(localization_landmarks): add localization reflector subtype (`#44 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/44>`_)
   doc: add localization reflector subtype
 * feat: add the lanelet length test (`#39 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/39>`_)
