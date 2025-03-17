@@ -28,6 +28,12 @@
     - source: .prettierignore
     - source: .prettierrc.yaml
     - source: .yamllint.yaml
+    - source: .github/workflows/build-and-test.yaml
+      pre-commands: |
+        sed -i '/build-depends-repos/d' {source}
+    - source: .github/workflows/build-and-test-differential.yaml
+      pre-commands: |
+        sed -i '/build-depends-repos/d' {source}
     - source: CPPLINT.cfg
       pre-commands: |
         sd 'filter=-whitespace/braces.*' '\n# https://github.com/cpplint/cpplint/issues/298 for the next filter\nfilter=-readability/nolint        # NOLINTBEGIN(*) and NOLINTEND(*) conflict with clang-tidy\n\nfilter=-whitespace/braces         # we wrap open curly braces for namespaces, classes and functions' {source}
