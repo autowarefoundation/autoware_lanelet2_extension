@@ -394,6 +394,18 @@ lanelet::ConstLineStrings3d getAllParkingSpaces(const lanelet::LaneletMapConstPt
   return parking_spaces;
 }
 
+lanelet::ConstLineStrings3d getAllWaypoints(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+{
+  lanelet::ConstLineStrings3d waypoints;
+  for (const auto & ll : lanelet_map_ptr->laneletLayer) {
+    if (ll.hasAttribute("waypoints")) {
+      const auto waypoints_id = ll.attribute("waypoints").asId().value();
+      waypoints.push_back(lanelet_map_ptr->lineStringLayer.get(waypoints_id));
+    }
+  }
+  return waypoints;
+}
+
 bool getLinkedLanelet(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr, lanelet::ConstLanelet * linked_lanelet)
