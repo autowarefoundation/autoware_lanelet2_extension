@@ -675,7 +675,7 @@ lanelet::ArcCoordinates getArcCoordinates(
   return arc_coordinates;
 }
 
-lanelet::ArcCoordinates getArcCoordinatesConsideringWaypoints(
+lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {

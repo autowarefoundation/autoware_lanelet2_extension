@@ -87,10 +87,13 @@ lanelet::ArcCoordinates getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 
 /**
- * @brief  This function uses custom centerline for the lanelet if exists defined with the attribute
- * "waypoints" instead of centerline associated to the lanelet
+ * @brief  This function uses the centerline for the ego to follow.
+ * - when the `use_waypoints` in the autoware_map_loader is true,
+ *   - the waypoints tag in the lanelet2::LaneletMapPtr is used instead of the centerline.
+ * - when the `use_waypoints` in the autoware_map_loader is false,
+ *   - the centerline in the lanelet2::LaneletMapPtr is used.
  */
-lanelet::ArcCoordinates getArcCoordinatesConsideringWaypoints(
+lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 
