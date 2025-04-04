@@ -2,6 +2,20 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* feat(projection): add_scale_factor (`#54 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/54>`_)
+  * add_scale_factor
+  * style(pre-commit): autofix
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+* feat: add getArcCoordinatesConsideringWaypoints to enable custom waypoint usage (`#49 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/49>`_)
+  * feat: add getArcCoordinatesUsingWaypoints to enable custom waypoint usage
+  * update function name and explanation
+  ---------
+* fix: update link to autoware_map_loader (`#53 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/53>`_)
+* Contributors: Mehmet Dogru, Ryohsuke Mitsudome, Yamato Ando
+
 0.6.3 (2025-03-17)
 ------------------
 * docs(localization_landmarks): add localization reflector subtype (`#44 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/44>`_)
