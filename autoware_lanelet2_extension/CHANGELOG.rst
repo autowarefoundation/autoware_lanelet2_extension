@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.4 (2025-04-04)
+------------------
 * feat(projection): add_scale_factor (`#54 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/54>`_)
   * add_scale_factor
   * style(pre-commit): autofix
