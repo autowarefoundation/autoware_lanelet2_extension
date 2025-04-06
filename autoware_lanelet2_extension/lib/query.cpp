@@ -28,9 +28,6 @@
 #include "autoware_lanelet2_extension/utility/message_conversion.hpp"
 #include "autoware_lanelet2_extension/utility/utilities.hpp"
 
-#include <Eigen/Eigen>
-#include <autoware_utils/autoware_utils.hpp>
-
 #include <lanelet2_core/LaneletMap.h>
 #include <lanelet2_core/geometry/Lanelet.h>
 #include <lanelet2_core/primitives/Lanelet.h>
@@ -44,6 +41,8 @@
 #else
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #endif
+
+#include "./normalize_radian.hpp"
 
 #include <deque>
 #include <limits>
@@ -946,7 +945,7 @@ bool query::getClosestLanelet(
       if (!segment.empty()) {
         double segment_angle = std::atan2(
           segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
-        angle_diff = std::abs(autoware_utils::normalize_radian(segment_angle - pose_yaw));
+        angle_diff = std::abs(impl::normalize_radian(segment_angle - pose_yaw));
       }
       if (angle_diff < min_angle) {
         min_angle = angle_diff;
@@ -1008,7 +1007,7 @@ bool query::getClosestLaneletWithConstrains(
       const auto & distance = llt_pair.second;
 
       double lanelet_angle = getLaneletAngle(llt_pair.first, search_pose.position);
-      double angle_diff = std::abs(autoware_utils::normalize_radian(lanelet_angle - pose_yaw));
+      double angle_diff = std::abs(impl::normalize_radian(lanelet_angle - pose_yaw));
 
       if (angle_diff > std::abs(yaw_threshold)) continue;
       if (min_distance < distance) break;
