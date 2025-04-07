@@ -2,6 +2,20 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.0 (2025-04-07)
+------------------
+* feat(lanelet2_extension)!: remove dependency on autoware_utils (`#47 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/47>`_)
+  * chore(lanelet2_extension)!: remove dependency on autoware_utils
+  * add test
+  * WIP
+  * WIP2
+  * remove tinyxml2
+  * remove from build_depends
+  ---------
+  Co-authored-by: Yutaka Kondo <yutaka.kondo@youtalk.jp>
+* feat: add query for all waypoints (`#56 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/56>`_)
+* Contributors: Mamoru Sobue, Mehmet Dogru
+
 0.6.4 (2025-04-04)
 ------------------
 * feat(projection): add_scale_factor (`#54 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/54>`_)
