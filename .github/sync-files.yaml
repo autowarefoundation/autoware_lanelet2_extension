@@ -19,6 +19,7 @@
     - source: .github/workflows/semantic-pull-request.yaml
     - source: .github/workflows/spell-check-differential.yaml
     - source: .github/workflows/sync-files.yaml
+    - source: .github/workflows/update-codeowners-from-packages.yaml
     - source: .clang-format
     - source: .clang-tidy
     - source: .markdown-link-check.json
