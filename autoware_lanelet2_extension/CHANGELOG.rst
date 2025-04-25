@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.1 (2025-04-25)
+------------------
 * ci(pre-commit): autoupdate (`#55 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/55>`_)
   * ci(pre-commit): autoupdate
   * style(pre-commit): autofix
