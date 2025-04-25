@@ -2,6 +2,22 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* ci(pre-commit): autoupdate (`#55 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/55>`_)
+  * ci(pre-commit): autoupdate
+  * style(pre-commit): autofix
+  ---------
+  Co-authored-by: github-actions <github-actions@github.com>
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+  Co-authored-by: Yutaka Kondo <yutaka.kondo@youtalk.jp>
+* fix(autoware_lanelet2_extension): not use obsolete header (`#63 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/63>`_)
+  * Update query.cpp
+  * style(pre-commit): autofix
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+* Contributors: Yutaka Kondo, awf-autoware-bot[bot]
+
 0.7.0 (2025-04-07)
 ------------------
 * feat(lanelet2_extension)!: remove dependency on autoware_utils (`#47 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/47>`_)
