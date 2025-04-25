@@ -86,6 +86,17 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence);
 lanelet::ArcCoordinates getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 
+/**
+ * @brief  This function uses the centerline for the ego to follow.
+ * - when the `use_waypoints` in the autoware_map_loader is true,
+ *   - the waypoints tag in the lanelet2::LaneletMapPtr is used instead of the centerline.
+ * - when the `use_waypoints` in the autoware_map_loader is false,
+ *   - the centerline in the lanelet2::LaneletMapPtr is used.
+ */
+lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
+  const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
+
 lanelet::ConstLineString3d getClosestSegment(
   const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
 

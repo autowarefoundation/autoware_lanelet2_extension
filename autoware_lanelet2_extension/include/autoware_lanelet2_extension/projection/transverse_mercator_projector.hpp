@@ -33,7 +33,8 @@ inline namespace format_v2
 class TransverseMercatorProjector : public Projector
 {
 public:
-  explicit TransverseMercatorProjector(Origin origin = Origin({0.0, 0.0}));
+  explicit TransverseMercatorProjector(
+    Origin origin = Origin({0.0, 0.0}), const double scale_factor = 0.9996);
 
   /**
    * [TransverseMercatorProjector::forward projects gps lat/lon to Transverse Mercator coordinate]
@@ -55,6 +56,11 @@ private:
   double origin_x_;
   double origin_y_;
   double central_meridian_;
+
+  /**
+   * scale factor of the map
+   */
+  double scale_factor_;
 };
 }  // namespace format_v2
 

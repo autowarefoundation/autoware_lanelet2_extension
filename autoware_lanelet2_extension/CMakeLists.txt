@@ -53,6 +53,8 @@ if(BUILD_TESTING)
   target_link_libraries(utilities-test ${PROJECT_NAME}_lib)
   ament_add_ros_isolated_gtest(route-test test/src/test_route_checker.cpp)
   target_link_libraries(route-test ${PROJECT_NAME}_lib)
+  ament_add_ros_isolated_gtest(normalize-radian test/src/test_normalize_radian.cpp)
+  target_link_libraries(normalize-radian ${PROJECT_NAME}_lib)
 endif()
 
 ament_auto_package()

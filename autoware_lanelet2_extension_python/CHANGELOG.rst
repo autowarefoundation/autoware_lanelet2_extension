@@ -2,6 +2,12 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.0 (2025-04-07)
+------------------
+
+0.6.4 (2025-04-04)
+------------------
+
 0.6.3 (2025-03-17)
 ------------------
 * chore: sync files (`#42 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/42>`_)
