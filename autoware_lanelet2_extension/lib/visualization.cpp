@@ -1374,10 +1374,12 @@ visualization_msgs::msg::MarkerArray visualization::laneletsBoundaryAsMarkerArra
     lanelet::ConstLineString3d right_ls = lll.rightBound();
     lanelet::ConstLineString3d center_ls = lll.centerline();
     lanelet::LineString3d start_bound_ls(lanelet::utils::getId());
-    start_bound_ls.push_back(lanelet::Point3d(
-      lanelet::utils::getId(), left_ls.front().x(), left_ls.front().y(), left_ls.front().z()));
-    start_bound_ls.push_back(lanelet::Point3d(
-      lanelet::utils::getId(), right_ls.front().x(), right_ls.front().y(), right_ls.front().z()));
+    start_bound_ls.push_back(
+      lanelet::Point3d(
+        lanelet::utils::getId(), left_ls.front().x(), left_ls.front().y(), left_ls.front().z()));
+    start_bound_ls.push_back(
+      lanelet::Point3d(
+        lanelet::utils::getId(), right_ls.front().x(), right_ls.front().y(), right_ls.front().z()));
 
     if (!exists(added, left_ls.id())) {
       visualization::pushLineStringMarker(&left_line_strip, left_ls, c, lss);

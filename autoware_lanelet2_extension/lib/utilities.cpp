@@ -611,8 +611,9 @@ bool lineStringToPolygon(
   lanelet::Polygon3d llt_poly;
 
   for (const auto & lp : linestring) {
-    llt_poly.push_back(lanelet::Point3d(
-      lanelet::InvalId, lp.basicPoint().x(), lp.basicPoint().y(), lp.basicPoint().z()));
+    llt_poly.push_back(
+      lanelet::Point3d(
+        lanelet::InvalId, lp.basicPoint().x(), lp.basicPoint().y(), lp.basicPoint().z()));
   }
 
   if (linestring.front().id() == linestring.back().id()) {
