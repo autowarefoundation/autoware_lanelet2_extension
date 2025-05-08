@@ -289,7 +289,7 @@ bool isWithinTriangle(
   double c2 = (c.x - b.x) * (p.y - c.y) - (c.y - b.y) * (p.x - c.x);
   double c3 = (a.x - c.x) * (p.y - a.y) - (a.y - c.y) * (p.x - a.x);
 
-  return (c1 > 0.0 && c2 > 0.0 && c3 > 0.0) || (c1 < 0.0 && c2 < 0.0 && c3 < 0.0);
+  return (c1 >= 0.0 && c2 >= 0.0 && c3 >= 0.0) || (c1 <= 0.0 && c2 <= 0.0 && c3 <= 0.0);
 }
 
 visualization_msgs::msg::Marker createPolygonMarker(
