@@ -2,6 +2,13 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix(autoware_lanelet2_extension): point on the edge of a triangle was  not treated as inside the triangle (`#66 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/66>`_)
+  fix(autoware_lanelet2_extension): point on the edge of a triangle was not treated as inside the triangle
+  Co-authored-by: Marek Piechula <mpiechula@autonomous-systems.pl>
+* Contributors: Marek Piechula
+
 0.7.1 (2025-04-25)
 ------------------
 * ci(pre-commit): autoupdate (`#55 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/55>`_)
