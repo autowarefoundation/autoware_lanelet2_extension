@@ -134,6 +134,9 @@ lanelet::ConstPolygons3d getAllObstaclePolygons(
 // query all parking lots in lanelet2 map
 lanelet::ConstPolygons3d getAllParkingLots(const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 
+// query all waypoint zones in lanelet2 map
+lanelet::ConstPolygons3d getAllWaypointZones(const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
+
 // query all partitions in lanelet2 map
 lanelet::ConstLineStrings3d getAllPartitions(const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 
@@ -193,6 +196,28 @@ bool getLinkedParkingLot(
 bool getLinkedParkingLot(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::ConstPolygons3d & all_parking_lots, lanelet::ConstPolygon3d * linked_parking_lot);
+
+// get linked waypoint zone from lanelet
+bool getLinkedWaypointZone(
+  const lanelet::ConstLanelet & lanelet, const lanelet::ConstPolygons3d & all_waypoint_zones,
+  lanelet::ConstPolygon3d * linked_waypoint_zone);
+// get linked waypoint zone from current pose of ego car
+bool getLinkedWaypointZone(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::ConstPolygons3d & all_waypoint_zones,
+  lanelet::ConstPolygon3d * linked_waypoint_zone);
+bool getLinkedWaypointZone(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::ConstPolygons3d & all_waypoint_zones,
+  lanelet::ConstPolygon3d * linked_waypoint_zone, double threshold);
+bool getLinkedWaypointZone(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr,
+  lanelet::ConstPolygon3d * linked_waypoint_zone);
+bool getLinkedWaypointZone(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr,
+  lanelet::ConstPolygon3d * linked_waypoint_zone, double threshold);
 
 // query linked parking space from parking lot
 lanelet::ConstLineStrings3d getLinkedParkingSpaces(
