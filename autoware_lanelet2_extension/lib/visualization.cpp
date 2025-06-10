@@ -374,7 +374,11 @@ visualization_msgs::msg::MarkerArray autowareTrafficLightsAsMarkerArray(
   for (const auto & tl : tl_reg_elems) {
     const auto lights = tl->trafficLights();
     for (const auto & lsp : lights) {
-      if (lsp.isLineString() && !exists(traffic_light_triangle_id_list, lsp.id())) {  // traffic lights can either polygons or linestrings
+      if (lsp.isLineString() && !exists(traffic_light_triangle_id_list, lsp.id())) {  // traffic
+                                                                                      // lights can
+                                                                                      // either
+                                                                                      // polygons or
+                                                                                      // linestrings
         lanelet::ConstLineString3d ls = static_cast<lanelet::ConstLineString3d>(lsp);
         traffic_light_triangle_id_list.insert(lsp.id());
         pushTrafficLightTriangleMarker(&marker_tri, ls, c, scale);
@@ -387,7 +391,8 @@ visualization_msgs::msg::MarkerArray autowareTrafficLightsAsMarkerArray(
       lanelet::ConstLineString3d l = static_cast<lanelet::ConstLineString3d>(ls);
       for (const auto & pt : l) {
         if (pt.hasAttribute("color")) {
-          if (!exists(traffic_light_triangle_id_list, pt.id()) && inputLightMarker(&marker_sph, pt)) {
+          if (
+            !exists(traffic_light_triangle_id_list, pt.id()) && inputLightMarker(&marker_sph, pt)) {
             tl_marker_array.markers.push_back(marker_sph);
             traffic_light_id_list.insert(pt.id());
           }
