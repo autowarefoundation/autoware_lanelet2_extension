@@ -179,6 +179,14 @@ visualization_msgs::msg::MarkerArray parkingLotsAsMarkerArray(
   const lanelet::ConstPolygons3d & parking_lots, const std_msgs::msg::ColorRGBA & c);
 
 /**
+ * [waypointZonesAsMarkerArray creates marker array to visualize parking lots]
+ * @param  waypoint_zones [waypoint zone polygon]
+ * @param  c              [color of the marker]
+ */
+visualization_msgs::msg::MarkerArray waypointZonesAsMarkerArray(
+  const lanelet::ConstPolygons3d & waypoint_zones, const std_msgs::msg::ColorRGBA & c);
+
+/**
  * [parkingSpacesAsMarkerArray creates marker array to visualize parking spaces]
  * @param  parking_spaces [parking space line string]
  * @param  c            [color of the marker]
