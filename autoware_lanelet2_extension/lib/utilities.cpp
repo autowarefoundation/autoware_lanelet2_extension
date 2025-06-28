@@ -776,6 +776,23 @@ double getLaneletAngle(
     segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
 }
 
+double getLaneletAngleOnEgoCenterline(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+{
+  ConstLineString3d centerline;
+  if (lanelet.hasAttribute("waypoints")) {
+    const auto waypoints_id = lanelet.attribute("waypoints").asId().value();
+    centerline = lanelet_map_ptr->lineStringLayer.get(waypoints_id);
+  } else {
+    centerline = lanelet.centerline();
+  }
+  lanelet::BasicPoint2d llt_search_point(search_point.x, search_point.y);
+  lanelet::ConstLineString3d segment = getClosestSegment(llt_search_point, centerline);
+  return std::atan2(
+    segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
+}
+
 bool isInLanelet(
   const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
   const double radius)
