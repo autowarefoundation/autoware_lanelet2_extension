@@ -369,11 +369,6 @@ lanelet::ConstLineStrings3d getAllFences(const lanelet::LaneletMapConstPtr & lan
   return fences;
 }
 
-lanelet::ConstLineStrings3d getAllRoadBorders(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
-{
-  return getAllLinestringsWithType(lanelet_map_ptr, "road_border");
-}
-
 lanelet::ConstLineStrings3d getAllPedestrianPolygonMarkings(
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {

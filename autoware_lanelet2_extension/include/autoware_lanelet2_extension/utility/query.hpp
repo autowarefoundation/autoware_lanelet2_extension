@@ -144,9 +144,6 @@ lanelet::ConstLineStrings3d getAllPartitions(const lanelet::LaneletMapConstPtr &
 // query all fences in lanelet2 map
 lanelet::ConstLineStrings3d getAllFences(const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 
-// query all road borders in lanelet2 map
-lanelet::ConstLineStrings3d getAllRoadBorders(const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
-
 // query all pedestrian polygon markings in lanelet2 map
 lanelet::ConstLineStrings3d getAllPedestrianPolygonMarkings(
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
