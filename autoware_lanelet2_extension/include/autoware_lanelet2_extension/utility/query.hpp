@@ -134,6 +134,7 @@ lanelet::ConstPolygons3d getAllObstaclePolygons(
 // query all parking lots in lanelet2 map
 lanelet::ConstPolygons3d getAllParkingLots(const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 
+// query all linestrings with defined type in lanelet2 map
 lanelet::ConstLineStrings3d getAllLinestringsWithType(
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr, const std::string & type);
 
