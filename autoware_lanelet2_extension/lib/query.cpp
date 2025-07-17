@@ -332,6 +332,19 @@ lanelet::ConstPolygons3d getAllParkingLots(const lanelet::LaneletMapConstPtr & l
   return parking_lots;
 }
 
+lanelet::ConstLineStrings3d getAllLinestringsWithType(
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr, const std::string & type)
+{
+  lanelet::ConstLineStrings3d linestrings_with_type;
+  for (const auto & ls : lanelet_map_ptr->lineStringLayer) {
+    const std::string ls_type = ls.attributeOr(lanelet::AttributeName::Type, "none");
+    if (ls_type == type) {
+      linestrings_with_type.push_back(ls);
+    }
+  }
+  return linestrings_with_type;
+}
+
 lanelet::ConstLineStrings3d getAllPartitions(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d partitions;
@@ -358,14 +371,7 @@ lanelet::ConstLineStrings3d getAllFences(const lanelet::LaneletMapConstPtr & lan
 
 lanelet::ConstLineStrings3d getAllRoadBorders(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
-  lanelet::ConstLineStrings3d road_borders;
-  for (const auto & ls : lanelet_map_ptr->lineStringLayer) {
-    const std::string type = ls.attributeOr(lanelet::AttributeName::Type, "none");
-    if (type == "road_border") {
-      road_borders.push_back(ls);
-    }
-  }
-  return road_borders;
+  return getAllLinestringsWithType(lanelet_map_ptr, "road_border");
 }
 
 lanelet::ConstLineStrings3d getAllPedestrianPolygonMarkings(
