@@ -332,6 +332,19 @@ lanelet::ConstPolygons3d getAllParkingLots(const lanelet::LaneletMapConstPtr & l
   return parking_lots;
 }
 
+lanelet::ConstLineStrings3d getAllLinestringsWithType(
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr, const std::string & type)
+{
+  lanelet::ConstLineStrings3d linestrings_with_type;
+  for (const auto & ls : lanelet_map_ptr->lineStringLayer) {
+    const std::string ls_type = ls.attributeOr(lanelet::AttributeName::Type, "none");
+    if (ls_type == type) {
+      linestrings_with_type.push_back(ls);
+    }
+  }
+  return linestrings_with_type;
+}
+
 lanelet::ConstLineStrings3d getAllPartitions(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d partitions;
