@@ -2,6 +2,16 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* feat: add linestring with type getter (`#73 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/73>`_)
+* fix: skip duplicate marker (`#69 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/69>`_)
+  * fix: skip duplicate marker
+  * style(pre-commit): autofix
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+* Contributors: Ryohsuke Mitsudome, Zulfaqar Azmi
+
 0.7.2 (2025-05-14)
 ------------------
 * fix(autoware_lanelet2_extension): point on the edge of a triangle was  not treated as inside the triangle (`#66 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/66>`_)
