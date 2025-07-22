@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.0 (2025-07-22)
+------------------
 * feat: add linestring with type getter (`#73 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/73>`_)
 * fix: skip duplicate marker (`#69 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/69>`_)
   * fix: skip duplicate marker
