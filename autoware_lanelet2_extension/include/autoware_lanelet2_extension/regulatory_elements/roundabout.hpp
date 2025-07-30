@@ -74,6 +74,16 @@ public:
    */
   [[nodiscard]] lanelet::ConstLanelets roundaboutInternalLanelets() const;
 
+  /**
+   * @brief Check if the given lanelet is an entry lanelet of this roundabout
+   */
+  bool isEntryLanelet(const lanelet::ConstLanelet & lanelet) const;
+
+  /**
+   * @brief Check if the given lanelet is an exit lanelet of this roundabout
+   */
+  bool isExitLanelet(const lanelet::ConstLanelet & lanelet) const;
+
 private:
   Roundabout(
     Id id, const AttributeMap & attributes, const lanelet::Lanelets & roundabout_entry_lanelets,
