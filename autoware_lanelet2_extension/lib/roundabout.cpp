@@ -68,18 +68,23 @@ RegulatoryElementDataPtr constructRoundabout(
 {
   RuleParameterMap rpm;
 
-  for (const auto & entry : roundabout_entry_lanelets) {
-    RuleParameters rule_parameters = {RuleParameter(entry)};
-    rpm.insert(std::make_pair(Roundabout::AutowareRoleNameString::Entry, rule_parameters));
+  if (!roundabout_entry_lanelets.empty()) {
+    rpm.insert(
+      std::make_pair(
+        Roundabout::AutowareRoleNameString::Entry, toRuleParameters(roundabout_entry_lanelets)));
   }
 
-  for (const auto & exit : roundabout_exit_lanelets) {
-    RuleParameters rule_parameters = {RuleParameter(exit)};
-    rpm.insert(std::make_pair(Roundabout::AutowareRoleNameString::Exit, rule_parameters));
+  if (!roundabout_exit_lanelets.empty()) {
+    rpm.insert(
+      std::make_pair(
+        Roundabout::AutowareRoleNameString::Exit, toRuleParameters(roundabout_exit_lanelets)));
   }
-  for (const auto & internal : roundabout_internal_lanelets) {
-    RuleParameters rule_parameters = {RuleParameter(internal)};
-    rpm.insert(std::make_pair(Roundabout::AutowareRoleNameString::Internal, rule_parameters));
+
+  if (!roundabout_internal_lanelets.empty()) {
+    rpm.insert(
+      std::make_pair(
+        Roundabout::AutowareRoleNameString::Internal,
+        toRuleParameters(roundabout_internal_lanelets)));
   }
   auto data = std::make_shared<RegulatoryElementData>(id, std::move(rpm), attributes);
   data->attributes[AttributeName::Type] = AttributeValueString::RegulatoryElement;
@@ -90,6 +95,7 @@ RegulatoryElementDataPtr constructRoundabout(
 
 Roundabout::Roundabout(const RegulatoryElementDataPtr & data) : RegulatoryElement(data)
 {
+  cacheLaneletIds();
 }
 
 Roundabout::Roundabout(
@@ -130,18 +136,39 @@ lanelet::ConstLanelets Roundabout::roundaboutInternalLanelets() const
   return getParameters<lanelet::ConstLanelet>(AutowareRoleNameString::Internal);
 }
 
+void Roundabout::cacheLaneletIds()
+{
+  auto cache = [](const auto & lanelets) {
+    std::unordered_set<lanelet::Id> ids;
+    ids.reserve(lanelets.size());
+    for (const auto & llt : lanelets) {
+      ids.insert(llt.id());
+    }
+    return ids;
+  };
+  entry_lanelet_ids_ = cache(roundaboutEntryLanelets());
+  exit_lanelet_ids_ = cache(roundaboutExitLanelets());
+  internal_lanelet_ids_ = cache(roundaboutInternalLanelets());
+}
+
 bool Roundabout::isEntryLanelet(const lanelet::ConstLanelet & lanelet) const
 {
-  const auto entries = roundaboutEntryLanelets();
-  return std::any_of(
-    entries.begin(), entries.end(), [&](const auto & l) { return l.id() == lanelet.id(); });
+  return entry_lanelet_ids_.count(lanelet.id()) > 0;
+}
+
+bool Roundabout::isInternalLanelet(const lanelet::ConstLanelet & lanelet) const
+{
+  return internal_lanelet_ids_.count(lanelet.id()) > 0;
 }
 
 bool Roundabout::isExitLanelet(const lanelet::ConstLanelet & lanelet) const
 {
-  const auto exits = roundaboutExitLanelets();
-  return std::any_of(
-    exits.begin(), exits.end(), [&](const auto & l) { return l.id() == lanelet.id(); });
+  return exit_lanelet_ids_.count(lanelet.id()) > 0;
+}
+
+bool Roundabout::isRoundaboutLanelet(const lanelet::ConstLanelet & lanelet) const
+{
+  return isEntryLanelet(lanelet) || isExitLanelet(lanelet) || isInternalLanelet(lanelet);
 }
 
 RegisterRegulatoryElement<Roundabout> regRoundabout;
