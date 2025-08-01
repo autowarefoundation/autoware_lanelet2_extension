@@ -104,7 +104,7 @@ private:
     const lanelet::Lanelets & roundabout_exit_lanelets,
     const lanelet::Lanelets & roundabout_internal_lanelets);
 
-  void cacheLaneletIds();  
+  void cacheLaneletIds();
 
   std::unordered_set<lanelet::Id> entry_lanelet_ids_;
   std::unordered_set<lanelet::Id> exit_lanelet_ids_;

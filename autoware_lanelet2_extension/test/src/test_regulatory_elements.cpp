@@ -188,8 +188,7 @@ TEST(TestSuite, RoundaboutInstantiation)  // NOLINT for gtest
 
   lanelet::Lanelets roundabout_entry_lanelets = {
     roundabout_entry_lanelet1, roundabout_entry_lanelet2};
-  lanelet::Lanelets roundabout_exit_lanelets = {
-    roundabout_exit_lanelet1, roundabout_exit_lanelet2};
+  lanelet::Lanelets roundabout_exit_lanelets = {roundabout_exit_lanelet1, roundabout_exit_lanelet2};
   lanelet::Lanelets roundabout_internal_lanelets = {
     roundabout_internal_lanelet1, roundabout_internal_lanelet2};
   // create roundabout
@@ -197,9 +196,11 @@ TEST(TestSuite, RoundaboutInstantiation)  // NOLINT for gtest
     getId(), lanelet::AttributeMap{}, roundabout_entry_lanelets, roundabout_exit_lanelets,
     roundabout_internal_lanelets);
   EXPECT_EQ(roundabout_reg_elem->roundaboutLanelets().size(), 6);
-  EXPECT_EQ(roundabout_reg_elem->roundaboutEntryLanelets().size(), roundabout_entry_lanelets.size());
+  EXPECT_EQ(
+    roundabout_reg_elem->roundaboutEntryLanelets().size(), roundabout_entry_lanelets.size());
   EXPECT_EQ(roundabout_reg_elem->roundaboutExitLanelets().size(), roundabout_exit_lanelets.size());
-  EXPECT_EQ(roundabout_reg_elem->roundaboutInternalLanelets().size(), roundabout_internal_lanelets.size());
+  EXPECT_EQ(
+    roundabout_reg_elem->roundaboutInternalLanelets().size(), roundabout_internal_lanelets.size());
   EXPECT_TRUE(roundabout_reg_elem->isEntryLanelet(roundabout_entry_lanelet1.id()));
   EXPECT_TRUE(roundabout_reg_elem->isEntryLanelet(roundabout_entry_lanelet2.id()));
   EXPECT_FALSE(roundabout_reg_elem->isEntryLanelet(roundabout_exit_lanelet1.id()));
@@ -224,7 +225,6 @@ TEST(TestSuite, RoundaboutInstantiation)  // NOLINT for gtest
   EXPECT_FALSE(roundabout_reg_elem->isInternalLanelet(roundabout_exit_lanelet3.id()));
   EXPECT_TRUE(roundabout_reg_elem->isRoundaboutLanelet(roundabout_entry_lanelet1.id()));
   EXPECT_FALSE(roundabout_reg_elem->isRoundaboutLanelet(roundabout_exit_lanelet3.id()));
-
 }
 
 // NOLINTEND(readability-identifier-naming)
