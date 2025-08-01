@@ -23,9 +23,9 @@
 #include <algorithm>
 #include <iostream>
 #include <memory>
+#include <unordered_set>
 #include <utility>
 #include <vector>
-#include <unordered_set>
 
 namespace lanelet::autoware
 {
