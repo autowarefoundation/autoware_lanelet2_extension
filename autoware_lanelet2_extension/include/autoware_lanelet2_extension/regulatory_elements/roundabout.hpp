@@ -78,25 +78,25 @@ public:
    * @brief Check if the given lanelet is an entry lanelet
    * @return true if the lanelet is an entry lanelet, false otherwise
    */
-  [[nodiscard]] bool isEntryLanelet(const lanelet::ConstLanelet & lanelet) const;
+  [[nodiscard]] bool isEntryLanelet(const lanelet::Id & lanelet_id) const;
 
   /**
    * @brief Check if the given lanelet is an internal lanelet
    * @return true if the lanelet is an internal lanelet, false otherwise
    */
-  [[nodiscard]] bool isInternalLanelet(const lanelet::ConstLanelet & lanelet) const;
+  [[nodiscard]] bool isInternalLanelet(const lanelet::Id & lanelet_id) const;
 
   /**
    * @brief Check if the given lanelet is an exit lanelet
    * @return true if the lanelet is an exit lanelet, false otherwise
    */
-  [[nodiscard]] bool isExitLanelet(const lanelet::ConstLanelet & lanelet) const;
+  [[nodiscard]] bool isExitLanelet(const lanelet::Id & lanelet_id) const;
 
   /**
    * @brief Check if the given lanelet is a roundabout lanelet
    * @return true if the lanelet is a roundabout lanelet, false otherwise
    */
-  [[nodiscard]] bool isRoundaboutLanelet(const lanelet::ConstLanelet & lanelet) const;
+  [[nodiscard]] bool isRoundaboutLanelet(const lanelet::Id & lanelet_id) const;
 
 private:
   Roundabout(
@@ -104,7 +104,7 @@ private:
     const lanelet::Lanelets & roundabout_exit_lanelets,
     const lanelet::Lanelets & roundabout_internal_lanelets);
 
-  void cacheLaneletIds();  // IDをキャッシュするヘルパー関数
+  void cacheLaneletIds();  
 
   std::unordered_set<lanelet::Id> entry_lanelet_ids_;
   std::unordered_set<lanelet::Id> exit_lanelet_ids_;

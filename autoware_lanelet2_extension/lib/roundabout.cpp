@@ -30,29 +30,6 @@ namespace lanelet::autoware
 {
 namespace
 {
-template <typename T>
-bool findAndErase(const T & primitive, RuleParameters * member)
-{
-  if (member == nullptr) {
-    std::cerr << __FUNCTION__ << ": member is null pointer";
-    return false;
-  }
-  auto it = std::find(member->begin(), member->end(), RuleParameter(primitive));
-  if (it == member->end()) {
-    return false;
-  }
-  member->erase(it);
-  return true;
-}
-
-template <typename T>
-Optional<T> tryGetFront(const std::vector<T> & vec)
-{
-  if (vec.empty()) {
-    return {};
-  }
-  return vec.front();
-}
 
 template <typename T>
 RuleParameters toRuleParameters(const std::vector<T> & primitives)
@@ -151,24 +128,24 @@ void Roundabout::cacheLaneletIds()
   internal_lanelet_ids_ = cache(roundaboutInternalLanelets());
 }
 
-bool Roundabout::isEntryLanelet(const lanelet::ConstLanelet & lanelet) const
+bool Roundabout::isEntryLanelet(const lanelet::Id & lanelet_id) const
 {
-  return entry_lanelet_ids_.count(lanelet.id()) > 0;
+  return entry_lanelet_ids_.find(lanelet_id) != entry_lanelet_ids_.end();
 }
 
-bool Roundabout::isInternalLanelet(const lanelet::ConstLanelet & lanelet) const
+bool Roundabout::isInternalLanelet(const lanelet::Id & lanelet_id) const
 {
-  return internal_lanelet_ids_.count(lanelet.id()) > 0;
+  return internal_lanelet_ids_.find(lanelet_id) != internal_lanelet_ids_.end();
 }
 
-bool Roundabout::isExitLanelet(const lanelet::ConstLanelet & lanelet) const
+bool Roundabout::isExitLanelet(const lanelet::Id & lanelet_id) const
 {
-  return exit_lanelet_ids_.count(lanelet.id()) > 0;
+  return exit_lanelet_ids_.find(lanelet_id) != exit_lanelet_ids_.end();
 }
 
-bool Roundabout::isRoundaboutLanelet(const lanelet::ConstLanelet & lanelet) const
+bool Roundabout::isRoundaboutLanelet(const lanelet::Id & lanelet_id) const
 {
-  return isEntryLanelet(lanelet) || isExitLanelet(lanelet) || isInternalLanelet(lanelet);
+  return isEntryLanelet(lanelet_id) || isExitLanelet(lanelet_id) || isInternalLanelet(lanelet_id);
 }
 
 RegisterRegulatoryElement<Roundabout> regRoundabout;
