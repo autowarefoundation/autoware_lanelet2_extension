@@ -20,8 +20,6 @@
 
 #include <lanelet2_core/primitives/RegulatoryElement.h>
 
-#include <algorithm>
-#include <iostream>
 #include <memory>
 #include <unordered_set>
 #include <utility>
