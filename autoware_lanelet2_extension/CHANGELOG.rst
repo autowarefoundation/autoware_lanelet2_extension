@@ -2,6 +2,23 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* feat: add roundabout regulatory element (`#75 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/75>`_)
+  * feat: add roundabout regulatory element implementation
+  * feat: add entry and exit lanelet checks for roundabouts
+  * feat: enhance roundabout functionality with lanelet ID caching and checks
+  * feat: update roundabout lanelet checks to use lanelet IDs
+  * style(pre-commit): autofix
+  * fix: include unordered_set for improved functionality
+  * style(pre-commit): autofix
+  * fix: remove unnecessary include
+  Co-authored-by: Yukinari Hisaki <42021302+yhisaki@users.noreply.github.com>
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+  Co-authored-by: Yukinari Hisaki <42021302+yhisaki@users.noreply.github.com>
+* Contributors: Sho Iwasawa
+
 0.8.0 (2025-07-22)
 ------------------
 * feat: add linestring with type getter (`#73 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/73>`_)
