@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.9.0 (2025-08-04)
+------------------
 * feat: add roundabout regulatory element (`#75 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/75>`_)
   * feat: add roundabout regulatory element implementation
   * feat: add entry and exit lanelet checks for roundabouts
