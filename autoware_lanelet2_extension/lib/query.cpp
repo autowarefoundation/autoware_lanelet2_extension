@@ -343,6 +343,8 @@ lanelet::ConstLineStrings3d getAllLinestringsWithType(
     }
   }
   return linestrings_with_type;
+}
+
 lanelet::ConstPolygons3d getAllWaypointZones(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstPolygons3d waypoint_zones;
