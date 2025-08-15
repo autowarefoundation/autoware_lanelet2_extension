@@ -43,6 +43,7 @@
 #include <algorithm>
 #include <limits>
 #include <map>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -273,15 +274,25 @@ lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanele
   lanelet::Points3d lefts;
   lanelet::Points3d rights;
   lanelet::Points3d centers;
+  std::set<lanelet::Id> left_ids;
+  std::set<lanelet::Id> right_ids;
+  std::set<lanelet::Id> center_ids;
+
   for (const auto & llt : lanelets) {
     for (const auto & pt : llt.leftBound()) {
-      lefts.push_back(lanelet::Point3d(pt));
+      if (left_ids.insert(pt.id()).second) {
+        lefts.push_back(lanelet::Point3d(pt));
+      }
     }
     for (const auto & pt : llt.rightBound()) {
-      rights.push_back(lanelet::Point3d(pt));
+      if (right_ids.insert(pt.id()).second) {
+        rights.push_back(lanelet::Point3d(pt));
+      }
     }
     for (const auto & pt : llt.centerline()) {
-      centers.push_back(lanelet::Point3d(pt));
+      if (center_ids.insert(pt.id()).second) {
+        centers.push_back(lanelet::Point3d(pt));
+      }
     }
   }
   const auto left_bound = lanelet::LineString3d(lanelet::InvalId, lefts);
