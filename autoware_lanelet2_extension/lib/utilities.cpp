@@ -271,29 +271,30 @@ lanelet::LineString3d getLineStringFromArcLength(
 
 lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets)
 {
-  lanelet::Points3d lefts;
-  lanelet::Points3d rights;
-  lanelet::Points3d centers;
-  std::set<lanelet::Id> left_ids;
-  std::set<lanelet::Id> right_ids;
-  std::set<lanelet::Id> center_ids;
+  const auto addUniquePoint = [](lanelet::Points3d & points, const lanelet::Point3d & new_point) {
+    constexpr double distance_threshold = 0.01;
+    const auto is_duplicate = std::any_of(
+      points.cbegin(), points.cend(),
+      [&new_point, distance_threshold](const auto & existing_point) {
+        return boost::geometry::distance(existing_point.basicPoint(), new_point.basicPoint()) <=
+               distance_threshold;
+      });
+    if (!is_duplicate) points.emplace_back(new_point);
+  };
 
+  const auto addUniquePoints = [&addUniquePoint](
+                                 lanelet::Points3d & output, const auto & input_points) {
+    std::for_each(
+      input_points.begin(), input_points.end(), [&output, &addUniquePoint](const auto & pt) {
+        addUniquePoint(output, lanelet::Point3d(pt));
+      });
+  };
+
+  lanelet::Points3d lefts, rights, centers;
   for (const auto & llt : lanelets) {
-    for (const auto & pt : llt.leftBound()) {
-      if (left_ids.insert(pt.id()).second) {
-        lefts.push_back(lanelet::Point3d(pt));
-      }
-    }
-    for (const auto & pt : llt.rightBound()) {
-      if (right_ids.insert(pt.id()).second) {
-        rights.push_back(lanelet::Point3d(pt));
-      }
-    }
-    for (const auto & pt : llt.centerline()) {
-      if (center_ids.insert(pt.id()).second) {
-        centers.push_back(lanelet::Point3d(pt));
-      }
-    }
+    addUniquePoints(lefts, llt.leftBound());
+    addUniquePoints(rights, llt.rightBound());
+    addUniquePoints(centers, llt.centerline());
   }
   const auto left_bound = lanelet::LineString3d(lanelet::InvalId, lefts);
   const auto right_bound = lanelet::LineString3d(lanelet::InvalId, rights);
