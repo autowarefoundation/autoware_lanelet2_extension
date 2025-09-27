@@ -26,6 +26,15 @@ ament_auto_add_library(${PROJECT_NAME}_lib SHARED
   lib/route_checker.cpp
 )
 
+# Suppress boost geometry uninitialized variable warnings
+# This is a known issue in boost geometry library where internal template code
+# may trigger maybe-uninitialized warnings that are false positives.
+# The warnings occur in boost geometry's distance calculation algorithms
+# and do not affect the actual functionality of the code.
+# Related: https://www.boost.org/doc/libs/latest/libs/utility/doc/html/utility/utilities/value_init.html
+# and https://www.boost.org/doc/libs/1_89_0/libs/optional/doc/html/boost_optional/design/gotchas/false_positive_with__wmaybe_uninitialized.html
+target_compile_options(${PROJECT_NAME}_lib PRIVATE -Wno-error=maybe-uninitialized)
+
 ament_auto_add_executable(${PROJECT_NAME}_sample src/sample_code.cpp)
 target_link_libraries(${PROJECT_NAME}_sample
   ${PROJECT_NAME}_lib
