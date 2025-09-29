@@ -18,6 +18,11 @@ lineStringWithWidthToPolygon = _utility_cpp.lineStringWithWidthToPolygon
 lineStringToPolygon = _utility_cpp.lineStringToPolygon
 
 
+def fromBinMsg(msg):
+    msg_byte = serialize_message(msg)
+    return _utility_cpp.fromBinMsg(msg_byte)
+
+
 def getLaneletLength2d(*args):
     if len(args) == 1 and isinstance(args[0], lanelet2.core.Lanelet):
         return _utility_cpp.getLaneletLength2d(args[0])
