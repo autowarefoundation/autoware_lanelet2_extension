@@ -29,8 +29,8 @@
 #include <lanelet2_core/primitives/Lanelet.h>
 #include <lanelet2_python/internal/converter.h>
 
-#include <iostream>
 #include <limits>
+#include <memory>
 #include <string>
 #include <vector>
 
