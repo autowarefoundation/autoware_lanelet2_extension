@@ -97,11 +97,13 @@ lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 
+[[deprecated("please use get_closest_segment instead")]]
 lanelet::ConstLineString3d getClosestSegment(
   const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
 
 lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2);
+[[deprecated("please use get_lanelet_angle instead")]]
 double getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
 bool isInLanelet(
