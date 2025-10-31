@@ -28,6 +28,15 @@
 
 #include <map>
 
+namespace impl
+{
+lanelet::ConstLineString3d getClosestSegment(
+  const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
+
+double getLaneletAngle(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
+}  // namespace impl
+
 namespace lanelet::utils
 {
 
