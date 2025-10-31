@@ -118,6 +118,7 @@ double getLaneletAngle(
 bool isInLanelet(
   const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
   const double radius = 0.0);
+[[deprecated("please use get_closest_center_pose instead")]]
 geometry_msgs::msg::Pose getClosestCenterPose(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
 double getLateralDistanceToCenterline(
