@@ -18,7 +18,7 @@
 #ifndef AUTOWARE_LANELET2_EXTENSION__LIB__NORMALIZE_RADIAN_HPP_
 #define AUTOWARE_LANELET2_EXTENSION__LIB__NORMALIZE_RADIAN_HPP_
 
-namespace lanelet::utils::impl
+namespace impl
 {
 inline double normalize_radian(const double rad)
 {
@@ -33,6 +33,6 @@ inline double normalize_radian(const double rad)
 
   return value - std::copysign(2 * pi, value);
 }
-}  // namespace lanelet::utils::impl
+}  // namespace impl
 
 #endif  // AUTOWARE_LANELET2_EXTENSION__LIB__NORMALIZE_RADIAN_HPP_

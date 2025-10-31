@@ -20,7 +20,7 @@
 
 TEST(normalize_radian, normalize_radian_test)
 {
-  EXPECT_FLOAT_EQ(lanelet::utils::impl::normalize_radian(M_PI * 1.5), M_PI * (-0.5));
+  EXPECT_FLOAT_EQ(impl::normalize_radian(M_PI * 1.5), M_PI * (-0.5));
 }
 
 int main(int argc, char ** argv)

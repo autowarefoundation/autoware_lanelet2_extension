@@ -107,8 +107,7 @@ bool getClosestLaneletWithConstrains(
       const auto & distance = llt_pair.second;
 
       double lanelet_angle = getLaneletAngle(llt_pair.first, search_pose.position);
-      double angle_diff =
-        std::abs(lanelet::utils::impl::normalize_radian(lanelet_angle - pose_yaw));
+      double angle_diff = std::abs(normalize_radian(lanelet_angle - pose_yaw));
 
       if (angle_diff > std::abs(yaw_threshold)) continue;
       if (min_distance < distance) break;
@@ -1033,7 +1032,7 @@ bool query::getClosestLanelet(
       if (!segment.empty()) {
         double segment_angle = std::atan2(
           segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
-        angle_diff = std::abs(impl::normalize_radian(segment_angle - pose_yaw));
+        angle_diff = std::abs(::impl::normalize_radian(segment_angle - pose_yaw));
       }
       if (angle_diff < min_angle) {
         min_angle = angle_diff;
@@ -1095,7 +1094,7 @@ bool query::getClosestLaneletWithConstrains(
       const auto & distance = llt_pair.second;
 
       double lanelet_angle = ::impl::getLaneletAngle(llt_pair.first, search_pose.position);
-      double angle_diff = std::abs(impl::normalize_radian(lanelet_angle - pose_yaw));
+      double angle_diff = std::abs(::impl::normalize_radian(lanelet_angle - pose_yaw));
 
       if (angle_diff > std::abs(yaw_threshold)) continue;
       if (min_distance < distance) break;
