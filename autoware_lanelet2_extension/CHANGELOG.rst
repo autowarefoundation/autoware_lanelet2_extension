@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.10.0 (2025-11-05)
+-------------------
 * chore: add build option -Wno-error=maybe-uninitialized (`#79 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/79>`_)
   build::jazzy-porting::add build option -Wno-error=maybe-uninitialized to surpress compile error caused by boost-geometry library, v0.0
 * fix: combineLaneletsShape duplicated point (`#77 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/77>`_)
