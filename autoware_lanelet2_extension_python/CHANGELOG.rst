@@ -2,6 +2,11 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.10.0 (2025-11-05)
+-------------------
+* feat(lanelet2_extension_python): add bindings for fromBinMsg (`#80 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/80>`_)
+* Contributors: Maxime CLEMENT
+
 0.9.0 (2025-08-04)
 ------------------
 
