@@ -4,6 +4,7 @@ g_autoware_lanelet2_extension_python_projection_imported = False
 
 try:
     from autoware_lanelet2_extension_python.projection import MGRSProjector
+
     g_autoware_lanelet2_extension_python_projection_imported = True
 except Exception as e:
     print(e)
@@ -27,5 +28,5 @@ class ImportTest(unittest.TestCase):
         self.assertTrue(g_autoware_lanelet2_extension_python_projection_imported)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
