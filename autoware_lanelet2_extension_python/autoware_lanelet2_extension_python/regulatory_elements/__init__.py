@@ -1,3 +1,4 @@
+import lanelet2  # noqa: F401 # isort: skip
 import autoware_lanelet2_extension_python._autoware_lanelet2_extension_python_boost_python_regulatory_elements as _regulatory_elements_cpp
 
 AutowareTrafficLight = _regulatory_elements_cpp.AutowareTrafficLight
