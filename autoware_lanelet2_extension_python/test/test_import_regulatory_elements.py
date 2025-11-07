@@ -3,7 +3,7 @@ import unittest
 g_autoware_lanelet2_extension_python_imported = False
 
 try:
-    import autoware_lanelet2_extension_python.regulatory_elements
+    import autoware_lanelet2_extension_python.regulatory_elements  # noqa: F401
 
     g_autoware_lanelet2_extension_python_imported = True
 except Exception as e:
@@ -11,7 +11,8 @@ except Exception as e:
 
 
 class ImportTest(unittest.TestCase):
-    """
+    """import check.
+
     This test is intended to check
     'initialization of _autoware_lanelet2_extension_python_boost_python_*** \
     raised unreported exception'

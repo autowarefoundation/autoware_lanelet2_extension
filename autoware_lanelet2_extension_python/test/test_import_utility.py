@@ -3,8 +3,8 @@ import unittest
 g_autoware_lanelet2_extension_python_utility_imported = False
 
 try:
-    import autoware_lanelet2_extension_python.utility.query as query
-    import autoware_lanelet2_extension_python.utility.utilities as utilities
+    import autoware_lanelet2_extension_python.utility.query as query  # noqa: F401
+    import autoware_lanelet2_extension_python.utility.utilities as utilities  # noqa: F401
 
     g_autoware_lanelet2_extension_python_utility_imported = True
 except Exception as e:
@@ -12,7 +12,8 @@ except Exception as e:
 
 
 class ImportTest(unittest.TestCase):
-    """
+    """import check.
+
     This test is intended to check
     'initialization of _autoware_lanelet2_extension_python_boost_python_*** \
     raised unreported exception'
