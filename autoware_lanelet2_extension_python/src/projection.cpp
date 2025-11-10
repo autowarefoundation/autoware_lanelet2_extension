@@ -24,6 +24,7 @@
 #include <lanelet2_io/Projection.h>
 
 #include <memory>
+#include <string>
 
 BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_projection)
 {
@@ -31,8 +32,13 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_projection)
 
   bp::class_<
     lanelet::projection::MGRSProjector, std::shared_ptr<lanelet::projection::MGRSProjector>,
-    bp::bases<lanelet::Projector>>
-    mgrs_projector("MGRSProjector", bp::init<lanelet::Origin>("origin"));
+    bp::bases<lanelet::Projector>>(
+    "MGRSProjector", bp::init<lanelet::Origin>((bp::arg("origin") = lanelet::Origin({0.0, 0.0}))))
+    .def(
+      "setMGRSCode", (void (lanelet::projection::MGRSProjector::*)(const std::string &))(
+                       &lanelet::projection::MGRSProjector::setMGRSCode))
+    .def("isMGRSCodeSet", &lanelet::projection::MGRSProjector::isMGRSCodeSet);
+
   bp::class_<
     lanelet::projection::TransverseMercatorProjector,
     std::shared_ptr<lanelet::projection::TransverseMercatorProjector>,
