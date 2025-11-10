@@ -28,4 +28,25 @@ install(TARGETS _${PROJECT_NAME}_boost_python_utility _${PROJECT_NAME}_boost_pyt
   DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}"
 )
 
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+  find_package(ament_cmake_pytest REQUIRED)
+
+  set(test_files
+    test/test_import_projection.py
+    test/test_import_utility.py
+    test/test_import_regulatory_elements.py
+  )
+  foreach(test_file ${test_files})
+    get_filename_component(test_name ${test_file} NAME_WE)
+    ament_add_pytest_test(${test_name} ${test_file}
+      APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
+      PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
+      TIMEOUT 120
+      WERROR ON
+    )
+  endforeach()
+endif()
+
 ament_package()
