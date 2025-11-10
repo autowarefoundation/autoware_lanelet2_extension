@@ -37,6 +37,7 @@ if(BUILD_TESTING)
     test/test_import_projection.py
     test/test_import_utility.py
     test/test_import_regulatory_elements.py
+    test/test_projection.py
   )
   foreach(test_file ${test_files})
     get_filename_component(test_name ${test_file} NAME_WE)
