@@ -292,7 +292,7 @@ bool getClosestLanelet(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelet * closest_lanelet_ptr);
 
-[[deprecated("please use get_closest_lanelet_with_constraint instead")]]
+[[deprecated("please use get_closest_lanelet_within_constraint instead")]]
 bool getClosestLaneletWithConstrains(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelet * closest_lanelet_ptr,
