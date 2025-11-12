@@ -38,6 +38,9 @@ double getLaneletAngle(
 
 geometry_msgs::msg::Pose getClosestCenterPose(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
+
+lanelet::ConstLanelets getConflictingLanelets(
+  const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet);
 }  // namespace impl
 
 namespace lanelet::utils
@@ -81,6 +84,7 @@ void overwriteLaneletsCenterlineWithWaypoints(
   lanelet::LaneletMapPtr lanelet_map, const double resolution = 5.0,
   const bool force_overwrite = false);
 
+[[deprecated("please use get_conflicting_lanelets instead")]]
 lanelet::ConstLanelets getConflictingLanelets(
   const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet);
 

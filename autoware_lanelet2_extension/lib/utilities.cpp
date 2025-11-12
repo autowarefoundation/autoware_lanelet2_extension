@@ -129,6 +129,22 @@ geometry_msgs::msg::Pose getClosestCenterPose(
 
   return closest_pose;
 }
+
+lanelet::ConstLanelets getConflictingLanelets(
+  const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet)
+{
+  const auto & llt_or_areas = graph->conflicting(lanelet);
+  lanelet::ConstLanelets lanelets;
+  lanelets.reserve(llt_or_areas.size());
+  for (const auto & l_or_a : llt_or_areas) {
+    auto llt_opt = l_or_a.lanelet();
+    if (!!llt_opt) {
+      lanelets.push_back(llt_opt.get());
+    }
+  }
+  return lanelets;
+}
+
 }  // namespace impl
 
 namespace lanelet::utils

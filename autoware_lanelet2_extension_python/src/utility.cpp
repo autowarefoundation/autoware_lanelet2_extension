@@ -432,7 +432,7 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def(
     "overwriteLaneletsCenterline", lanelet::utils::overwriteLaneletsCenterline,
     overwriteLaneletsCenterline_overload());
-  bp::def("getConflictingLanelets", lanelet::utils::getConflictingLanelets);
+  bp::def("getConflictingLanelets", impl::getConflictingLanelets);
   bp::def("lineStringWithWidthToPolygon", ::lineStringWithWidthToPolygon);
   bp::def("lineStringToPolygon", ::lineStringToPolygon);
   bp::def<double(const lanelet::ConstLanelet &)>(
