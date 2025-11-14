@@ -50,4 +50,6 @@ if(BUILD_TESTING)
   endforeach()
 endif()
 
-ament_package()
+ament_auto_package(INSTALL_TO_SHARE
+  test_map
+)

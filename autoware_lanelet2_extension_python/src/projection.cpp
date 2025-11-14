@@ -37,7 +37,8 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_projection)
     .def(
       "setMGRSCode", (void (lanelet::projection::MGRSProjector::*)(const std::string &))(
                        &lanelet::projection::MGRSProjector::setMGRSCode))
-    .def("isMGRSCodeSet", &lanelet::projection::MGRSProjector::isMGRSCodeSet);
+    .def("isMGRSCodeSet", &lanelet::projection::MGRSProjector::isMGRSCodeSet)
+    .def("getProjectedMGRSGrid", &lanelet::projection::MGRSProjector::getProjectedMGRSGrid);
 
   bp::class_<
     lanelet::projection::TransverseMercatorProjector,
