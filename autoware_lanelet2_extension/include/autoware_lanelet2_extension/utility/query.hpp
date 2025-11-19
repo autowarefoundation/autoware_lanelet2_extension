@@ -37,14 +37,6 @@
 #include <string>
 #include <vector>
 
-namespace impl
-{
-bool getClosestLaneletWithConstrains(
-  const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
-  lanelet::ConstLanelet * closest_lanelet_ptr, const double dist_threshold,
-  const double yaw_threshold);
-}
-
 namespace lanelet::utils::query
 {
 

@@ -36,12 +36,6 @@ lanelet::ConstLineString3d getClosestSegment(
 double getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
 
-geometry_msgs::msg::Pose getClosestCenterPose(
-  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
-
-lanelet::ConstLanelets getConflictingLanelets(
-  const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet);
-
 double getLaneletLength2d(const lanelet::ConstLanelet & lanelet);
 double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence);
 
