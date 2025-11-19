@@ -456,14 +456,10 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def("getConflictingLanelets", impl::getConflictingLanelets);
   bp::def("lineStringWithWidthToPolygon", ::lineStringWithWidthToPolygon);
   bp::def("lineStringToPolygon", ::lineStringToPolygon);
-  bp::def<double(const lanelet::ConstLanelet &)>(
-    "getLaneletLength2d", lanelet::utils::getLaneletLength2d);
-  bp::def<double(const lanelet::ConstLanelet &)>(
-    "getLaneletLength3d", lanelet::utils::getLaneletLength3d);
-  bp::def<double(const lanelet::ConstLanelets &)>(
-    "getLaneletLength2d", lanelet::utils::getLaneletLength2d);
-  bp::def<double(const lanelet::ConstLanelets &)>(
-    "getLaneletLength3d", lanelet::utils::getLaneletLength3d);
+  bp::def<double(const lanelet::ConstLanelet &)>("getLaneletLength2d", impl::getLaneletLength2d);
+  bp::def<double(const lanelet::ConstLanelet &)>("getLaneletLength3d", impl::getLaneletLength3d);
+  bp::def<double(const lanelet::ConstLanelets &)>("getLaneletLength2d", impl::getLaneletLength2d);
+  bp::def<double(const lanelet::ConstLanelets &)>("getLaneletLength3d", impl::getLaneletLength3d);
   bp::def("getArcCoordinates", ::getArcCoordinates);  // depends ros msg
   bp::def("getClosestSegment", impl::getClosestSegment);
   bp::def("getPolygonFromArcLength", lanelet::utils::getPolygonFromArcLength);

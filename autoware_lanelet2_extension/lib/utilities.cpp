@@ -145,6 +145,35 @@ lanelet::ConstLanelets getConflictingLanelets(
   return lanelets;
 }
 
+double getLaneletLength2d(const lanelet::ConstLanelet & lanelet)
+{
+  return static_cast<double>(
+    boost::geometry::length(lanelet::utils::to2D(lanelet.centerline()).basicLineString()));
+}
+
+double getLaneletLength3d(const lanelet::ConstLanelet & lanelet)
+{
+  return static_cast<double>(boost::geometry::length(lanelet.centerline().basicLineString()));
+}
+
+double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence)
+{
+  double length = 0;
+  for (const auto & llt : lanelet_sequence) {
+    length += getLaneletLength2d(llt);
+  }
+  return length;
+}
+
+double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
+{
+  double length = 0;
+  for (const auto & llt : lanelet_sequence) {
+    length += getLaneletLength3d(llt);
+  }
+  return length;
+}
+
 }  // namespace impl
 
 namespace lanelet::utils
@@ -752,7 +781,7 @@ double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence)
 {
   double length = 0;
   for (const auto & llt : lanelet_sequence) {
-    length += getLaneletLength2d(llt);
+    length += ::impl::getLaneletLength2d(llt);
   }
   return length;
 }
@@ -761,7 +790,7 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
 {
   double length = 0;
   for (const auto & llt : lanelet_sequence) {
-    length += getLaneletLength3d(llt);
+    length += ::impl::getLaneletLength3d(llt);
   }
   return length;
 }
@@ -852,7 +881,7 @@ lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2)
 {
   const auto combined_lanelet = combineLaneletsShape(lanelets);
-  const auto total_length = getLaneletLength2d(combined_lanelet);
+  const auto total_length = ::impl::getLaneletLength2d(combined_lanelet);
 
   // make sure that s1, and s2 are between [0, lane_length]
   const auto s1_saturated = std::max(0.0, std::min(s1, total_length));

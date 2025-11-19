@@ -161,8 +161,8 @@ TEST_F(TestSuite, OverwriteLaneletsCenterline)  // NOLINT for gtest
 
 TEST_F(TestSuite, GetLaneletLength)  // NOLINT for gtest
 {
-  double length_2d = lanelet::utils::getLaneletLength2d(road_lanelet);
-  double length_3d = lanelet::utils::getLaneletLength3d(road_lanelet);
+  double length_2d = impl::getLaneletLength2d(road_lanelet);
+  double length_3d = impl::getLaneletLength3d(road_lanelet);
 
   EXPECT_DOUBLE_EQ(length_2d, 1.0);
   EXPECT_DOUBLE_EQ(length_3d, 1.0);
