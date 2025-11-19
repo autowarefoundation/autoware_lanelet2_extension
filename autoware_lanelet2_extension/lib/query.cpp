@@ -1094,7 +1094,7 @@ std::vector<std::deque<lanelet::ConstLanelet>> getSucceedingLaneletSequencesRecu
   std::vector<std::deque<lanelet::ConstLanelet>> succeeding_lanelet_sequences;
 
   const auto next_lanelets = graph->following(lanelet);
-  const double lanelet_length = impl::getLaneletLength3d(lanelet);
+  const double lanelet_length = lanelet::geometry::length3d(lanelet);
 
   // end condition of the recursive function
   if (next_lanelets.empty() || lanelet_length >= length) {
@@ -1121,7 +1121,7 @@ std::vector<std::deque<lanelet::ConstLanelet>> getPrecedingLaneletSequencesRecur
   std::vector<std::deque<lanelet::ConstLanelet>> preceding_lanelet_sequences;
 
   const auto prev_lanelets = graph->previous(lanelet);
-  const double lanelet_length = impl::getLaneletLength3d(lanelet);
+  const double lanelet_length = lanelet::geometry::length3d(lanelet);
 
   // end condition of the recursive function
   if (prev_lanelets.empty() || lanelet_length >= length) {

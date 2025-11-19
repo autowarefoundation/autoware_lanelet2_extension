@@ -121,6 +121,35 @@ lanelet::ConstLanelets getConflictingLanelets(
   return lanelets;
 }
 
+double getLaneletLength2d(const lanelet::ConstLanelet & lanelet)
+{
+  return static_cast<double>(
+    boost::geometry::length(lanelet::utils::to2D(lanelet.centerline()).basicLineString()));
+}
+
+double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence)
+{
+  double length = 0;
+  for (const auto & llt : lanelet_sequence) {
+    length += getLaneletLength2d(llt);
+  }
+  return length;
+}
+
+double getLaneletLength3d(const lanelet::ConstLanelet & lanelet)
+{
+  return static_cast<double>(boost::geometry::length(lanelet.centerline().basicLineString()));
+}
+
+double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
+{
+  double length = 0;
+  for (const auto & llt : lanelet_sequence) {
+    length += getLaneletLength3d(llt);
+  }
+  return length;
+}
+
 /**
  * query.cpp
  */

@@ -88,36 +88,6 @@ double getLaneletAngle(
   return std::atan2(
     segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
 }
-
-double getLaneletLength2d(const lanelet::ConstLanelet & lanelet)
-{
-  return static_cast<double>(
-    boost::geometry::length(lanelet::utils::to2D(lanelet.centerline()).basicLineString()));
-}
-
-double getLaneletLength3d(const lanelet::ConstLanelet & lanelet)
-{
-  return static_cast<double>(boost::geometry::length(lanelet.centerline().basicLineString()));
-}
-
-double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence)
-{
-  double length = 0;
-  for (const auto & llt : lanelet_sequence) {
-    length += getLaneletLength2d(llt);
-  }
-  return length;
-}
-
-double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
-{
-  double length = 0;
-  for (const auto & llt : lanelet_sequence) {
-    length += getLaneletLength3d(llt);
-  }
-  return length;
-}
-
 }  // namespace impl
 
 namespace lanelet::utils
@@ -725,7 +695,7 @@ double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence)
 {
   double length = 0;
   for (const auto & llt : lanelet_sequence) {
-    length += ::impl::getLaneletLength2d(llt);
+    length += lanelet::geometry::length2d(llt);
   }
   return length;
 }
@@ -734,7 +704,7 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
 {
   double length = 0;
   for (const auto & llt : lanelet_sequence) {
-    length += ::impl::getLaneletLength3d(llt);
+    length += lanelet::geometry::length3d(llt);
   }
   return length;
 }
@@ -825,7 +795,7 @@ lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2)
 {
   const auto combined_lanelet = combineLaneletsShape(lanelets);
-  const auto total_length = ::impl::getLaneletLength2d(combined_lanelet);
+  const auto total_length = lanelet::geometry::length2d(combined_lanelet);
 
   // make sure that s1, and s2 are between [0, lane_length]
   const auto s1_saturated = std::max(0.0, std::min(s1, total_length));

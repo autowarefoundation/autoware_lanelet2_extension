@@ -35,12 +35,6 @@ lanelet::ConstLineString3d getClosestSegment(
 
 double getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
-
-double getLaneletLength2d(const lanelet::ConstLanelet & lanelet);
-double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence);
-
-double getLaneletLength3d(const lanelet::ConstLanelet & lanelet);
-double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence);
 }  // namespace impl
 
 namespace lanelet::utils
