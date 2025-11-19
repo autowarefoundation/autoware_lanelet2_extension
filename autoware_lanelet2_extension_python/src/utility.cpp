@@ -25,6 +25,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
+#include <lanelet2_core/geometry/Lanelet.h>
 #include <lanelet2_core/geometry/Polygon.h>
 #include <lanelet2_core/primitives/Lanelet.h>
 #include <lanelet2_python/internal/converter.h>
@@ -121,31 +122,20 @@ lanelet::ConstLanelets getConflictingLanelets(
   return lanelets;
 }
 
-double getLaneletLength2d(const lanelet::ConstLanelet & lanelet)
-{
-  return static_cast<double>(
-    boost::geometry::length(lanelet::utils::to2D(lanelet.centerline()).basicLineString()));
-}
-
 double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence)
 {
   double length = 0;
   for (const auto & llt : lanelet_sequence) {
-    length += getLaneletLength2d(llt);
+    length += lanelet::geometry::length2d(llt);
   }
   return length;
-}
-
-double getLaneletLength3d(const lanelet::ConstLanelet & lanelet)
-{
-  return static_cast<double>(boost::geometry::length(lanelet.centerline().basicLineString()));
 }
 
 double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
 {
   double length = 0;
   for (const auto & llt : lanelet_sequence) {
-    length += getLaneletLength3d(llt);
+    length += lanelet::geometry::length3d(llt);
   }
   return length;
 }
@@ -643,8 +633,8 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def("getConflictingLanelets", impl::getConflictingLanelets);
   bp::def("lineStringWithWidthToPolygon", ::lineStringWithWidthToPolygon);
   bp::def("lineStringToPolygon", ::lineStringToPolygon);
-  bp::def<double(const lanelet::ConstLanelet &)>("getLaneletLength2d", impl::getLaneletLength2d);
-  bp::def<double(const lanelet::ConstLanelet &)>("getLaneletLength3d", impl::getLaneletLength3d);
+  bp::def<double(const lanelet::ConstLanelet &)>("getLaneletLength2d", lanelet::geometry::length2d);
+  bp::def<double(const lanelet::ConstLanelet &)>("getLaneletLength3d", lanelet::geometry::length3d);
   bp::def<double(const lanelet::ConstLanelets &)>("getLaneletLength2d", impl::getLaneletLength2d);
   bp::def<double(const lanelet::ConstLanelets &)>("getLaneletLength3d", impl::getLaneletLength3d);
   bp::def("getArcCoordinates", ::getArcCoordinates);  // depends ros msg
