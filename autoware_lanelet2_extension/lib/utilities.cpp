@@ -47,6 +47,106 @@
 #include <utility>
 #include <vector>
 
+namespace impl
+{
+lanelet::ConstLineString3d getClosestSegment(
+  const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring)
+{
+  if (linestring.size() < 2) {
+    return lanelet::LineString3d();
+  }
+
+  lanelet::ConstLineString3d closest_segment;
+  double min_distance = std::numeric_limits<double>::max();
+
+  for (size_t i = 1; i < linestring.size(); i++) {
+    lanelet::BasicPoint3d prev_basic_pt = linestring[i - 1].basicPoint();
+    lanelet::BasicPoint3d current_basic_pt = linestring[i].basicPoint();
+
+    lanelet::Point3d prev_pt(
+      lanelet::InvalId, prev_basic_pt.x(), prev_basic_pt.y(), prev_basic_pt.z());
+    lanelet::Point3d current_pt(
+      lanelet::InvalId, current_basic_pt.x(), current_basic_pt.y(), current_basic_pt.z());
+
+    lanelet::LineString3d current_segment(lanelet::InvalId, {prev_pt, current_pt});
+    double distance = lanelet::geometry::distance2d(
+      lanelet::utils::to2D(current_segment).basicLineString(), search_pt);
+    if (distance < min_distance) {
+      closest_segment = current_segment;
+      min_distance = distance;
+    }
+  }
+  return closest_segment;
+}
+
+double getLaneletAngle(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point)
+{
+  lanelet::BasicPoint2d llt_search_point(search_point.x, search_point.y);
+  lanelet::ConstLineString3d segment =
+    ::impl::getClosestSegment(llt_search_point, lanelet.centerline());
+  return std::atan2(
+    segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
+}
+
+geometry_msgs::msg::Pose getClosestCenterPose(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point)
+{
+  lanelet::BasicPoint2d llt_search_point(search_point.x, search_point.y);
+
+  if (lanelet.centerline().size() == 1) {
+    geometry_msgs::msg::Pose closest_pose;
+    closest_pose.position.x = lanelet.centerline().front().x();
+    closest_pose.position.y = lanelet.centerline().front().y();
+    closest_pose.position.z = search_point.z;
+    closest_pose.orientation.x = 0.0;
+    closest_pose.orientation.y = 0.0;
+    closest_pose.orientation.z = 0.0;
+    closest_pose.orientation.w = 1.0;
+    return closest_pose;
+  }
+
+  lanelet::ConstLineString3d segment = getClosestSegment(llt_search_point, lanelet.centerline());
+  if (segment.empty()) {
+    return geometry_msgs::msg::Pose{};
+  }
+
+  const Eigen::Vector2d direction(
+    (segment.back().basicPoint2d() - segment.front().basicPoint2d()).normalized());
+  const Eigen::Vector2d xf(segment.front().basicPoint2d());
+  const Eigen::Vector2d x(search_point.x, search_point.y);
+  const Eigen::Vector2d p = xf + (x - xf).dot(direction) * direction;
+
+  geometry_msgs::msg::Pose closest_pose;
+  closest_pose.position.x = p.x();
+  closest_pose.position.y = p.y();
+  closest_pose.position.z = search_point.z;
+
+  const double lane_yaw = getLaneletAngle(lanelet, search_point);
+  tf2::Quaternion q;
+  q.setRPY(0, 0, lane_yaw);
+  closest_pose.orientation = tf2::toMsg(q);
+
+  return closest_pose;
+}
+
+lanelet::ConstLanelets getConflictingLanelets(
+  const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet)
+{
+  const auto & llt_or_areas = graph->conflicting(lanelet);
+  lanelet::ConstLanelets lanelets;
+  lanelets.reserve(llt_or_areas.size());
+  for (const auto & l_or_a : llt_or_areas) {
+    auto llt_opt = l_or_a.lanelet();
+    if (!!llt_opt) {
+      lanelets.push_back(llt_opt.get());
+    }
+  }
+  return lanelets;
+}
+
+}  // namespace impl
+
 namespace lanelet::utils
 {
 namespace
@@ -783,7 +883,8 @@ double getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point)
 {
   lanelet::BasicPoint2d llt_search_point(search_point.x, search_point.y);
-  lanelet::ConstLineString3d segment = getClosestSegment(llt_search_point, lanelet.centerline());
+  lanelet::ConstLineString3d segment =
+    ::impl::getClosestSegment(llt_search_point, lanelet.centerline());
   return std::atan2(
     segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
 }
@@ -814,7 +915,8 @@ geometry_msgs::msg::Pose getClosestCenterPose(
     return closest_pose;
   }
 
-  lanelet::ConstLineString3d segment = getClosestSegment(llt_search_point, lanelet.centerline());
+  lanelet::ConstLineString3d segment =
+    ::impl::getClosestSegment(llt_search_point, lanelet.centerline());
   if (segment.empty()) {
     return geometry_msgs::msg::Pose{};
   }
@@ -830,7 +932,7 @@ geometry_msgs::msg::Pose getClosestCenterPose(
   closest_pose.position.y = p.y();
   closest_pose.position.z = search_point.z;
 
-  const double lane_yaw = getLaneletAngle(lanelet, search_point);
+  const double lane_yaw = ::impl::getLaneletAngle(lanelet, search_point);
   tf2::Quaternion q;
   q.setRPY(0, 0, lane_yaw);
   closest_pose.orientation = tf2::toMsg(q);

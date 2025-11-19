@@ -37,6 +37,14 @@
 #include <string>
 #include <vector>
 
+namespace impl
+{
+bool getClosestLaneletWithConstrains(
+  const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
+  lanelet::ConstLanelet * closest_lanelet_ptr, const double dist_threshold,
+  const double yaw_threshold);
+}
+
 namespace lanelet::utils::query
 {
 
@@ -284,6 +292,7 @@ bool getClosestLanelet(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelet * closest_lanelet_ptr);
 
+[[deprecated("please use autoware::lanelet2_utils::get_closest_lanelet_within_constraint instead")]]
 bool getClosestLaneletWithConstrains(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelet * closest_lanelet_ptr,

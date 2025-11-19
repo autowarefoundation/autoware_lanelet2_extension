@@ -79,7 +79,7 @@ int main(int argc, char ** argv)
     std::set<lanelet::Id> conflicting_ids;
     for (auto && right_of_way : right_of_ways) {
       const std::vector<lanelet::ConstLanelet> & conflicting_lanelets =
-        lanelet::utils::getConflictingLanelets(routing_graph_ptr, right_of_way);
+        impl::getConflictingLanelets(routing_graph_ptr, right_of_way);
       for (auto && conflict : conflicting_lanelets) conflicting_ids.insert(conflict.id());
     }
 

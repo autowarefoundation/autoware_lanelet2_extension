@@ -28,6 +28,21 @@
 
 #include <map>
 
+namespace impl
+{
+lanelet::ConstLineString3d getClosestSegment(
+  const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
+
+double getLaneletAngle(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
+
+geometry_msgs::msg::Pose getClosestCenterPose(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
+
+lanelet::ConstLanelets getConflictingLanelets(
+  const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet);
+}  // namespace impl
+
 namespace lanelet::utils
 {
 
@@ -69,6 +84,7 @@ void overwriteLaneletsCenterlineWithWaypoints(
   lanelet::LaneletMapPtr lanelet_map, const double resolution = 5.0,
   const bool force_overwrite = false);
 
+[[deprecated("please use autoware::lanelet2_utils::get_conflicting_lanelets instead")]]
 lanelet::ConstLanelets getConflictingLanelets(
   const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet);
 
@@ -97,16 +113,19 @@ lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 
+[[deprecated("please use autoware::lanelet2_utils::get_closest_segment instead")]]
 lanelet::ConstLineString3d getClosestSegment(
   const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
 
 lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2);
+[[deprecated("please use autoware::lanelet2_utils::get_lanelet_angle instead")]]
 double getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
 bool isInLanelet(
   const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
   const double radius = 0.0);
+[[deprecated("please use autoware::lanelet2_utils::get_closest_center_pose instead")]]
 geometry_msgs::msg::Pose getClosestCenterPose(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
 double getLateralDistanceToCenterline(

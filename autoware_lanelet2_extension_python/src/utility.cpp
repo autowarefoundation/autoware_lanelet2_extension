@@ -94,7 +94,7 @@ double getLaneletAngle(const lanelet::ConstLanelet & lanelet, const std::string 
   geometry_msgs::msg::Point point;
   static rclcpp::Serialization<geometry_msgs::msg::Point> serializer;
   serializer.deserialize_message(&serialized_msg, &point);
-  return lanelet::utils::getLaneletAngle(lanelet, point);
+  return ::impl::getLaneletAngle(lanelet, point);
 }
 
 bool isInLanelet(
@@ -130,7 +130,7 @@ std::vector<double> getClosestCenterPose(
   geometry_msgs::msg::Point search_point;
   static rclcpp::Serialization<geometry_msgs::msg::Point> serializer_point;
   serializer_point.deserialize_message(&serialized_point_msg, &search_point);
-  const geometry_msgs::msg::Pose pose = lanelet::utils::getClosestCenterPose(lanelet, search_point);
+  const geometry_msgs::msg::Pose pose = impl::getClosestCenterPose(lanelet, search_point);
   // NOTE: it was difficult to return the deserialized pose_byte and serialize the pose_byte on
   // python-side. So this function returns [*position, *quaternion] as double array
   const auto & xyz = pose.position;
@@ -337,7 +337,7 @@ lanelet::Optional<lanelet::ConstLanelet> getClosestLaneletWithConstrains(
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
   lanelet::ConstLanelet closest_lanelet{};
-  if (lanelet::utils::query::getClosestLaneletWithConstrains(
+  if (impl::getClosestLaneletWithConstrains(
         lanelets, pose, &closest_lanelet, dist_threshold, yaw_threshold)) {
     return closest_lanelet;
   }
@@ -453,7 +453,7 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def(
     "overwriteLaneletsCenterline", lanelet::utils::overwriteLaneletsCenterline,
     overwriteLaneletsCenterline_overload());
-  bp::def("getConflictingLanelets", lanelet::utils::getConflictingLanelets);
+  bp::def("getConflictingLanelets", impl::getConflictingLanelets);
   bp::def("lineStringWithWidthToPolygon", ::lineStringWithWidthToPolygon);
   bp::def("lineStringToPolygon", ::lineStringToPolygon);
   bp::def<double(const lanelet::ConstLanelet &)>(
@@ -465,7 +465,7 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def<double(const lanelet::ConstLanelets &)>(
     "getLaneletLength3d", lanelet::utils::getLaneletLength3d);
   bp::def("getArcCoordinates", ::getArcCoordinates);  // depends ros msg
-  bp::def("getClosestSegment", lanelet::utils::getClosestSegment);
+  bp::def("getClosestSegment", impl::getClosestSegment);
   bp::def("getPolygonFromArcLength", lanelet::utils::getPolygonFromArcLength);
   bp::def("getLaneletAngle", ::getLaneletAngle);                  // depends on ros msg
   bp::def("isInLanelet", ::isInLanelet, isInLanelet_overload());  // depends ros msg
