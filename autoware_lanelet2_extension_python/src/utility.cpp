@@ -25,16 +25,193 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
+#include <lanelet2_core/geometry/Lanelet.h>
 #include <lanelet2_core/geometry/Polygon.h>
 #include <lanelet2_core/primitives/Lanelet.h>
 #include <lanelet2_python/internal/converter.h>
 
+#ifdef ROS_DISTRO_GALACTIC
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#else
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#endif
+#include <tf2/utils.hpp>
+
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace bp = boost::python;
+
+namespace impl
+{
+inline double normalize_radian(const double rad)
+{
+  constexpr double pi = 3.14159265358979323846;  // To be replaced by std::numbers::pi in C++20
+  constexpr double min_rad = -pi;
+  const auto max_rad = min_rad + 2 * pi;
+
+  const auto value = std::fmod(rad, 2 * pi);
+  if (min_rad <= value && value < max_rad) {
+    return value;
+  }
+
+  return value - std::copysign(2 * pi, value);
+}
+
+/**
+ * utilities.cpp
+ */
+
+geometry_msgs::msg::Pose getClosestCenterPose(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point)
+{
+  lanelet::BasicPoint2d llt_search_point(search_point.x, search_point.y);
+
+  if (lanelet.centerline().size() == 1) {
+    geometry_msgs::msg::Pose closest_pose;
+    closest_pose.position.x = lanelet.centerline().front().x();
+    closest_pose.position.y = lanelet.centerline().front().y();
+    closest_pose.position.z = search_point.z;
+    closest_pose.orientation.x = 0.0;
+    closest_pose.orientation.y = 0.0;
+    closest_pose.orientation.z = 0.0;
+    closest_pose.orientation.w = 1.0;
+    return closest_pose;
+  }
+
+  lanelet::ConstLineString3d segment = getClosestSegment(llt_search_point, lanelet.centerline());
+  if (segment.empty()) {
+    return geometry_msgs::msg::Pose{};
+  }
+
+  const Eigen::Vector2d direction(
+    (segment.back().basicPoint2d() - segment.front().basicPoint2d()).normalized());
+  const Eigen::Vector2d xf(segment.front().basicPoint2d());
+  const Eigen::Vector2d x(search_point.x, search_point.y);
+  const Eigen::Vector2d p = xf + (x - xf).dot(direction) * direction;
+
+  geometry_msgs::msg::Pose closest_pose;
+  closest_pose.position.x = p.x();
+  closest_pose.position.y = p.y();
+  closest_pose.position.z = search_point.z;
+
+  const double lane_yaw = getLaneletAngle(lanelet, search_point);
+  tf2::Quaternion q;
+  q.setRPY(0, 0, lane_yaw);
+  closest_pose.orientation = tf2::toMsg(q);
+
+  return closest_pose;
+}
+
+lanelet::ConstLanelets getConflictingLanelets(
+  const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet)
+{
+  const auto & llt_or_areas = graph->conflicting(lanelet);
+  lanelet::ConstLanelets lanelets;
+  lanelets.reserve(llt_or_areas.size());
+  for (const auto & l_or_a : llt_or_areas) {
+    auto llt_opt = l_or_a.lanelet();
+    if (!!llt_opt) {
+      lanelets.push_back(llt_opt.get());
+    }
+  }
+  return lanelets;
+}
+
+double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence)
+{
+  double length = 0;
+  for (const auto & llt : lanelet_sequence) {
+    length += lanelet::geometry::length2d(llt);
+  }
+  return length;
+}
+
+double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
+{
+  double length = 0;
+  for (const auto & llt : lanelet_sequence) {
+    length += lanelet::geometry::length3d(llt);
+  }
+  return length;
+}
+
+/**
+ * query.cpp
+ */
+
+bool getClosestLaneletWithConstrains(
+  const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
+  lanelet::ConstLanelet * closest_lanelet_ptr, const double dist_threshold,
+  const double yaw_threshold)
+{
+  bool found = false;
+
+  if (closest_lanelet_ptr == nullptr) {
+    std::cerr << "argument closest_lanelet_ptr is null! Failed to find closest lanelet"
+              << std::endl;
+    return found;
+  }
+
+  if (lanelets.empty()) {
+    return found;
+  }
+
+  lanelet::BasicPoint2d search_point(search_pose.position.x, search_pose.position.y);
+
+  // find by distance
+  std::vector<std::pair<lanelet::ConstLanelet, double>> candidate_lanelets;
+  {
+    for (const auto & llt : lanelets) {
+      double distance = boost::geometry::distance(llt.polygon2d().basicPolygon(), search_point);
+
+      if (distance <= dist_threshold) {
+        candidate_lanelets.emplace_back(llt, distance);
+      }
+    }
+
+    if (!candidate_lanelets.empty()) {
+      // sort by distance
+      std::sort(
+        candidate_lanelets.begin(), candidate_lanelets.end(),
+        [](
+          const std::pair<lanelet::ConstLanelet, double> & x,
+          std::pair<lanelet::ConstLanelet, double> & y) { return x.second < y.second; });
+    } else {
+      return found;
+    }
+  }
+
+  // find closest lanelet within yaw_threshold
+  {
+    double min_angle = std::numeric_limits<double>::max();
+    double min_distance = std::numeric_limits<double>::max();
+    double pose_yaw = tf2::getYaw(search_pose.orientation);
+    for (const auto & llt_pair : candidate_lanelets) {
+      const auto & distance = llt_pair.second;
+
+      double lanelet_angle = getLaneletAngle(llt_pair.first, search_pose.position);
+      double angle_diff = std::abs(normalize_radian(lanelet_angle - pose_yaw));
+
+      if (angle_diff > std::abs(yaw_threshold)) continue;
+      if (min_distance < distance) break;
+
+      if (angle_diff < min_angle) {
+        min_angle = angle_diff;
+        min_distance = distance;
+        *closest_lanelet_ptr = llt_pair.first;
+        found = true;
+      }
+    }
+  }
+
+  return found;
+}
+}  // namespace impl
 
 namespace
 {
@@ -456,14 +633,10 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def("getConflictingLanelets", impl::getConflictingLanelets);
   bp::def("lineStringWithWidthToPolygon", ::lineStringWithWidthToPolygon);
   bp::def("lineStringToPolygon", ::lineStringToPolygon);
-  bp::def<double(const lanelet::ConstLanelet &)>(
-    "getLaneletLength2d", lanelet::utils::getLaneletLength2d);
-  bp::def<double(const lanelet::ConstLanelet &)>(
-    "getLaneletLength3d", lanelet::utils::getLaneletLength3d);
-  bp::def<double(const lanelet::ConstLanelets &)>(
-    "getLaneletLength2d", lanelet::utils::getLaneletLength2d);
-  bp::def<double(const lanelet::ConstLanelets &)>(
-    "getLaneletLength3d", lanelet::utils::getLaneletLength3d);
+  bp::def<double(const lanelet::ConstLanelet &)>("getLaneletLength2d", lanelet::geometry::length2d);
+  bp::def<double(const lanelet::ConstLanelet &)>("getLaneletLength3d", lanelet::geometry::length3d);
+  bp::def<double(const lanelet::ConstLanelets &)>("getLaneletLength2d", impl::getLaneletLength2d);
+  bp::def<double(const lanelet::ConstLanelets &)>("getLaneletLength3d", impl::getLaneletLength3d);
   bp::def("getArcCoordinates", ::getArcCoordinates);  // depends ros msg
   bp::def("getClosestSegment", impl::getClosestSegment);
   bp::def("getPolygonFromArcLength", lanelet::utils::getPolygonFromArcLength);

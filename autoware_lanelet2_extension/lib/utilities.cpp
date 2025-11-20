@@ -88,63 +88,6 @@ double getLaneletAngle(
   return std::atan2(
     segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
 }
-
-geometry_msgs::msg::Pose getClosestCenterPose(
-  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point)
-{
-  lanelet::BasicPoint2d llt_search_point(search_point.x, search_point.y);
-
-  if (lanelet.centerline().size() == 1) {
-    geometry_msgs::msg::Pose closest_pose;
-    closest_pose.position.x = lanelet.centerline().front().x();
-    closest_pose.position.y = lanelet.centerline().front().y();
-    closest_pose.position.z = search_point.z;
-    closest_pose.orientation.x = 0.0;
-    closest_pose.orientation.y = 0.0;
-    closest_pose.orientation.z = 0.0;
-    closest_pose.orientation.w = 1.0;
-    return closest_pose;
-  }
-
-  lanelet::ConstLineString3d segment = getClosestSegment(llt_search_point, lanelet.centerline());
-  if (segment.empty()) {
-    return geometry_msgs::msg::Pose{};
-  }
-
-  const Eigen::Vector2d direction(
-    (segment.back().basicPoint2d() - segment.front().basicPoint2d()).normalized());
-  const Eigen::Vector2d xf(segment.front().basicPoint2d());
-  const Eigen::Vector2d x(search_point.x, search_point.y);
-  const Eigen::Vector2d p = xf + (x - xf).dot(direction) * direction;
-
-  geometry_msgs::msg::Pose closest_pose;
-  closest_pose.position.x = p.x();
-  closest_pose.position.y = p.y();
-  closest_pose.position.z = search_point.z;
-
-  const double lane_yaw = getLaneletAngle(lanelet, search_point);
-  tf2::Quaternion q;
-  q.setRPY(0, 0, lane_yaw);
-  closest_pose.orientation = tf2::toMsg(q);
-
-  return closest_pose;
-}
-
-lanelet::ConstLanelets getConflictingLanelets(
-  const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet)
-{
-  const auto & llt_or_areas = graph->conflicting(lanelet);
-  lanelet::ConstLanelets lanelets;
-  lanelets.reserve(llt_or_areas.size());
-  for (const auto & l_or_a : llt_or_areas) {
-    auto llt_opt = l_or_a.lanelet();
-    if (!!llt_opt) {
-      lanelets.push_back(llt_opt.get());
-    }
-  }
-  return lanelets;
-}
-
 }  // namespace impl
 
 namespace lanelet::utils
@@ -752,7 +695,7 @@ double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence)
 {
   double length = 0;
   for (const auto & llt : lanelet_sequence) {
-    length += getLaneletLength2d(llt);
+    length += lanelet::geometry::length2d(llt);
   }
   return length;
 }
@@ -761,7 +704,7 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
 {
   double length = 0;
   for (const auto & llt : lanelet_sequence) {
-    length += getLaneletLength3d(llt);
+    length += lanelet::geometry::length3d(llt);
   }
   return length;
 }
@@ -852,7 +795,7 @@ lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2)
 {
   const auto combined_lanelet = combineLaneletsShape(lanelets);
-  const auto total_length = getLaneletLength2d(combined_lanelet);
+  const auto total_length = lanelet::geometry::length2d(combined_lanelet);
 
   // make sure that s1, and s2 are between [0, lane_length]
   const auto s1_saturated = std::max(0.0, std::min(s1, total_length));

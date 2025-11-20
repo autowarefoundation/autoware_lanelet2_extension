@@ -35,12 +35,6 @@ lanelet::ConstLineString3d getClosestSegment(
 
 double getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
-
-geometry_msgs::msg::Pose getClosestCenterPose(
-  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
-
-lanelet::ConstLanelets getConflictingLanelets(
-  const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet);
 }  // namespace impl
 
 namespace lanelet::utils
@@ -94,9 +88,16 @@ bool lineStringWithWidthToPolygon(
 bool lineStringToPolygon(
   const lanelet::ConstLineString3d & linestring, lanelet::ConstPolygon3d * polygon);
 
+[[deprecated("please use lanelet::geometry::length2d instead")]]
 double getLaneletLength2d(const lanelet::ConstLanelet & lanelet);
-double getLaneletLength3d(const lanelet::ConstLanelet & lanelet);
+
+[[deprecated("please use lanelet::geometry::length2d instead")]]
 double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence);
+
+[[deprecated("please use lanelet::geometry::length3d instead")]]
+double getLaneletLength3d(const lanelet::ConstLanelet & lanelet);
+
+[[deprecated("please use lanelet::geometry::length3d instead")]]
 double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence);
 
 lanelet::ArcCoordinates getArcCoordinates(
