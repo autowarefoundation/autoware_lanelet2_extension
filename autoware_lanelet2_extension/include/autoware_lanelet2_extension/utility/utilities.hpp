@@ -90,11 +90,13 @@ bool lineStringToPolygon(
 
 [[deprecated("please use lanelet::geometry::length2d instead")]]
 double getLaneletLength2d(const lanelet::ConstLanelet & lanelet);
+
 [[deprecated("please use lanelet::geometry::length2d instead")]]
 double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence);
 
 [[deprecated("please use lanelet::geometry::length3d instead")]]
 double getLaneletLength3d(const lanelet::ConstLanelet & lanelet);
+
 [[deprecated("please use lanelet::geometry::length3d instead")]]
 double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence);
 
