@@ -45,8 +45,9 @@ using LaneletsWithRegulatoryElements = PrimitivesWithRegulatoryElement<Lanelet>;
 
 bool isValid(const LineStrings3d & lss)
 {
-  BasicPolygon2d ls(utils::concatenate(
-    lss, [](const auto & elem) { return traits::to2D(elem).basicLineString(); }));
+  BasicPolygon2d ls(utils::concatenate(lss, [](const auto & elem) {
+    return traits::to2D(elem).basicLineString();
+  }));
   return boost::geometry::is_valid(ls);
 }
 
