@@ -182,7 +182,7 @@ AreasWithRegulatoryElements MultiFileLoader::loadAreas(const lanelet::osm::Relat
 
     auto outerRing = getOuterRing(arElem);
     if (outerRing.empty()) {
-      // getOuter ring repors errors for us
+      // getOuter ring reports errors for us
       continue;
     }
 
@@ -396,7 +396,7 @@ std::vector<LineStrings3d> MultiFileLoader::assembleBoundary(
 
     // check if we closed the ring
     if (currRing.back().back().id() == currRing.front().front().id()) {
-      // wohoo. Check the clockwise requirement.
+      // Check the clockwise requirement.
       if (!isValid(currRing)) {
         reverse(currRing);
         if (!isValid(currRing)) {
@@ -466,7 +466,7 @@ lanelet::LaneletMapPtr MultiOsmParser::parse(
       auto result = doc.load_file(file_name.c_str());
       if (!result) {
         throw lanelet::ParseError(
-          "Errors occured while parsing osm file: "s + result.description());
+          "Errors occurred while parsing osm file: "s + result.description());
       }
       testAndPrintLocaleWarning(osmReadErrors);
 
@@ -501,7 +501,7 @@ std::unique_ptr<LaneletMap> MultiOsmParser::parse(
   pugi::xml_document doc;
   auto result = doc.load_file(filename.c_str());
   if (!result) {
-    throw lanelet::ParseError("Errors occured while parsing osm file: "s + result.description());
+    throw lanelet::ParseError("Errors occurred while parsing osm file: "s + result.description());
   }
   osm::Errors osmReadErrors;
   testAndPrintLocaleWarning(osmReadErrors);
