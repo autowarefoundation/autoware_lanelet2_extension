@@ -26,7 +26,13 @@
 #include <lanelet2_projection/UTM.h>
 
 #include <iostream>
+#include <map>
+#include <memory>
 #include <sstream>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 namespace lanelet
 {
