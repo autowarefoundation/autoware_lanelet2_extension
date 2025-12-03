@@ -56,7 +56,9 @@ void toBinMsg(const lanelet::LaneletMapPtr & map, autoware_map_msgs::msg::Lanele
  */
 [[deprecated("please use autoware::lanelet2_utils::from_autoware_map_msgs instead")]]
 void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map);
-[[deprecated("please use autoware::lanelet2_utils::from_autoware_map_msgs instead")]]
+[[deprecated(
+  "please use autoware::lanelet2_utils::from_autoware_map_msgs and "
+  "autoware::lanelet2_utils::instantiate_routing_graph_and_traffic_rules instead")]]
 void fromBinMsg(
   const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map,
   lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
