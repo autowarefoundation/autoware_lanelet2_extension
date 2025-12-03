@@ -31,7 +31,7 @@ std::vector<lanelet::Polygon3d> parseLandmarkPolygons(
   const std::string & target_subtype)
 {
   lanelet::LaneletMapPtr lanelet_map_ptr{std::make_shared<lanelet::LaneletMap>()};
-  lanelet::utils::conversion::fromBinMsg(*msg, lanelet_map_ptr);
+  impl::fromBinMsg(*msg, lanelet_map_ptr);
 
   std::vector<lanelet::Polygon3d> landmarks;
 

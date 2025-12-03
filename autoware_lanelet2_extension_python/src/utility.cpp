@@ -577,7 +577,7 @@ lanelet::LaneletMapPtr fromBinMsg_wrapper(const std::string & msg_byte)
   serializer.deserialize_message(&serialized_msg, &msg);
 
   auto map = std::make_shared<lanelet::LaneletMap>();
-  lanelet::utils::conversion::fromBinMsg(msg, map);
+  impl::fromBinMsg(msg, map);
   return map;
 }
 
