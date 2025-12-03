@@ -28,6 +28,15 @@
 #include <lanelet2_routing/Forward.h>
 #include <lanelet2_traffic_rules/TrafficRulesFactory.h>
 
+namespace impl
+{
+void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map);
+void fromBinMsg(
+  const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map,
+  lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
+  lanelet::routing::RoutingGraphPtr * routing_graph);
+}  // namespace impl
+
 namespace lanelet::utils::conversion
 {
 /**
@@ -36,6 +45,7 @@ namespace lanelet::utils::conversion
  * @param map [lanelet map data]
  * @param msg [converted ROS message. Only "data" field is filled]
  */
+[[deprecated("please use autoware::lanelet2_utils::to_autoware_map_msgs instead")]]
 void toBinMsg(const lanelet::LaneletMapPtr & map, autoware_map_msgs::msg::LaneletMapBin * msg);
 
 /**
@@ -44,7 +54,9 @@ void toBinMsg(const lanelet::LaneletMapPtr & map, autoware_map_msgs::msg::Lanele
  * @param msg [ROS message for lanelet map]
  * @param map [Converted lanelet2 data]
  */
+[[deprecated("please use autoware::lanelet2_utils::from_autoware_map_msgs instead")]]
 void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map);
+[[deprecated("please use autoware::lanelet2_utils::from_autoware_map_msgs instead")]]
 void fromBinMsg(
   const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map,
   lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
