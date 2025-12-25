@@ -30,11 +30,7 @@
 
 namespace impl
 {
-void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map);
-void fromBinMsg(
-  const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map,
-  lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
-  lanelet::routing::RoutingGraphPtr * routing_graph);
+lanelet::LaneletMapPtr from_autoware_map_msgs(const autoware_map_msgs::msg::LaneletMapBin & msg);
 }  // namespace impl
 
 namespace lanelet::utils::conversion
