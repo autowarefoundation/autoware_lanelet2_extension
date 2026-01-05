@@ -41,7 +41,8 @@
 
 namespace impl
 {
-void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
+static void fromBinMsg(
+  const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
 {
   if (!map) {
     std::cerr << __FUNCTION__ << ": map is null pointer!";

@@ -14,8 +14,6 @@
 
 #include "autoware_lanelet2_extension/localization/landmark.hpp"
 
-#include "autoware_lanelet2_extension/utility/message_conversion.hpp"
-
 #include <Eigen/Core>
 
 #include <boost/archive/binary_iarchive.hpp>
@@ -30,7 +28,8 @@
 
 namespace impl
 {
-void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
+static void fromBinMsg(
+  const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
 {
   if (!map) {
     std::cerr << __FUNCTION__ << ": map is null pointer!";
