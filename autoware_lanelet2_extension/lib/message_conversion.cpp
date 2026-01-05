@@ -41,25 +41,23 @@
 
 namespace impl
 {
-// This function is already ported to autoware_lanelet2_utils.
-// This is a copy for internal use, and autoware_rviz_plugin.
-// Please use autoware::lanelet2_utils::from_autoware_map_msgs instead.
-lanelet::LaneletMapPtr from_autoware_map_msgs(const autoware_map_msgs::msg::LaneletMapBin & msg)
+void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
 {
+  if (!map) {
+    std::cerr << __FUNCTION__ << ": map is null pointer!";
+    return;
+  }
+
   std::string data_str;
   data_str.assign(msg.data.begin(), msg.data.end());
 
   std::stringstream ss;
   ss << data_str;
   boost::archive::binary_iarchive oa(ss);
-
-  auto lanelet_map_ptr = std::make_shared<lanelet::LaneletMap>();
-  oa >> *lanelet_map_ptr;
+  oa >> *map;
   lanelet::Id id_counter = 0;
   oa >> id_counter;
   lanelet::utils::registerId(id_counter);
-
-  return lanelet_map_ptr;
 }
 
 void fromBinMsg(
@@ -67,7 +65,7 @@ void fromBinMsg(
   lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
   lanelet::routing::RoutingGraphPtr * routing_graph)
 {
-  map = from_autoware_map_msgs(msg);
+  fromBinMsg(msg, map);
   *traffic_rules = lanelet::traffic_rules::TrafficRulesFactory::create(
     lanelet::Locations::Germany, lanelet::Participants::Vehicle);
   *routing_graph = lanelet::routing::RoutingGraph::build(*map, **traffic_rules);
@@ -120,7 +118,7 @@ void fromBinMsg(
   lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
   lanelet::routing::RoutingGraphPtr * routing_graph)
 {
-  map = ::impl::from_autoware_map_msgs(msg);
+  ::impl::fromBinMsg(msg, map);
   *traffic_rules = lanelet::traffic_rules::TrafficRulesFactory::create(
     lanelet::Locations::Germany, lanelet::Participants::Vehicle);
   *routing_graph = lanelet::routing::RoutingGraph::build(*map, **traffic_rules);

@@ -28,11 +28,6 @@
 #include <lanelet2_routing/Forward.h>
 #include <lanelet2_traffic_rules/TrafficRulesFactory.h>
 
-namespace impl
-{
-lanelet::LaneletMapPtr from_autoware_map_msgs(const autoware_map_msgs::msg::LaneletMapBin & msg);
-}  // namespace impl
-
 namespace lanelet::utils::conversion
 {
 /**
