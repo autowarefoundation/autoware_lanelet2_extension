@@ -561,26 +561,6 @@ lanelet::ConstLanelets getCurrentLanelets_pose(
   return current_lanelets;
 }
 
-lanelet::LaneletMapPtr fromBinMsg_wrapper(const std::string & msg_byte)
-{
-  rclcpp::SerializedMessage serialized_msg;
-  static constexpr size_t message_header_length = 8u;
-  serialized_msg.reserve(message_header_length + msg_byte.size());
-  serialized_msg.get_rcl_serialized_message().buffer_length = msg_byte.size();
-  for (size_t i = 0; i < msg_byte.size(); ++i) {
-    // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    serialized_msg.get_rcl_serialized_message().buffer[i] = msg_byte[i];
-    // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-  }
-  autoware_map_msgs::msg::LaneletMapBin msg;
-  static rclcpp::Serialization<autoware_map_msgs::msg::LaneletMapBin> serializer;
-  serializer.deserialize_message(&serialized_msg, &msg);
-
-  auto map = std::make_shared<lanelet::LaneletMap>();
-  lanelet::utils::conversion::fromBinMsg(msg, map);
-  return map;
-}
-
 }  // namespace
 
 // for handling functions with default arguments
@@ -774,7 +754,6 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def(
     "getPrecedingLaneletSequences", lanelet::utils::query::getPrecedingLaneletSequences,
     getPrecedingLaneletSequences_overload());
-  bp::def("fromBinMsg", fromBinMsg_wrapper);
 }
 
 // NOLINTEND(readability-identifier-naming)

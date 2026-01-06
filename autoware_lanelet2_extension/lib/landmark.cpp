@@ -14,14 +14,40 @@
 
 #include "autoware_lanelet2_extension/localization/landmark.hpp"
 
-#include "autoware_lanelet2_extension/utility/message_conversion.hpp"
-
 #include <Eigen/Core>
 
-#include <lanelet2_core/LaneletMap.h>
+#include <boost/archive/binary_iarchive.hpp>
 
+#include <lanelet2_core/LaneletMap.h>
+#include <lanelet2_io/io_handlers/Serialize.h>
+
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
+
+namespace impl
+{
+static void fromBinMsg(
+  const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
+{
+  if (!map) {
+    std::cerr << __FUNCTION__ << ": map is null pointer!";
+    return;
+  }
+
+  std::string data_str;
+  data_str.assign(msg.data.begin(), msg.data.end());
+
+  std::stringstream ss;
+  ss << data_str;
+  boost::archive::binary_iarchive oa(ss);
+  oa >> *map;
+  lanelet::Id id_counter = 0;
+  oa >> id_counter;
+  lanelet::utils::registerId(id_counter);
+}
+}  // namespace impl
 
 namespace lanelet::localization
 {
@@ -31,7 +57,7 @@ std::vector<lanelet::Polygon3d> parseLandmarkPolygons(
   const std::string & target_subtype)
 {
   lanelet::LaneletMapPtr lanelet_map_ptr{std::make_shared<lanelet::LaneletMap>()};
-  lanelet::utils::conversion::fromBinMsg(*msg, lanelet_map_ptr);
+  ::impl::fromBinMsg(*msg, lanelet_map_ptr);
 
   std::vector<lanelet::Polygon3d> landmarks;
 

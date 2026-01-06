@@ -76,15 +76,10 @@ private:
 
 TEST_F(TestSuite, isRouteValid)  // NOLINT for gtest
 {
-  autoware_map_msgs::msg::LaneletMapBin bin_msg;
-
   const auto route_ptr1 =
     std::make_shared<autoware_planning_msgs::msg::LaneletRoute>(sample_route1);
   const auto route_ptr2 =
     std::make_shared<autoware_planning_msgs::msg::LaneletRoute>(sample_route2);
-
-  // toBinMsg is tested at test_message_conversion.cpp
-  lanelet::utils::conversion::toBinMsg(sample_map_ptr, &bin_msg);
 
   ASSERT_TRUE(lanelet::utils::route::isRouteValid(*route_ptr1, sample_map_ptr))
     << "The route should be valid, which should be created on the same map as the current one";
