@@ -257,10 +257,11 @@ lanelet::ConstLanelets roadLanelets(const lanelet::ConstLanelets & lls);
 // query all polygons that has given type in lanelet2 map
 lanelet::ConstPolygons3d getAllPolygonsByType(
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr, const std::string & polygon_type);
-
+[[deprecated("use LaneletLayer R-tree API instead")]]
 ConstLanelets getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const lanelet::BasicPoint2d & search_point,
   const double range);
+[[deprecated("use LaneletLayer R-tree API instead")]]
 ConstLanelets getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   const double range);
@@ -271,9 +272,12 @@ ConstLanelets getLaneChangeableNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point);
 
+[[deprecated("please use autoware::lanelet2_utils::all_neighbor_lanelets instead")]]
 ConstLanelets getAllNeighbors(const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+[[deprecated("please use autoware::lanelet2_utils::left_lanelets instead")]]
 ConstLanelets getAllNeighborsLeft(
   const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+[[deprecated("please use autoware::lanelet2_utils::right_lanelets instead")]]
 ConstLanelets getAllNeighborsRight(
   const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
 ConstLanelets getAllNeighbors(
