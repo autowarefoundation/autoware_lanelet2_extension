@@ -278,6 +278,20 @@ static lanelet::ConstLanelets getAllNeighbors(
   return lanelets;
 }
 
+static lanelet::ConstLanelets getAllNeighbors(
+  const lanelet::routing::RoutingGraphPtr & graph, const lanelet::ConstLanelets & road_lanelets,
+  const geometry_msgs::msg::Point & search_point)
+{
+  const auto lanelets =
+    getLaneletsWithinRange(road_lanelets, search_point, std::numeric_limits<double>::epsilon());
+  lanelet::ConstLanelets road_slices;
+  for (const auto & llt : lanelets) {
+    const auto tmp_road_slice = getAllNeighbors(graph, llt);
+    road_slices.insert(road_slices.end(), tmp_road_slice.begin(), tmp_road_slice.end());
+  }
+  return road_slices;
+}
+
 }  // namespace impl
 
 namespace
@@ -538,7 +552,7 @@ lanelet::ConstLanelets getAllNeighbors_point(
   geometry_msgs::msg::Point point;
   static rclcpp::Serialization<geometry_msgs::msg::Point> serializer;
   serializer.deserialize_message(&serialized_msg, &point);
-  return lanelet::utils::query::getAllNeighbors(graph, road_lanelets, point);
+  return impl::getAllNeighbors(graph, road_lanelets, point);
 }
 
 lanelet::Optional<lanelet::ConstLanelet> getClosestLanelet(

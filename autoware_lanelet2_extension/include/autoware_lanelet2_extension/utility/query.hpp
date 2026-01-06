@@ -280,6 +280,7 @@ ConstLanelets getAllNeighborsLeft(
 [[deprecated("please use autoware::lanelet2_utils::right_lanelets instead")]]
 ConstLanelets getAllNeighborsRight(
   const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+[[deprecated]]
 ConstLanelets getAllNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point);
