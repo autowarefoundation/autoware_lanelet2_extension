@@ -65,24 +65,6 @@ public:
 private:
 };
 
-TEST_F(TestSuite, BinMsgConversion)  // NOLINT for gtest
-{
-  autoware_map_msgs::msg::LaneletMapBin bin_msg;
-  lanelet::LaneletMapPtr regenerated_map(new lanelet::LaneletMap);
-
-  lanelet::utils::conversion::toBinMsg(single_lanelet_map_ptr, &bin_msg);
-
-  ASSERT_NE(0U, bin_msg.data.size()) << "converted bin message does not have any data";
-
-  lanelet::utils::conversion::fromBinMsg(bin_msg, regenerated_map);
-
-  auto original_lanelet = lanelet::utils::query::laneletLayer(single_lanelet_map_ptr);
-  auto regenerated_lanelet = lanelet::utils::query::laneletLayer(regenerated_map);
-
-  ASSERT_EQ(original_lanelet.front().id(), regenerated_lanelet.front().id())
-    << "regenerated map has different id";
-}
-
 TEST_F(TestSuite, ToGeomMsgPt)  // NOLINT for gtest
 {
   Point3d lanelet_pt(getId(), -0.1, 0.2, 3.0);

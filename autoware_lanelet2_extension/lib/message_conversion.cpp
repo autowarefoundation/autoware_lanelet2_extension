@@ -34,9 +34,44 @@
 #include <lanelet2_routing/RoutingGraph.h>
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <utility>
+
+namespace impl
+{
+static void fromBinMsg(
+  const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
+{
+  if (!map) {
+    std::cerr << __FUNCTION__ << ": map is null pointer!";
+    return;
+  }
+
+  std::string data_str;
+  data_str.assign(msg.data.begin(), msg.data.end());
+
+  std::stringstream ss;
+  ss << data_str;
+  boost::archive::binary_iarchive oa(ss);
+  oa >> *map;
+  lanelet::Id id_counter = 0;
+  oa >> id_counter;
+  lanelet::utils::registerId(id_counter);
+}
+
+void fromBinMsg(
+  const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map,
+  lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
+  lanelet::routing::RoutingGraphPtr * routing_graph)
+{
+  fromBinMsg(msg, map);
+  *traffic_rules = lanelet::traffic_rules::TrafficRulesFactory::create(
+    lanelet::Locations::Germany, lanelet::Participants::Vehicle);
+  *routing_graph = lanelet::routing::RoutingGraph::build(*map, **traffic_rules);
+}
+}  // namespace impl
 
 namespace lanelet::utils::conversion
 {
@@ -84,7 +119,7 @@ void fromBinMsg(
   lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
   lanelet::routing::RoutingGraphPtr * routing_graph)
 {
-  fromBinMsg(msg, map);
+  ::impl::fromBinMsg(msg, map);
   *traffic_rules = lanelet::traffic_rules::TrafficRulesFactory::create(
     lanelet::Locations::Germany, lanelet::Participants::Vehicle);
   *routing_graph = lanelet::routing::RoutingGraph::build(*map, **traffic_rules);
