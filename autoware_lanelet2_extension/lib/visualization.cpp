@@ -119,12 +119,10 @@ bool inputLightMarker(visualization_msgs::msg::Marker * marker, const lanelet::C
 
   marker->id = static_cast<int32_t>(p.id());
 
-  geometry_msgs::msg::Point point;
   marker->pose.position.x = p.x();
   marker->pose.position.y = p.y();
   marker->pose.position.z = p.z();
 
-  std_msgs::msg::ColorRGBA color;
   marker->color.r = 0.0f;
   marker->color.g = 0.0f;
   marker->color.b = 0.0f;
