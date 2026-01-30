@@ -130,6 +130,7 @@ bool isInLanelet(
 [[deprecated("please use autoware::lanelet2_utils::get_closest_center_pose instead")]]
 geometry_msgs::msg::Pose getClosestCenterPose(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
+[[deprecated("please use autoware::lanelet2_utils::get_lateral_distance_to_centerline instead")]]
 double getLateralDistanceToCenterline(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose);
 double getLateralDistanceToClosestLanelet(

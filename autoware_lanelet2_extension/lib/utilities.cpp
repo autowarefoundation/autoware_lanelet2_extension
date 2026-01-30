@@ -88,6 +88,16 @@ double getLaneletAngle(
   return std::atan2(
     segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
 }
+
+static double getLateralDistanceToCenterline(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose)
+{
+  const auto & centerline_2d = lanelet::utils::to2D(lanelet.centerline());
+  const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+  return lanelet::geometry::signedDistance(
+    centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
+}
+
 }  // namespace impl
 
 namespace lanelet::utils
@@ -897,7 +907,7 @@ double getLateralDistanceToClosestLanelet(
 {
   lanelet::ConstLanelet closest_lanelet;
   lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
-  return getLateralDistanceToCenterline(closest_lanelet, pose);
+  return ::impl::getLateralDistanceToCenterline(closest_lanelet, pose);
 }
 }  // namespace lanelet::utils
 

@@ -162,6 +162,15 @@ lanelet::ArcCoordinates getArcCoordinates(
   return arc_coordinates;
 }
 
+static double getLateralDistanceToCenterline(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose)
+{
+  const auto & centerline_2d = lanelet::utils::to2D(lanelet.centerline());
+  const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+  return lanelet::geometry::signedDistance(
+    centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
+}
+
 /**
  * query.cpp
  */
@@ -433,7 +442,7 @@ double getLateralDistanceToCenterline(
   geometry_msgs::msg::Pose pose;
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
-  return lanelet::utils::getLateralDistanceToCenterline(lanelet, pose);
+  return impl::getLateralDistanceToCenterline(lanelet, pose);
 }
 
 double getLateralDistanceToClosestLanelet(
