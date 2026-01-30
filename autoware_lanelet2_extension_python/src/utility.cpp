@@ -171,6 +171,14 @@ static double getLateralDistanceToCenterline(
     centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
 }
 
+double getLateralDistanceToClosestLanelet(
+  const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
+{
+  lanelet::ConstLanelet closest_lanelet;
+  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+  return getLateralDistanceToCenterline(closest_lanelet, pose);
+}
+
 /**
  * query.cpp
  */
@@ -460,7 +468,7 @@ double getLateralDistanceToClosestLanelet(
   geometry_msgs::msg::Pose pose;
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
-  return lanelet::utils::getLateralDistanceToClosestLanelet(lanelet_sequence, pose);
+  return impl::getLateralDistanceToClosestLanelet(lanelet_sequence, pose);
 }
 
 /*

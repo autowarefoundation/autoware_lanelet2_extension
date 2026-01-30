@@ -133,6 +133,7 @@ geometry_msgs::msg::Pose getClosestCenterPose(
 [[deprecated("please use autoware::lanelet2_utils::get_lateral_distance_to_centerline instead")]]
 double getLateralDistanceToCenterline(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose);
+[[deprecated("please use autoware::lanelet2_utils::get_lateral_distance_to_centerline instead")]]
 double getLateralDistanceToClosestLanelet(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 }  // namespace lanelet::utils
