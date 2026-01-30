@@ -179,6 +179,41 @@ double getLateralDistanceToClosestLanelet(
   return getLateralDistanceToCenterline(closest_lanelet, pose);
 }
 
+lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets)
+{
+  const auto addUniquePoint = [](lanelet::Points3d & points, const lanelet::Point3d & new_point) {
+    constexpr double distance_threshold = 0.01;
+    const auto is_duplicate = std::any_of(
+      points.cbegin(), points.cend(),
+      [&new_point, distance_threshold](const auto & existing_point) {
+        return boost::geometry::distance(existing_point.basicPoint(), new_point.basicPoint()) <=
+               distance_threshold;
+      });
+    if (!is_duplicate) points.emplace_back(new_point);
+  };
+
+  const auto addUniquePoints = [&addUniquePoint](
+                                 lanelet::Points3d & output, const auto & input_points) {
+    std::for_each(
+      input_points.begin(), input_points.end(), [&output, &addUniquePoint](const auto & pt) {
+        addUniquePoint(output, lanelet::Point3d(pt));
+      });
+  };
+
+  lanelet::Points3d lefts, rights, centers;
+  for (const auto & llt : lanelets) {
+    addUniquePoints(lefts, llt.leftBound());
+    addUniquePoints(rights, llt.rightBound());
+    addUniquePoints(centers, llt.centerline());
+  }
+  const auto left_bound = lanelet::LineString3d(lanelet::InvalId, lefts);
+  const auto right_bound = lanelet::LineString3d(lanelet::InvalId, rights);
+  const auto center_line = lanelet::LineString3d(lanelet::InvalId, centers);
+  auto combined_lanelet = lanelet::Lanelet(lanelet::InvalId, left_bound, right_bound);
+  combined_lanelet.setCenterline(center_line);
+  return combined_lanelet;
+}
+
 /**
  * query.cpp
  */
@@ -712,7 +747,7 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   /*
    * utilities.cpp
    */
-  bp::def("combineLaneletsShape", lanelet::utils::combineLaneletsShape);
+  bp::def("combineLaneletsShape", impl::combineLaneletsShape);
   bp::def(
     "generateFineCenterline", lanelet::utils::generateFineCenterline,
     generateFineCenterline_overload());

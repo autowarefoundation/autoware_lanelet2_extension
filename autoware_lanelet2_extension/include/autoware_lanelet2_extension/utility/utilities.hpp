@@ -43,6 +43,7 @@ namespace lanelet::utils
 // @brief combine multiple lanelets into one, solely focusing on the shape and discarding any
 // associated information such as ID and attributes. InvalId is set for the ID.
 // @param lanelets to be combined.
+[[deprecated("please use autoware::lanelet2_utils::combine_lanelets_shape instead")]]
 lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets);
 
 lanelet::LineString3d generateFineCenterline(

@@ -98,6 +98,41 @@ static double getLateralDistanceToCenterline(
     centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
 }
 
+static lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets)
+{
+  const auto addUniquePoint = [](lanelet::Points3d & points, const lanelet::Point3d & new_point) {
+    constexpr double distance_threshold = 0.01;
+    const auto is_duplicate = std::any_of(
+      points.cbegin(), points.cend(),
+      [&new_point, distance_threshold](const auto & existing_point) {
+        return boost::geometry::distance(existing_point.basicPoint(), new_point.basicPoint()) <=
+               distance_threshold;
+      });
+    if (!is_duplicate) points.emplace_back(new_point);
+  };
+
+  const auto addUniquePoints = [&addUniquePoint](
+                                 lanelet::Points3d & output, const auto & input_points) {
+    std::for_each(
+      input_points.begin(), input_points.end(), [&output, &addUniquePoint](const auto & pt) {
+        addUniquePoint(output, lanelet::Point3d(pt));
+      });
+  };
+
+  lanelet::Points3d lefts, rights, centers;
+  for (const auto & llt : lanelets) {
+    addUniquePoints(lefts, llt.leftBound());
+    addUniquePoints(rights, llt.rightBound());
+    addUniquePoints(centers, llt.centerline());
+  }
+  const auto left_bound = lanelet::LineString3d(lanelet::InvalId, lefts);
+  const auto right_bound = lanelet::LineString3d(lanelet::InvalId, rights);
+  const auto center_line = lanelet::LineString3d(lanelet::InvalId, centers);
+  auto combined_lanelet = lanelet::Lanelet(lanelet::InvalId, left_bound, right_bound);
+  combined_lanelet.setCenterline(center_line);
+  return combined_lanelet;
+}
+
 }  // namespace impl
 
 namespace lanelet::utils
@@ -804,7 +839,7 @@ lanelet::ConstLineString3d getClosestSegment(
 lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2)
 {
-  const auto combined_lanelet = combineLaneletsShape(lanelets);
+  const auto combined_lanelet = ::impl::combineLaneletsShape(lanelets);
   const auto total_length = lanelet::geometry::length2d(combined_lanelet);
 
   // make sure that s1, and s2 are between [0, lane_length]
