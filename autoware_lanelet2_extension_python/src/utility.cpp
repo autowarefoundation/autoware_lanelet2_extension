@@ -140,6 +140,28 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
   return length;
 }
 
+lanelet::ArcCoordinates getArcCoordinates(
+  const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
+{
+  lanelet::ConstLanelet closest_lanelet;
+  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+
+  double length = 0;
+  lanelet::ArcCoordinates arc_coordinates;
+  for (const auto & llt : lanelet_sequence) {
+    const auto & centerline_2d = lanelet::utils::to2D(llt.centerline());
+    if (llt == closest_lanelet) {
+      const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+      arc_coordinates = lanelet::geometry::toArcCoordinates(
+        centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
+      arc_coordinates.length += length;
+      break;
+    }
+    length += static_cast<double>(boost::geometry::length(centerline_2d));
+  }
+  return arc_coordinates;
+}
+
 /**
  * query.cpp
  */
@@ -335,7 +357,7 @@ lanelet::ArcCoordinates getArcCoordinates(
   geometry_msgs::msg::Pose pose;
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
-  return lanelet::utils::getArcCoordinates(lanelet_sequence, pose);
+  return impl::getArcCoordinates(lanelet_sequence, pose);
 }
 
 double getLaneletAngle(const lanelet::ConstLanelet & lanelet, const std::string & point_byte)

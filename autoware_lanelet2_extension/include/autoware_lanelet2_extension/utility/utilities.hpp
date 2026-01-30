@@ -100,6 +100,7 @@ double getLaneletLength3d(const lanelet::ConstLanelet & lanelet);
 [[deprecated("please use lanelet::geometry::length3d instead")]]
 double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence);
 
+[[deprecated("please use autoware::lanelet2_utils::get_arc_coordinates instead")]]
 lanelet::ArcCoordinates getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 
