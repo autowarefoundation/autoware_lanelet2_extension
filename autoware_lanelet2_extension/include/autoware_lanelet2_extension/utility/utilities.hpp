@@ -51,8 +51,10 @@ lanelet::LineString3d generateFineCenterline(
 [[deprecated("please use autoware::lanelet2_utils::get_centerline_with_offset instead")]]
 lanelet::ConstLineString3d getCenterlineWithOffset(
   const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
+[[deprecated("please use autoware::lanelet2_utils::get_right_bound_with_offset instead")]]
 lanelet::ConstLineString3d getRightBoundWithOffset(
   const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
+[[deprecated("please use autoware::lanelet2_utils::get_left_bound_with_offset instead")]]
 lanelet::ConstLineString3d getLeftBoundWithOffset(
   const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
 

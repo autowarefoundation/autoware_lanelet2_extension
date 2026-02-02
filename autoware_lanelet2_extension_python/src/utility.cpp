@@ -341,6 +341,69 @@ lanelet::ConstLineString3d getCenterlineWithOffset(
   return static_cast<lanelet::ConstLineString3d>(centerline);
 }
 
+lanelet::ConstLineString3d getRightBoundWithOffset(
+  const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0)
+{
+  // Get length of longer border
+  const double left_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.leftBound()));
+  const double right_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.rightBound()));
+  const double longer_distance = (left_length > right_length) ? left_length : right_length;
+  const int num_segments = std::max(static_cast<int>(ceil(longer_distance / resolution)), 1);
+
+  // Resample points
+  const auto left_points = detail::resamplePoints(lanelet_obj.leftBound(), num_segments);
+  const auto right_points = detail::resamplePoints(lanelet_obj.rightBound(), num_segments);
+
+  // Create centerline
+  lanelet::LineString3d rightBound(lanelet::utils::getId());
+  for (int i = 0; i < num_segments + 1; i++) {
+    // Add ID for the average point of left and right
+    const auto vec_left_2_right = (right_points.at(i) - left_points.at(i)).normalized();
+
+    const auto offset_right_basic_point = right_points.at(i) + vec_left_2_right * offset;
+
+    const lanelet::Point3d rightBound_point(
+      lanelet::utils::getId(), offset_right_basic_point.x(), offset_right_basic_point.y(),
+      offset_right_basic_point.z());
+    rightBound.push_back(rightBound_point);
+  }
+  return static_cast<lanelet::ConstLineString3d>(rightBound);
+}
+
+lanelet::ConstLineString3d getLeftBoundWithOffset(
+  const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0)
+{
+  // Get length of longer border
+  const double left_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.leftBound()));
+  const double right_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.rightBound()));
+  const double longer_distance = (left_length > right_length) ? left_length : right_length;
+  const int num_segments = std::max(static_cast<int>(ceil(longer_distance / resolution)), 1);
+
+  // Resample points
+  const auto left_points = detail::resamplePoints(lanelet_obj.leftBound(), num_segments);
+  const auto right_points = detail::resamplePoints(lanelet_obj.rightBound(), num_segments);
+
+  // Create centerline
+  lanelet::LineString3d leftBound(lanelet::utils::getId());
+  for (int i = 0; i < num_segments + 1; i++) {
+    // Add ID for the average point of left and right
+
+    const auto vec_right_2_left = (left_points.at(i) - right_points.at(i)).normalized();
+
+    const auto offset_left_basic_point = left_points.at(i) + vec_right_2_left * offset;
+
+    const lanelet::Point3d leftBound_point(
+      lanelet::utils::getId(), offset_left_basic_point.x(), offset_left_basic_point.y(),
+      offset_left_basic_point.z());
+    leftBound.push_back(leftBound_point);
+  }
+  return static_cast<lanelet::ConstLineString3d>(leftBound);
+}
+
 /**
  * query.cpp
  */
@@ -853,9 +916,8 @@ BOOST_PYTHON_FUNCTION_OVERLOADS(
 BOOST_PYTHON_FUNCTION_OVERLOADS(
   getCenterlineWithOffset_overload, impl::getCenterlineWithOffset, 2, 3)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
-  getRightBoundWithOffset_overload, lanelet::utils::getRightBoundWithOffset, 2, 3)
-BOOST_PYTHON_FUNCTION_OVERLOADS(
-  getLeftBoundWithOffset_overload, lanelet::utils::getLeftBoundWithOffset, 2, 3)
+  getRightBoundWithOffset_overload, impl::getRightBoundWithOffset, 2, 3)
+BOOST_PYTHON_FUNCTION_OVERLOADS(getLeftBoundWithOffset_overload, impl::getLeftBoundWithOffset, 2, 3)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
   overwriteLaneletsCenterline_overload, lanelet::utils::overwriteLaneletsCenterline, 1, 3)
 BOOST_PYTHON_FUNCTION_OVERLOADS(isInLanelet_overload, ::isInLanelet, 2, 3)
@@ -881,11 +943,9 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def(
     "getCenterlineWithOffset", impl::getCenterlineWithOffset, getCenterlineWithOffset_overload());
   bp::def(
-    "getRightBoundWithOffset", lanelet::utils::getRightBoundWithOffset,
-    getRightBoundWithOffset_overload());
+    "getRightBoundWithOffset", impl::getRightBoundWithOffset, getRightBoundWithOffset_overload());
   bp::def(
-    "getLeftBoundWithOffset", lanelet::utils::getLeftBoundWithOffset,
-    getLeftBoundWithOffset_overload());
+    "getLeftBoundWithOffset", impl::getLeftBoundWithOffset, getLeftBoundWithOffset_overload());
   bp::def("getExpandedLanelet", lanelet::utils::getExpandedLanelet);
   bp::def("getExpandedLanelets", lanelet::utils::getExpandedLanelets);
   bp::def(
