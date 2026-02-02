@@ -140,6 +140,33 @@ std::vector<lanelet::BasicPoint3d> resamplePoints(
 
   return resampled_points;
 }
+
+/// @brief copy the z values between 2 containers based on the 2D arc lengths
+/// @tparam T1 a container of 3D points
+/// @tparam T2 a container of 3D points
+/// @param from points from which the z values will be copied
+/// @param to points to which the z values will be copied
+template <typename T1, typename T2>
+void copyZ(const T1 & from, T2 & to)
+{
+  if (from.empty() || to.empty()) return;
+  to.front().z() = from.front().z();
+  if (from.size() < 2 || to.size() < 2) return;
+  to.back().z() = from.back().z();
+  auto i_from = 1lu;
+  auto s_from = lanelet::geometry::distance2d(from[0], from[1]);
+  auto s_to = 0.0;
+  auto s_from_prev = 0.0;
+  for (auto i_to = 1lu; i_to + 1 < to.size(); ++i_to) {
+    s_to += lanelet::geometry::distance2d(to[i_to - 1], to[i_to]);
+    for (; s_from < s_to && i_from + 1 < from.size(); ++i_from) {
+      s_from_prev = s_from;
+      s_from += lanelet::geometry::distance2d(from[i_from], from[i_from + 1]);
+    }
+    const auto ratio = (s_to - s_from_prev) / (s_from - s_from_prev);
+    to[i_to].z() = from[i_from - 1].z() + ratio * (from[i_from].z() - from[i_from - 1].z());
+  }
+}
 }  // namespace detail
 
 inline double normalize_radian(const double rad)
@@ -402,6 +429,92 @@ lanelet::ConstLineString3d getLeftBoundWithOffset(
     leftBound.push_back(leftBound_point);
   }
   return static_cast<lanelet::ConstLineString3d>(leftBound);
+}
+
+static lanelet::ConstLanelet getExpandedLanelet(
+  const lanelet::ConstLanelet & lanelet_obj, const double left_offset, const double right_offset)
+{
+  using lanelet::geometry::offsetNoThrow;
+  using lanelet::geometry::internal::checkForInversion;
+
+  const auto & orig_left_bound_2d = lanelet_obj.leftBound2d().basicLineString();
+  const auto & orig_right_bound_2d = lanelet_obj.rightBound2d().basicLineString();
+
+  // Note: The lanelet::geometry::offset throws exception when the undesired inversion is found.
+  // Use offsetNoThrow until the logic is updated to handle the inversion.
+  // TODO(Horibe) update
+  auto expanded_left_bound_2d = offsetNoThrow(orig_left_bound_2d, left_offset);
+  auto expanded_right_bound_2d = offsetNoThrow(orig_right_bound_2d, right_offset);
+
+  rclcpp::Clock clock{RCL_ROS_TIME};
+  try {
+    checkForInversion(orig_left_bound_2d, expanded_left_bound_2d, left_offset);
+    checkForInversion(orig_right_bound_2d, expanded_right_bound_2d, right_offset);
+  } catch (const lanelet::GeometryError & e) {
+    RCLCPP_ERROR_THROTTLE(
+      rclcpp::get_logger("autoware_lanelet2_extension"), clock, 1000,
+      "Fail to expand lanelet. output may be undesired. Lanelet points interval in map data could "
+      "be too narrow.");
+  }
+
+  // Note: modify front and back points so that the successive lanelets will not have any
+  // longitudinal space between them.
+  {  // front
+    const double diff_x = orig_right_bound_2d.front().x() - orig_left_bound_2d.front().x();
+    const double diff_y = orig_right_bound_2d.front().y() - orig_left_bound_2d.front().y();
+    const double theta = std::atan2(diff_y, diff_x);
+    expanded_right_bound_2d.front().x() =
+      orig_right_bound_2d.front().x() - right_offset * std::cos(theta);
+    expanded_right_bound_2d.front().y() =
+      orig_right_bound_2d.front().y() - right_offset * std::sin(theta);
+    expanded_left_bound_2d.front().x() =
+      orig_left_bound_2d.front().x() - left_offset * std::cos(theta);
+    expanded_left_bound_2d.front().y() =
+      orig_left_bound_2d.front().y() - left_offset * std::sin(theta);
+  }
+  {  // back
+    const double diff_x = orig_right_bound_2d.back().x() - orig_left_bound_2d.back().x();
+    const double diff_y = orig_right_bound_2d.back().y() - orig_left_bound_2d.back().y();
+    const double theta = std::atan2(diff_y, diff_x);
+    expanded_right_bound_2d.back().x() =
+      orig_right_bound_2d.back().x() - right_offset * std::cos(theta);
+    expanded_right_bound_2d.back().y() =
+      orig_right_bound_2d.back().y() - right_offset * std::sin(theta);
+    expanded_left_bound_2d.back().x() =
+      orig_left_bound_2d.back().x() - left_offset * std::cos(theta);
+    expanded_left_bound_2d.back().y() =
+      orig_left_bound_2d.back().y() - left_offset * std::sin(theta);
+  }
+
+  const auto toPoints3d = [](const lanelet::BasicLineString2d & ls2d) {
+    lanelet::Points3d output;
+    for (const auto & pt : ls2d) {
+      output.push_back(lanelet::Point3d(lanelet::InvalId, pt.x(), pt.y(), 0.0));
+    }
+    return output;
+  };
+
+  lanelet::Points3d ex_lefts = toPoints3d(expanded_left_bound_2d);
+  lanelet::Points3d ex_rights = toPoints3d(expanded_right_bound_2d);
+  detail::copyZ(lanelet_obj.leftBound3d(), ex_lefts);
+  detail::copyZ(lanelet_obj.rightBound3d(), ex_rights);
+
+  const auto & extended_left_bound_3d = lanelet::LineString3d(lanelet::InvalId, ex_lefts);
+  const auto & expanded_right_bound_3d = lanelet::LineString3d(lanelet::InvalId, ex_rights);
+  const auto & lanelet = lanelet::Lanelet(
+    lanelet_obj.id(), extended_left_bound_3d, expanded_right_bound_3d, lanelet_obj.attributes());
+
+  return lanelet;
+}
+
+lanelet::ConstLanelets getExpandedLanelets(
+  const lanelet::ConstLanelets & lanelet_obj, const double left_offset, const double right_offset)
+{
+  lanelet::ConstLanelets lanelets;
+  for (const auto & llt : lanelet_obj) {
+    lanelets.push_back(impl::getExpandedLanelet(llt, left_offset, right_offset));
+  }
+  return lanelets;
 }
 
 /**
@@ -946,8 +1059,8 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
     "getRightBoundWithOffset", impl::getRightBoundWithOffset, getRightBoundWithOffset_overload());
   bp::def(
     "getLeftBoundWithOffset", impl::getLeftBoundWithOffset, getLeftBoundWithOffset_overload());
-  bp::def("getExpandedLanelet", lanelet::utils::getExpandedLanelet);
-  bp::def("getExpandedLanelets", lanelet::utils::getExpandedLanelets);
+  bp::def("getExpandedLanelet", impl::getExpandedLanelet);
+  bp::def("getExpandedLanelets", impl::getExpandedLanelets);
   bp::def(
     "overwriteLaneletsCenterline", lanelet::utils::overwriteLaneletsCenterline,
     overwriteLaneletsCenterline_overload());

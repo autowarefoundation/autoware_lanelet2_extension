@@ -58,9 +58,11 @@ lanelet::ConstLineString3d getRightBoundWithOffset(
 lanelet::ConstLineString3d getLeftBoundWithOffset(
   const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
 
+[[deprecated("please use autoware::lanelet2_utils::get_dirty_expanded_lanelet instead")]]
 lanelet::ConstLanelet getExpandedLanelet(
   const lanelet::ConstLanelet & lanelet_obj, const double left_offset, const double right_offset);
 
+[[deprecated("please use autoware::lanelet2_utils::get_dirty_expanded_lanelets instead")]]
 lanelet::ConstLanelets getExpandedLanelets(
   const lanelet::ConstLanelets & lanelet_obj, const double left_offset, const double right_offset);
 
