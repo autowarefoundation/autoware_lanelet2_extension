@@ -292,6 +292,128 @@ static lanelet::ConstLanelets getAllNeighbors(
   return road_slices;
 }
 
+static lanelet::ConstLanelets getLaneChangeableNeighbors(
+  const lanelet::routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet)
+{
+  return graph->besides(lanelet);
+}
+
+static lanelet::ConstLanelets getLaneChangeableNeighbors(
+  const lanelet::routing::RoutingGraphPtr & graph, const lanelet::ConstLanelets & road_lanelets,
+  const geometry_msgs::msg::Point & search_point)
+{
+  const auto lanelets =
+    getLaneletsWithinRange(road_lanelets, search_point, std::numeric_limits<double>::epsilon());
+  lanelet::ConstLanelets road_slices;
+  for (const auto & llt : lanelets) {
+    const auto tmp_road_slice = getLaneChangeableNeighbors(graph, llt);
+    road_slices.insert(road_slices.end(), tmp_road_slice.begin(), tmp_road_slice.end());
+  }
+  return road_slices;
+}
+
+static std::vector<std::deque<lanelet::ConstLanelet>> getSucceedingLaneletSequencesRecursive(
+  const lanelet::routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
+  const double length)
+{
+  std::vector<std::deque<lanelet::ConstLanelet>> succeeding_lanelet_sequences;
+
+  const auto next_lanelets = graph->following(lanelet);
+  const double lanelet_length = lanelet::geometry::length3d(lanelet);
+
+  // end condition of the recursive function
+  if (next_lanelets.empty() || lanelet_length >= length) {
+    succeeding_lanelet_sequences.push_back({lanelet});
+    return succeeding_lanelet_sequences;
+  }
+
+  for (const auto & next_lanelet : next_lanelets) {
+    // get lanelet sequence after next_lanelet
+    auto tmp_lanelet_sequences =
+      getSucceedingLaneletSequencesRecursive(graph, next_lanelet, length - lanelet_length);
+    for (auto & tmp_lanelet_sequence : tmp_lanelet_sequences) {
+      tmp_lanelet_sequence.push_front(lanelet);
+      succeeding_lanelet_sequences.push_back(tmp_lanelet_sequence);
+    }
+  }
+  return succeeding_lanelet_sequences;
+}
+
+static std::vector<lanelet::ConstLanelets> getSucceedingLaneletSequences(
+  const lanelet::routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
+  const double length)
+{
+  std::vector<lanelet::ConstLanelets> lanelet_sequences_vec;
+  const auto next_lanelets = graph->following(lanelet);
+  for (const auto & next_lanelet : next_lanelets) {
+    const auto lanelet_sequences_deq =
+      getSucceedingLaneletSequencesRecursive(graph, next_lanelet, length);
+    for (const auto & lanelet_sequence : lanelet_sequences_deq) {
+      lanelet_sequences_vec.emplace_back(lanelet_sequence.begin(), lanelet_sequence.end());
+    }
+  }
+  return lanelet_sequences_vec;
+}
+
+static std::vector<std::deque<lanelet::ConstLanelet>> getPrecedingLaneletSequencesRecursive(
+  const lanelet::routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
+  const double length, const lanelet::ConstLanelets & exclude_lanelets)
+{
+  std::vector<std::deque<lanelet::ConstLanelet>> preceding_lanelet_sequences;
+
+  const auto prev_lanelets = graph->previous(lanelet);
+  const double lanelet_length = lanelet::geometry::length3d(lanelet);
+
+  // end condition of the recursive function
+  if (prev_lanelets.empty() || lanelet_length >= length) {
+    preceding_lanelet_sequences.push_back({lanelet});
+    return preceding_lanelet_sequences;
+  }
+
+  for (const auto & prev_lanelet : prev_lanelets) {
+    if (lanelet::utils::contains(exclude_lanelets, prev_lanelet)) {
+      // if prev_lanelet is included in exclude_lanelets,
+      // remove prev_lanelet from preceding_lanelet_sequences
+      continue;
+    }
+
+    // get lanelet sequence after prev_lanelet
+    auto tmp_lanelet_sequences = getPrecedingLaneletSequencesRecursive(
+      graph, prev_lanelet, length - lanelet_length, exclude_lanelets);
+    for (auto & tmp_lanelet_sequence : tmp_lanelet_sequences) {
+      tmp_lanelet_sequence.push_back(lanelet);
+      preceding_lanelet_sequences.push_back(tmp_lanelet_sequence);
+    }
+  }
+
+  if (preceding_lanelet_sequences.empty()) {
+    preceding_lanelet_sequences.push_back({lanelet});
+  }
+  return preceding_lanelet_sequences;
+}
+
+static std::vector<lanelet::ConstLanelets> getPrecedingLaneletSequences(
+  const lanelet::routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
+  const double length, const lanelet::ConstLanelets & exclude_lanelets = {})
+{
+  std::vector<lanelet::ConstLanelets> lanelet_sequences_vec;
+  const auto prev_lanelets = graph->previous(lanelet);
+  for (const auto & prev_lanelet : prev_lanelets) {
+    if (lanelet::utils::contains(exclude_lanelets, prev_lanelet)) {
+      // if prev_lanelet is included in exclude_lanelets,
+      // remove prev_lanelet from preceding_lanelet_sequences
+      continue;
+    }
+    // convert deque into vector
+    const auto lanelet_sequences_deq =
+      getPrecedingLaneletSequencesRecursive(graph, prev_lanelet, length, exclude_lanelets);
+    for (const auto & lanelet_sequence : lanelet_sequences_deq) {
+      lanelet_sequences_vec.emplace_back(lanelet_sequence.begin(), lanelet_sequence.end());
+    }
+  }
+  return lanelet_sequences_vec;
+}
+
 }  // namespace impl
 
 namespace
@@ -533,7 +655,7 @@ lanelet::ConstLanelets getLaneChangeableNeighbors_point(
   geometry_msgs::msg::Point point;
   static rclcpp::Serialization<geometry_msgs::msg::Point> serializer;
   serializer.deserialize_message(&serialized_msg, &point);
-  return lanelet::utils::query::getLaneChangeableNeighbors(graph, road_lanelets, point);
+  return impl::getLaneChangeableNeighbors(graph, road_lanelets, point);
 }
 
 lanelet::ConstLanelets getAllNeighbors_point(
@@ -665,7 +787,7 @@ BOOST_PYTHON_FUNCTION_OVERLOADS(
 BOOST_PYTHON_FUNCTION_OVERLOADS(
   getClosestLaneletWithConstrains_overload, ::getClosestLaneletWithConstrains, 2, 4)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
-  getPrecedingLaneletSequences_overload, lanelet::utils::query::getPrecedingLaneletSequences, 3, 4)
+  getPrecedingLaneletSequences_overload, impl::getPrecedingLaneletSequences, 3, 4)
 // NOLINTEND(google-explicit-constructor)
 
 BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
@@ -806,7 +928,7 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
     "getLaneletsWithinRange_point", ::getLaneletsWithinRange_point);  // depends on ros msg
   bp::def<lanelet::ConstLanelets(
     const lanelet::routing::RoutingGraphPtr &, const lanelet::ConstLanelet &)>(
-    "getLaneChangeableNeighbors", lanelet::utils::query::getLaneChangeableNeighbors);
+    "getLaneChangeableNeighbors", impl::getLaneChangeableNeighbors);
   bp::def<lanelet::ConstLanelets(
     const lanelet::routing::RoutingGraphPtr &, const lanelet::ConstLanelets &,
     const std::string &)>(
@@ -831,9 +953,9 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   // NOTE: this is required for return-type of getSucceeding/PrecedingLaneletSequences
   // bp::class_<std::vector<lanelet::ConstLanelets>>("std::vector<lanelet::ConstLanelets>")
   //  .def(bp::vector_indexing_suite<std::vector<lanelet::ConstLanelets>>());
-  bp::def("getSucceedingLaneletSequences", lanelet::utils::query::getSucceedingLaneletSequences);
+  bp::def("getSucceedingLaneletSequences", impl::getSucceedingLaneletSequences);
   bp::def(
-    "getPrecedingLaneletSequences", lanelet::utils::query::getPrecedingLaneletSequences,
+    "getPrecedingLaneletSequences", impl::getPrecedingLaneletSequences,
     getPrecedingLaneletSequences_overload());
 }
 
