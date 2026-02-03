@@ -285,6 +285,11 @@ _An example:_
 
 For more details about the `no_drivable_lane` concept and design, please refer to the [**_no-drivable-lane-design_**](https://github.com/autowarefoundation/autoware.universe/blob/main/planning/behavior_velocity_planner/autoware_behavior_velocity_no_drivable_lane_module/README.md) document.
 
+### Map Filter Area
+
+If there is a polygon area that has `map_area_filter` tag, the poincloud and objects in this area are removed.
+For more detal, please refer https://github.com/tier4/map_area_filter
+
 ### Localization Landmarks
 
 Landmarks, such as AR-Tags, can be defined into the lanelet map to aid localization module.
