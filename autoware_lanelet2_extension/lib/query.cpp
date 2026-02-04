@@ -121,6 +121,12 @@ static lanelet::ConstLanelets getAllNeighbors(
 
   return lanelets;
 }
+
+static lanelet::ConstLanelets getLaneChangeableNeighbors(
+  const lanelet::routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet)
+{
+  return graph->besides(lanelet);
+}
 }  // namespace impl
 
 namespace lanelet::utils
@@ -913,7 +919,7 @@ ConstLanelets query::getLaneChangeableNeighbors(
     road_lanelets, search_point, std::numeric_limits<double>::epsilon());
   ConstLanelets road_slices;
   for (const auto & llt : lanelets) {
-    const auto tmp_road_slice = getLaneChangeableNeighbors(graph, llt);
+    const auto tmp_road_slice = impl::getLaneChangeableNeighbors(graph, llt);
     road_slices.insert(road_slices.end(), tmp_road_slice.begin(), tmp_road_slice.end());
   }
   return road_slices;

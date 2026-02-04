@@ -266,8 +266,10 @@ ConstLanelets getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   const double range);
 
+[[deprecated("please use autoware::lanelet2_utils::lane_changeable_neighbors")]]
 ConstLanelets getLaneChangeableNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+[[deprecated("please use autoware::lanelet2_utils::lane_changeable_neighbors")]]
 ConstLanelets getLaneChangeableNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point);
@@ -313,6 +315,7 @@ bool getCurrentLanelets(
  * @param length [minimum length of retrieved lanelet sequence]
  * @return   [lanelet sequence that follows given lanelet]
  */
+[[deprecated("please use autoware::lanelet2_utils::get_succeeding_lanelet_sequences instead")]]
 std::vector<lanelet::ConstLanelets> getSucceedingLaneletSequences(
   const routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
   const double length);
@@ -326,6 +329,7 @@ std::vector<lanelet::ConstLanelets> getSucceedingLaneletSequences(
  * @param length [minimum length of retrieved lanelet sequence]
  * @return   [lanelet sequence that leads to given lanelet]
  */
+[[deprecated("please use autoware::lanelet2_utils::get_preceding_lanelet_sequences instead")]]
 std::vector<lanelet::ConstLanelets> getPrecedingLaneletSequences(
   const routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
   const double length, const lanelet::ConstLanelets & exclude_lanelets = {});
