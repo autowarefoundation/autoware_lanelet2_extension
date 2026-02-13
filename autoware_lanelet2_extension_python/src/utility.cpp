@@ -330,6 +330,54 @@ static lanelet::ConstLanelets getLaneletsWithinRange(
   return near_lanelets;
 }
 
+bool getCurrentLanelets(
+  const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
+  lanelet::ConstLanelets * current_lanelets_ptr)
+{
+  if (current_lanelets_ptr == nullptr) {
+    std::cerr << "argument closest_lanelet_ptr is null! Failed to find closest lanelet"
+              << std::endl;
+    return false;
+  }
+
+  if (lanelets.empty()) {
+    return false;
+  }
+
+  lanelet::BasicPoint2d search_point_2d(search_point.x, search_point.y);
+  for (const auto & llt : lanelets) {
+    if (lanelet::geometry::inside(llt, search_point_2d)) {
+      current_lanelets_ptr->push_back(llt);
+    }
+  }
+
+  return !current_lanelets_ptr->empty();  // return found
+}
+
+bool getCurrentLanelets(
+  const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
+  lanelet::ConstLanelets * current_lanelets_ptr)
+{
+  if (current_lanelets_ptr == nullptr) {
+    std::cerr << "argument closest_lanelet_ptr is null! Failed to find closest lanelet"
+              << std::endl;
+    return false;
+  }
+
+  if (lanelets.empty()) {
+    return false;
+  }
+
+  lanelet::BasicPoint2d search_point(search_pose.position.x, search_pose.position.y);
+  for (const auto & llt : lanelets) {
+    if (lanelet::geometry::inside(llt, search_point)) {
+      current_lanelets_ptr->push_back(llt);
+    }
+  }
+
+  return !current_lanelets_ptr->empty();  // return found
+}
+
 static lanelet::ConstLanelets getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   const double range)
@@ -843,7 +891,7 @@ lanelet::ConstLanelets getCurrentLanelets_point(
   static rclcpp::Serialization<geometry_msgs::msg::Point> serializer;
   serializer.deserialize_message(&serialized_msg, &point);
   lanelet::ConstLanelets current_lanelets{};
-  lanelet::utils::query::getCurrentLanelets(lanelets, point, &current_lanelets);
+  impl::getCurrentLanelets(lanelets, point, &current_lanelets);
   return current_lanelets;
 }
 
@@ -863,7 +911,7 @@ lanelet::ConstLanelets getCurrentLanelets_pose(
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
   lanelet::ConstLanelets current_lanelets{};
-  lanelet::utils::query::getCurrentLanelets(lanelets, pose, &current_lanelets);
+  impl::getCurrentLanelets(lanelets, pose, &current_lanelets);
   return current_lanelets;
 }
 
