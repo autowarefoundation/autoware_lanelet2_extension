@@ -183,6 +183,70 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
  * query.cpp
  */
 
+bool getClosestLanelet(
+  const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
+  lanelet::ConstLanelet * closest_lanelet_ptr)
+{
+  if (closest_lanelet_ptr == nullptr) {
+    std::cerr << "argument closest_lanelet_ptr is null! Failed to find closest lanelet"
+              << std::endl;
+    return false;
+  }
+
+  if (lanelets.empty()) {
+    return false;
+  }
+
+  bool found = false;
+
+  lanelet::BasicPoint2d search_point(search_pose.position.x, search_pose.position.y);
+
+  // find by distance
+  lanelet::ConstLanelets candidate_lanelets;
+  {
+    double min_distance = std::numeric_limits<double>::max();
+    for (const auto & llt : lanelets) {
+      double distance =
+        boost::geometry::comparable_distance(llt.polygon2d().basicPolygon(), search_point);
+
+      if (std::abs(distance - min_distance) <= std::numeric_limits<double>::epsilon()) {
+        candidate_lanelets.push_back(llt);
+      } else if (distance < min_distance) {
+        found = true;
+        candidate_lanelets.clear();
+        candidate_lanelets.push_back(llt);
+        min_distance = distance;
+      }
+    }
+  }
+
+  if (candidate_lanelets.size() == 1) {
+    *closest_lanelet_ptr = candidate_lanelets.at(0);
+    return found;
+  }
+
+  // find by angle
+  {
+    double min_angle = std::numeric_limits<double>::max();
+    double pose_yaw = tf2::getYaw(search_pose.orientation);
+    for (const auto & llt : candidate_lanelets) {
+      lanelet::ConstLineString3d segment = getClosestSegment(search_point, llt.centerline());
+      double angle_diff = M_PI;
+      if (!segment.empty()) {
+        double segment_angle = std::atan2(
+          segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
+        angle_diff = std::abs(normalize_radian(segment_angle - pose_yaw));
+      }
+      if (angle_diff < min_angle) {
+        min_angle = angle_diff;
+        *closest_lanelet_ptr = llt;
+      }
+    }
+  }
+
+  return found;
+}
+
 bool getClosestLaneletWithConstrains(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   lanelet::ConstLanelet * closest_lanelet_ptr, const double dist_threshold,
@@ -732,7 +796,7 @@ lanelet::Optional<lanelet::ConstLanelet> getClosestLanelet(
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
   lanelet::ConstLanelet closest_lanelet{};
-  if (lanelet::utils::query::getClosestLanelet(lanelets, pose, &closest_lanelet)) {
+  if (impl::getClosestLanelet(lanelets, pose, &closest_lanelet)) {
     return closest_lanelet;
   }
   return {};
