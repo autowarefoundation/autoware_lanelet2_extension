@@ -850,7 +850,7 @@ double getLateralDistanceToClosestLanelet(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
 {
   lanelet::ConstLanelet closest_lanelet;
-  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+  deprecated::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
   return getLateralDistanceToCenterline(closest_lanelet, pose);
 }
 }  // namespace lanelet::utils
