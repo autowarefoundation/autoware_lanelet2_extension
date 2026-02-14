@@ -2,6 +2,37 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* feat(lanelet2_extension): deprecate some functions in query (2) (`#94 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/94>`_)
+  deprecate ported functions
+  - getLaneChangeableNeighbors
+  - getSuceedingLaneletSequences
+  - getPrecedingLaneletSequences
+* feat(lanelet2_extension): deprecate some functions in query (`#91 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/91>`_)
+  * deprecate following functions
+  - getAllNeighbors
+  - getAllNeighborsLeft
+  - getAllNeighborsRight
+  - getLaneletsWithinRange
+  * deprecate overload of getAllNeighbors
+  ---------
+* fix(autoware_lanelet2_extension): remove unused variable (`#93 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/93>`_)
+  Remove unused  variable that was declared but never used.
+  The lanelet::Origin is created directly in the UtmProjector constructor.
+  Detected by Facebook Infer static analyzer (DEAD_STORE).
+* fix(autoware_lanelet2_extension): remove unused variables (`#92 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/92>`_)
+  fix(autoware_lanelet2_extension): remove unused variables in visualization.cpp
+  Remove unused 'point' and 'color' variables that were declared but never used.
+  The code directly assigns to marker->pose.position and marker->color
+  without using these local variables.
+  Detected by Facebook Infer static analyzer (DEAD_STORE).
+* feat(lanelet2_extension): deprecate fromBinMsg and toBinMsg (`#89 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/89>`_)
+* feat(lanelet2_extension): deprecate getLaneletLength2d and getLaneletLength3d (`#88 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/88>`_)
+  Co-authored-by: Mamoru Sobue <hilo.soblin@gmail.com>
+* feat(lanelet2_extension): deprecate ported functions in lanelet2_extension (`#81 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/81>`_)
+* Contributors: Ryuta Kambe, Sarun MUKDAPITAK
+
 0.10.0 (2025-11-05)
 -------------------
 * chore: add build option -Wno-error=maybe-uninitialized (`#79 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/79>`_)
