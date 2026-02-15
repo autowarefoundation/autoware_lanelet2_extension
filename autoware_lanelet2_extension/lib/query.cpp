@@ -420,6 +420,22 @@ lanelet::ConstLineStrings3d getAllLinestringsWithType(
   return linestrings_with_type;
 }
 
+lanelet::ConstPolygons3d getAllWaypointZones(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
+{
+  lanelet::ConstPolygons3d waypoint_zones;
+  if (!lanelet_map_ptr) {
+    return waypoint_zones;
+  }
+
+  for (const auto & poly : lanelet_map_ptr->polygonLayer) {
+    const std::string type_val = poly.attributeOr(lanelet::AttributeName::Type, "none");
+    if (type_val == "waypoint_zone") {
+      waypoint_zones.push_back(poly);
+    }
+  }
+  return waypoint_zones;
+}
+
 lanelet::ConstLineStrings3d getAllPartitions(const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLineStrings3d partitions;
@@ -708,6 +724,93 @@ bool getLinkedParkingLot(
     }
   }
   return false;
+}
+
+// get overlapping waypoint zone
+bool getLinkedWaypointZone(
+  const lanelet::ConstLanelet & lanelet, const lanelet::ConstPolygons3d & all_waypoint_zones,
+  lanelet::ConstPolygon3d * linked_waypoint_zone)
+{
+  for (const auto & waypoint_zone : all_waypoint_zones) {
+    const double distance = boost::geometry::distance(
+      lanelet.polygon2d().basicPolygon(), to2D(waypoint_zone).basicPolygon());
+    if (distance < std::numeric_limits<double>::epsilon()) {
+      *linked_waypoint_zone = waypoint_zone;
+      return true;
+    }
+  }
+  return false;
+}
+
+// get overlapping waypoint zone
+bool getLinkedWaypointZone(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::ConstPolygons3d & all_waypoint_zones,
+  lanelet::ConstPolygon3d * linked_waypoint_zone)
+{
+  for (const auto & waypoint_zone : all_waypoint_zones) {
+    const double distance =
+      boost::geometry::distance(current_position, to2D(waypoint_zone).basicPolygon());
+    if (distance < std::numeric_limits<double>::epsilon()) {
+      *linked_waypoint_zone = waypoint_zone;
+      return true;
+    }
+  }
+  return false;
+}
+
+// get overlapping waypoint zone
+bool getLinkedWaypointZone(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::ConstPolygons3d & all_waypoint_zones,
+  lanelet::ConstPolygon3d * linked_waypoint_zone, double threshold)
+{
+  for (const auto & waypoint_zone : all_waypoint_zones) {
+    const double distance =
+      boost::geometry::distance(current_position, to2D(waypoint_zone).basicPolygon());
+    if (distance < threshold) {
+      *linked_waypoint_zone = waypoint_zone;
+      return true;
+    }
+  }
+  return false;
+}
+
+bool getLinkedWaypointZone(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr,
+  lanelet::ConstPolygon3d * linked_waypoint_zone)
+{
+  auto candidates =
+    lanelet_map_ptr->polygonLayer.search(lanelet::geometry::boundingBox2d(current_position));
+  candidates.erase(
+    std::remove_if(
+      candidates.begin(), candidates.end(),
+      [](const auto & c) {
+        const std::string type = c.attributeOr(lanelet::AttributeName::Type, "none");
+        return type != "waypoint_zone";
+      }),
+    candidates.end());
+  return getLinkedWaypointZone(current_position, candidates, linked_waypoint_zone);
+}
+
+// get linked waypoint zone with specific distance
+bool getLinkedWaypointZone(
+  const lanelet::BasicPoint2d & current_position,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr,
+  lanelet::ConstPolygon3d * linked_waypoint_zone, double threshold)
+{
+  auto candidates =
+    lanelet_map_ptr->polygonLayer.search(lanelet::geometry::boundingBox2d(current_position));
+  candidates.erase(
+    std::remove_if(
+      candidates.begin(), candidates.end(),
+      [](const auto & c) {
+        const std::string type = c.attributeOr(lanelet::AttributeName::Type, "none");
+        return type != "waypoint_zone";
+      }),
+    candidates.end());
+  return getLinkedWaypointZone(current_position, candidates, linked_waypoint_zone, threshold);
 }
 
 lanelet::ConstLineStrings3d getLinkedParkingSpaces(
