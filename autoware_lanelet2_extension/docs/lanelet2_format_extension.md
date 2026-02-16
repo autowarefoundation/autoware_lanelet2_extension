@@ -288,7 +288,7 @@ For more details about the `no_drivable_lane` concept and design, please refer t
 ### Map Filter Area
 
 If there is a polygon area that has `map_area_filter` tag, the pointcloud and objects in this area are removed.
-For more details, please refer https://github.com/tier4/map_area_filter
+For more details, please refer <https://github.com/tier4/map_area_filter>
 
 ### Localization Landmarks
 
