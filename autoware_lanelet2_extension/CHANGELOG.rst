@@ -2,6 +2,16 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* feat(visualizer): change a tag name; map_are_filter to obstacle_removal_area (`#100 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/100>`_)
+* feat(visualzer): add new maker type (`#96 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/96>`_)
+  * add new maker
+  * add docs
+  * fix spell
+  ---------
+* Contributors: Yuki TAKAGI
+
 0.11.0 (2026-02-14)
 -------------------
 * feat(lanelet2_extension): deprecate some functions in query (2) (`#94 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/94>`_)

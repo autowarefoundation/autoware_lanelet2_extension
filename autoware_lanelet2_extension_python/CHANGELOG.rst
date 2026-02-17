@@ -2,6 +2,9 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.11.0 (2026-02-14)
 -------------------
 * feat(lanelet2_extension): deprecate some functions in query (2) (`#94 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/94>`_)
