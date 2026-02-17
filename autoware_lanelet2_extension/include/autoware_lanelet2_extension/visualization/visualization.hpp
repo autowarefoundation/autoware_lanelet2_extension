@@ -230,12 +230,12 @@ visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
   const std_msgs::msg::ColorRGBA & area_color, const std_msgs::msg::ColorRGBA & line_color);
 
 /**
- * [map creates marker array to visualize intersection area]
- * @param  map_filter_area [map filter area polygon]
+ * [map creates marker array to visualize obstacle removal area]
+ * @param  obstacle_removal_area [obstacle removal area polygon]
  * @param  c               [color of the marker]
  */
-visualization_msgs::msg::MarkerArray mapFilterAreaAsMarkerArray(
-  const lanelet::ConstPolygons3d & map_filter_area, const std_msgs::msg::ColorRGBA & c);
+visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
+  const lanelet::ConstPolygons3d & obstacle_removal_area, const std_msgs::msg::ColorRGBA & c);
 }  // namespace format_v2
 
 /**
