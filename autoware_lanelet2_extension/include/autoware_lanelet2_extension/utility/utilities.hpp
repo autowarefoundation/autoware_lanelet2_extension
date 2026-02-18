@@ -123,6 +123,9 @@ lanelet::CompoundPolygon3d getPolygonFromArcLength(
 [[deprecated("please use autoware::lanelet2_utils::get_lanelet_angle instead")]]
 double getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
+double getLaneletAngleOnEgoCenterline(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point,
+  const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 bool isInLanelet(
   const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
   const double radius = 0.0);
