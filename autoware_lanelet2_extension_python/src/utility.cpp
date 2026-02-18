@@ -37,6 +37,7 @@
 #endif
 #include <tf2/utils.hpp>
 
+#include <algorithm>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -48,6 +49,126 @@ namespace bp = boost::python;
 
 namespace impl
 {
+namespace detail
+{
+std::vector<double> calculateSegmentDistances(const lanelet::ConstLineString3d & line_string)
+{
+  std::vector<double> segment_distances;
+  segment_distances.reserve(line_string.size() - 1);
+
+  for (size_t i = 1; i < line_string.size(); ++i) {
+    const auto distance = lanelet::geometry::distance(line_string[i], line_string[i - 1]);
+    segment_distances.push_back(distance);
+  }
+
+  return segment_distances;
+}
+
+std::vector<double> calculateAccumulatedLengths(const lanelet::ConstLineString3d & line_string)
+{
+  const auto segment_distances = calculateSegmentDistances(line_string);
+
+  std::vector<double> accumulated_lengths{0};
+  accumulated_lengths.reserve(segment_distances.size() + 1);
+  std::partial_sum(
+    std::begin(segment_distances), std::end(segment_distances),
+    std::back_inserter(accumulated_lengths));
+
+  return accumulated_lengths;
+}
+
+std::pair<size_t, size_t> findNearestIndexPair(
+  const std::vector<double> & accumulated_lengths, const double target_length)
+{
+  // List size
+  const auto N = accumulated_lengths.size();
+
+  // Front
+  if (target_length < accumulated_lengths.at(1)) {
+    return std::make_pair(0, 1);
+  }
+
+  // Back
+  if (target_length > accumulated_lengths.at(N - 2)) {
+    return std::make_pair(N - 2, N - 1);
+  }
+
+  // Middle
+  for (std::size_t i = 1; i < N; ++i) {
+    if (
+      accumulated_lengths.at(i - 1) <= target_length &&
+      target_length <= accumulated_lengths.at(i)) {
+      return std::make_pair(i - 1, i);
+    }
+  }
+
+  // Throw an exception because this never happens
+  throw std::runtime_error("No nearest point found.");
+}
+
+std::vector<lanelet::BasicPoint3d> resamplePoints(
+  const lanelet::ConstLineString3d & line_string, const int num_segments)
+{
+  // Calculate length
+  const auto line_length = static_cast<double>(lanelet::geometry::length(line_string));
+
+  // Calculate accumulated lengths
+  const auto accumulated_lengths = calculateAccumulatedLengths(line_string);
+  if (accumulated_lengths.size() < 2) return {};
+
+  // Create each segment
+  std::vector<lanelet::BasicPoint3d> resampled_points;
+  for (auto i = 0; i <= num_segments; ++i) {
+    // Find two nearest points
+    const auto target_length = (static_cast<double>(i) / num_segments) * line_length;
+    const auto index_pair = findNearestIndexPair(accumulated_lengths, target_length);
+
+    // Apply linear interpolation
+    const lanelet::BasicPoint3d back_point = line_string[index_pair.first];
+    const lanelet::BasicPoint3d front_point = line_string[index_pair.second];
+    const auto direction_vector = (front_point - back_point);
+
+    const auto back_length = accumulated_lengths.at(index_pair.first);
+    const auto front_length = accumulated_lengths.at(index_pair.second);
+    const auto segment_length = front_length - back_length;
+    const auto target_point =
+      back_point + (direction_vector * (target_length - back_length) / segment_length);
+
+    // Add to list
+    resampled_points.emplace_back(target_point);
+  }
+
+  return resampled_points;
+}
+
+/// @brief copy the z values between 2 containers based on the 2D arc lengths
+/// @tparam T1 a container of 3D points
+/// @tparam T2 a container of 3D points
+/// @param from points from which the z values will be copied
+/// @param to points to which the z values will be copied
+template <typename T1, typename T2>
+void copyZ(const T1 & from, T2 & to)
+{
+  if (from.empty() || to.empty()) return;
+  to.front().z() = from.front().z();
+  if (from.size() < 2 || to.size() < 2) return;
+  to.back().z() = from.back().z();
+  auto i_from = 1lu;
+  auto s_from = lanelet::geometry::distance2d(from[0], from[1]);
+  auto s_to = 0.0;
+  auto s_from_prev = 0.0;
+  for (auto i_to = 1lu; i_to + 1 < to.size(); ++i_to) {
+    s_to += lanelet::geometry::distance2d(to[i_to - 1], to[i_to]);
+    for (; s_from < s_to && i_from + 1 < from.size(); ++i_from) {
+      s_from_prev = s_from;
+      s_from += lanelet::geometry::distance2d(from[i_from], from[i_from + 1]);
+    }
+    const auto ratio = (s_to - s_from_prev) / (s_from - s_from_prev);
+    to[i_to].z() = from[i_from - 1].z() + ratio * (from[i_from].z() - from[i_from - 1].z());
+  }
+}
+}  // namespace detail
+
 inline double normalize_radian(const double rad)
 {
   constexpr double pi = 3.14159265358979323846;  // To be replaced by std::numbers::pi in C++20
@@ -138,6 +259,262 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
     length += lanelet::geometry::length3d(llt);
   }
   return length;
+}
+
+lanelet::ArcCoordinates getArcCoordinates(
+  const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
+{
+  lanelet::ConstLanelet closest_lanelet;
+  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+
+  double length = 0;
+  lanelet::ArcCoordinates arc_coordinates;
+  for (const auto & llt : lanelet_sequence) {
+    const auto & centerline_2d = lanelet::utils::to2D(llt.centerline());
+    if (llt == closest_lanelet) {
+      const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+      arc_coordinates = lanelet::geometry::toArcCoordinates(
+        centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
+      arc_coordinates.length += length;
+      break;
+    }
+    length += static_cast<double>(boost::geometry::length(centerline_2d));
+  }
+  return arc_coordinates;
+}
+
+static double getLateralDistanceToCenterline(
+  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose)
+{
+  const auto & centerline_2d = lanelet::utils::to2D(lanelet.centerline());
+  const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+  return lanelet::geometry::signedDistance(
+    centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
+}
+
+double getLateralDistanceToClosestLanelet(
+  const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
+{
+  lanelet::ConstLanelet closest_lanelet;
+  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+  return getLateralDistanceToCenterline(closest_lanelet, pose);
+}
+
+lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets)
+{
+  const auto addUniquePoint = [](lanelet::Points3d & points, const lanelet::Point3d & new_point) {
+    constexpr double distance_threshold = 0.01;
+    const auto is_duplicate = std::any_of(
+      points.cbegin(), points.cend(),
+      [&new_point, distance_threshold](const auto & existing_point) {
+        return boost::geometry::distance(existing_point.basicPoint(), new_point.basicPoint()) <=
+               distance_threshold;
+      });
+    if (!is_duplicate) points.emplace_back(new_point);
+  };
+
+  const auto addUniquePoints = [&addUniquePoint](
+                                 lanelet::Points3d & output, const auto & input_points) {
+    std::for_each(
+      input_points.begin(), input_points.end(), [&output, &addUniquePoint](const auto & pt) {
+        addUniquePoint(output, lanelet::Point3d(pt));
+      });
+  };
+
+  lanelet::Points3d lefts, rights, centers;
+  for (const auto & llt : lanelets) {
+    addUniquePoints(lefts, llt.leftBound());
+    addUniquePoints(rights, llt.rightBound());
+    addUniquePoints(centers, llt.centerline());
+  }
+  const auto left_bound = lanelet::LineString3d(lanelet::InvalId, lefts);
+  const auto right_bound = lanelet::LineString3d(lanelet::InvalId, rights);
+  const auto center_line = lanelet::LineString3d(lanelet::InvalId, centers);
+  auto combined_lanelet = lanelet::Lanelet(lanelet::InvalId, left_bound, right_bound);
+  combined_lanelet.setCenterline(center_line);
+  return combined_lanelet;
+}
+
+lanelet::ConstLineString3d getCenterlineWithOffset(
+  const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0)
+{
+  // Get length of longer border
+  const double left_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.leftBound()));
+  const double right_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.rightBound()));
+  const double longer_distance = (left_length > right_length) ? left_length : right_length;
+  const int num_segments = std::max(static_cast<int>(ceil(longer_distance / resolution)), 1);
+
+  // Resample points
+  const auto left_points = detail::resamplePoints(lanelet_obj.leftBound(), num_segments);
+  const auto right_points = detail::resamplePoints(lanelet_obj.rightBound(), num_segments);
+
+  // Create centerline
+  lanelet::LineString3d centerline(lanelet::utils::getId());
+  for (int i = 0; i < num_segments + 1; i++) {
+    // Add ID for the average point of left and right
+    const auto center_basic_point = (right_points.at(i) + left_points.at(i)) / 2;
+
+    const auto vec_right_2_left = (left_points.at(i) - right_points.at(i)).normalized();
+
+    const auto offset_center_basic_point = center_basic_point + vec_right_2_left * offset;
+
+    const lanelet::Point3d center_point(
+      lanelet::utils::getId(), offset_center_basic_point.x(), offset_center_basic_point.y(),
+      offset_center_basic_point.z());
+    centerline.push_back(center_point);
+  }
+  return static_cast<lanelet::ConstLineString3d>(centerline);
+}
+
+lanelet::ConstLineString3d getRightBoundWithOffset(
+  const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0)
+{
+  // Get length of longer border
+  const double left_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.leftBound()));
+  const double right_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.rightBound()));
+  const double longer_distance = (left_length > right_length) ? left_length : right_length;
+  const int num_segments = std::max(static_cast<int>(ceil(longer_distance / resolution)), 1);
+
+  // Resample points
+  const auto left_points = detail::resamplePoints(lanelet_obj.leftBound(), num_segments);
+  const auto right_points = detail::resamplePoints(lanelet_obj.rightBound(), num_segments);
+
+  // Create centerline
+  lanelet::LineString3d rightBound(lanelet::utils::getId());
+  for (int i = 0; i < num_segments + 1; i++) {
+    // Add ID for the average point of left and right
+    const auto vec_left_2_right = (right_points.at(i) - left_points.at(i)).normalized();
+
+    const auto offset_right_basic_point = right_points.at(i) + vec_left_2_right * offset;
+
+    const lanelet::Point3d rightBound_point(
+      lanelet::utils::getId(), offset_right_basic_point.x(), offset_right_basic_point.y(),
+      offset_right_basic_point.z());
+    rightBound.push_back(rightBound_point);
+  }
+  return static_cast<lanelet::ConstLineString3d>(rightBound);
+}
+
+lanelet::ConstLineString3d getLeftBoundWithOffset(
+  const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0)
+{
+  // Get length of longer border
+  const double left_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.leftBound()));
+  const double right_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.rightBound()));
+  const double longer_distance = (left_length > right_length) ? left_length : right_length;
+  const int num_segments = std::max(static_cast<int>(ceil(longer_distance / resolution)), 1);
+
+  // Resample points
+  const auto left_points = detail::resamplePoints(lanelet_obj.leftBound(), num_segments);
+  const auto right_points = detail::resamplePoints(lanelet_obj.rightBound(), num_segments);
+
+  // Create centerline
+  lanelet::LineString3d leftBound(lanelet::utils::getId());
+  for (int i = 0; i < num_segments + 1; i++) {
+    // Add ID for the average point of left and right
+
+    const auto vec_right_2_left = (left_points.at(i) - right_points.at(i)).normalized();
+
+    const auto offset_left_basic_point = left_points.at(i) + vec_right_2_left * offset;
+
+    const lanelet::Point3d leftBound_point(
+      lanelet::utils::getId(), offset_left_basic_point.x(), offset_left_basic_point.y(),
+      offset_left_basic_point.z());
+    leftBound.push_back(leftBound_point);
+  }
+  return static_cast<lanelet::ConstLineString3d>(leftBound);
+}
+
+static lanelet::ConstLanelet getExpandedLanelet(
+  const lanelet::ConstLanelet & lanelet_obj, const double left_offset, const double right_offset)
+{
+  using lanelet::geometry::offsetNoThrow;
+  using lanelet::geometry::internal::checkForInversion;
+
+  const auto & orig_left_bound_2d = lanelet_obj.leftBound2d().basicLineString();
+  const auto & orig_right_bound_2d = lanelet_obj.rightBound2d().basicLineString();
+
+  // Note: The lanelet::geometry::offset throws exception when the undesired inversion is found.
+  // Use offsetNoThrow until the logic is updated to handle the inversion.
+  // TODO(Horibe) update
+  auto expanded_left_bound_2d = offsetNoThrow(orig_left_bound_2d, left_offset);
+  auto expanded_right_bound_2d = offsetNoThrow(orig_right_bound_2d, right_offset);
+
+  rclcpp::Clock clock{RCL_ROS_TIME};
+  try {
+    checkForInversion(orig_left_bound_2d, expanded_left_bound_2d, left_offset);
+    checkForInversion(orig_right_bound_2d, expanded_right_bound_2d, right_offset);
+  } catch (const lanelet::GeometryError & e) {
+    RCLCPP_ERROR_THROTTLE(
+      rclcpp::get_logger("autoware_lanelet2_extension"), clock, 1000,
+      "Fail to expand lanelet. output may be undesired. Lanelet points interval in map data could "
+      "be too narrow.");
+  }
+
+  // Note: modify front and back points so that the successive lanelets will not have any
+  // longitudinal space between them.
+  {  // front
+    const double diff_x = orig_right_bound_2d.front().x() - orig_left_bound_2d.front().x();
+    const double diff_y = orig_right_bound_2d.front().y() - orig_left_bound_2d.front().y();
+    const double theta = std::atan2(diff_y, diff_x);
+    expanded_right_bound_2d.front().x() =
+      orig_right_bound_2d.front().x() - right_offset * std::cos(theta);
+    expanded_right_bound_2d.front().y() =
+      orig_right_bound_2d.front().y() - right_offset * std::sin(theta);
+    expanded_left_bound_2d.front().x() =
+      orig_left_bound_2d.front().x() - left_offset * std::cos(theta);
+    expanded_left_bound_2d.front().y() =
+      orig_left_bound_2d.front().y() - left_offset * std::sin(theta);
+  }
+  {  // back
+    const double diff_x = orig_right_bound_2d.back().x() - orig_left_bound_2d.back().x();
+    const double diff_y = orig_right_bound_2d.back().y() - orig_left_bound_2d.back().y();
+    const double theta = std::atan2(diff_y, diff_x);
+    expanded_right_bound_2d.back().x() =
+      orig_right_bound_2d.back().x() - right_offset * std::cos(theta);
+    expanded_right_bound_2d.back().y() =
+      orig_right_bound_2d.back().y() - right_offset * std::sin(theta);
+    expanded_left_bound_2d.back().x() =
+      orig_left_bound_2d.back().x() - left_offset * std::cos(theta);
+    expanded_left_bound_2d.back().y() =
+      orig_left_bound_2d.back().y() - left_offset * std::sin(theta);
+  }
+
+  const auto toPoints3d = [](const lanelet::BasicLineString2d & ls2d) {
+    lanelet::Points3d output;
+    for (const auto & pt : ls2d) {
+      output.push_back(lanelet::Point3d(lanelet::InvalId, pt.x(), pt.y(), 0.0));
+    }
+    return output;
+  };
+
+  lanelet::Points3d ex_lefts = toPoints3d(expanded_left_bound_2d);
+  lanelet::Points3d ex_rights = toPoints3d(expanded_right_bound_2d);
+  detail::copyZ(lanelet_obj.leftBound3d(), ex_lefts);
+  detail::copyZ(lanelet_obj.rightBound3d(), ex_rights);
+
+  const auto & extended_left_bound_3d = lanelet::LineString3d(lanelet::InvalId, ex_lefts);
+  const auto & expanded_right_bound_3d = lanelet::LineString3d(lanelet::InvalId, ex_rights);
+  const auto & lanelet = lanelet::Lanelet(
+    lanelet_obj.id(), extended_left_bound_3d, expanded_right_bound_3d, lanelet_obj.attributes());
+
+  return lanelet;
+}
+
+lanelet::ConstLanelets getExpandedLanelets(
+  const lanelet::ConstLanelets & lanelet_obj, const double left_offset, const double right_offset)
+{
+  lanelet::ConstLanelets lanelets;
+  for (const auto & llt : lanelet_obj) {
+    lanelets.push_back(impl::getExpandedLanelet(llt, left_offset, right_offset));
+  }
+  return lanelets;
 }
 
 /**
@@ -457,7 +834,7 @@ lanelet::ArcCoordinates getArcCoordinates(
   geometry_msgs::msg::Pose pose;
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
-  return lanelet::utils::getArcCoordinates(lanelet_sequence, pose);
+  return impl::getArcCoordinates(lanelet_sequence, pose);
 }
 
 double getLaneletAngle(const lanelet::ConstLanelet & lanelet, const std::string & point_byte)
@@ -533,7 +910,7 @@ double getLateralDistanceToCenterline(
   geometry_msgs::msg::Pose pose;
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
-  return lanelet::utils::getLateralDistanceToCenterline(lanelet, pose);
+  return impl::getLateralDistanceToCenterline(lanelet, pose);
 }
 
 double getLateralDistanceToClosestLanelet(
@@ -551,7 +928,7 @@ double getLateralDistanceToClosestLanelet(
   geometry_msgs::msg::Pose pose;
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
-  return lanelet::utils::getLateralDistanceToClosestLanelet(lanelet_sequence, pose);
+  return impl::getLateralDistanceToClosestLanelet(lanelet_sequence, pose);
 }
 
 /*
@@ -772,11 +1149,10 @@ lanelet::ConstLanelets getCurrentLanelets_pose(
 BOOST_PYTHON_FUNCTION_OVERLOADS(
   generateFineCenterline_overload, lanelet::utils::generateFineCenterline, 1, 2)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
-  getCenterlineWithOffset_overload, lanelet::utils::getCenterlineWithOffset, 2, 3)
+  getCenterlineWithOffset_overload, impl::getCenterlineWithOffset, 2, 3)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
-  getRightBoundWithOffset_overload, lanelet::utils::getRightBoundWithOffset, 2, 3)
-BOOST_PYTHON_FUNCTION_OVERLOADS(
-  getLeftBoundWithOffset_overload, lanelet::utils::getLeftBoundWithOffset, 2, 3)
+  getRightBoundWithOffset_overload, impl::getRightBoundWithOffset, 2, 3)
+BOOST_PYTHON_FUNCTION_OVERLOADS(getLeftBoundWithOffset_overload, impl::getLeftBoundWithOffset, 2, 3)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
   overwriteLaneletsCenterline_overload, lanelet::utils::overwriteLaneletsCenterline, 1, 3)
 BOOST_PYTHON_FUNCTION_OVERLOADS(isInLanelet_overload, ::isInLanelet, 2, 3)
@@ -795,21 +1171,18 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   /*
    * utilities.cpp
    */
-  bp::def("combineLaneletsShape", lanelet::utils::combineLaneletsShape);
+  bp::def("combineLaneletsShape", impl::combineLaneletsShape);
   bp::def(
     "generateFineCenterline", lanelet::utils::generateFineCenterline,
     generateFineCenterline_overload());
   bp::def(
-    "getCenterlineWithOffset", lanelet::utils::getCenterlineWithOffset,
-    getCenterlineWithOffset_overload());
+    "getCenterlineWithOffset", impl::getCenterlineWithOffset, getCenterlineWithOffset_overload());
   bp::def(
-    "getRightBoundWithOffset", lanelet::utils::getRightBoundWithOffset,
-    getRightBoundWithOffset_overload());
+    "getRightBoundWithOffset", impl::getRightBoundWithOffset, getRightBoundWithOffset_overload());
   bp::def(
-    "getLeftBoundWithOffset", lanelet::utils::getLeftBoundWithOffset,
-    getLeftBoundWithOffset_overload());
-  bp::def("getExpandedLanelet", lanelet::utils::getExpandedLanelet);
-  bp::def("getExpandedLanelets", lanelet::utils::getExpandedLanelets);
+    "getLeftBoundWithOffset", impl::getLeftBoundWithOffset, getLeftBoundWithOffset_overload());
+  bp::def("getExpandedLanelet", impl::getExpandedLanelet);
+  bp::def("getExpandedLanelets", impl::getExpandedLanelets);
   bp::def(
     "overwriteLaneletsCenterline", lanelet::utils::overwriteLaneletsCenterline,
     overwriteLaneletsCenterline_overload());

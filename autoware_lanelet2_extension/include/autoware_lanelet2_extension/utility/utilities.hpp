@@ -43,20 +43,26 @@ namespace lanelet::utils
 // @brief combine multiple lanelets into one, solely focusing on the shape and discarding any
 // associated information such as ID and attributes. InvalId is set for the ID.
 // @param lanelets to be combined.
+[[deprecated("please use autoware::lanelet2_utils::combine_lanelets_shape instead")]]
 lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets);
 
 lanelet::LineString3d generateFineCenterline(
   const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0);
+[[deprecated("please use autoware::lanelet2_utils::get_centerline_with_offset instead")]]
 lanelet::ConstLineString3d getCenterlineWithOffset(
   const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
+[[deprecated("please use autoware::lanelet2_utils::get_right_bound_with_offset instead")]]
 lanelet::ConstLineString3d getRightBoundWithOffset(
   const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
+[[deprecated("please use autoware::lanelet2_utils::get_left_bound_with_offset instead")]]
 lanelet::ConstLineString3d getLeftBoundWithOffset(
   const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
 
+[[deprecated("please use autoware::lanelet2_utils::get_dirty_expanded_lanelet instead")]]
 lanelet::ConstLanelet getExpandedLanelet(
   const lanelet::ConstLanelet & lanelet_obj, const double left_offset, const double right_offset);
 
+[[deprecated("please use autoware::lanelet2_utils::get_dirty_expanded_lanelets instead")]]
 lanelet::ConstLanelets getExpandedLanelets(
   const lanelet::ConstLanelets & lanelet_obj, const double left_offset, const double right_offset);
 
@@ -100,6 +106,7 @@ double getLaneletLength3d(const lanelet::ConstLanelet & lanelet);
 [[deprecated("please use lanelet::geometry::length3d instead")]]
 double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence);
 
+[[deprecated("please use autoware::lanelet2_utils::get_arc_coordinates instead")]]
 lanelet::ArcCoordinates getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 
@@ -129,8 +136,10 @@ bool isInLanelet(
 [[deprecated("please use autoware::lanelet2_utils::get_closest_center_pose instead")]]
 geometry_msgs::msg::Pose getClosestCenterPose(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
+[[deprecated("please use autoware::lanelet2_utils::get_lateral_distance_to_centerline instead")]]
 double getLateralDistanceToCenterline(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose);
+[[deprecated("please use autoware::lanelet2_utils::get_lateral_distance_to_centerline instead")]]
 double getLateralDistanceToClosestLanelet(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 }  // namespace lanelet::utils
