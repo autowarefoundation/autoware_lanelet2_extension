@@ -140,6 +140,15 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
   return length;
 }
 
+bool isInLanelet(
+  const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
+  const double radius)
+{
+  constexpr double eps = 1.0e-9;
+  const lanelet::BasicPoint2d p(current_pose.position.x, current_pose.position.y);
+  return boost::geometry::distance(p, lanelet.polygon2d().basicPolygon()) < radius + eps;
+}
+
 /**
  * query.cpp
  */
@@ -492,7 +501,7 @@ bool isInLanelet(
   geometry_msgs::msg::Pose pose;
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
-  return lanelet::utils::isInLanelet(pose, lanelet, radius);
+  return impl::isInLanelet(pose, lanelet, radius);
 }
 
 std::vector<double> getClosestCenterPose(
