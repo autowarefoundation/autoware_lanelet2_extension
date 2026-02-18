@@ -360,3 +360,23 @@ _An example:_
 ...
 
 ```
+
+### Bus Stop
+
+Bus stop lanelets can be defined using the `bus_stop` tag to support bus stop specific features.
+
+_An example:_
+
+```xml
+<relation id="4">
+  <member type="way" role="left" ref="1"/>
+  <member type="way" role="right" ref="2"/>
+  <member type="way" role="centerline" ref="3"/>
+  <tag k="type" v="lanelet"/>
+  <tag k="subtype" v="road"/>
+  <tag k="speed_limit" v="15.0"/>
+  <tag k="location" v="urban"/>
+  <tag k="one_way" v="yes"/>
+  <tag k="bus_stop" v="yes"/>
+</relation>
+```
