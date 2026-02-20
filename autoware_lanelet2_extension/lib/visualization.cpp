@@ -1147,6 +1147,25 @@ visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
 
   return marker_array;
 }
+
+visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
+  const lanelet::ConstPolygons3d & obstacle_removal_areas, const std_msgs::msg::ColorRGBA & c)
+{
+  visualization_msgs::msg::MarkerArray marker_array;
+  if (obstacle_removal_areas.empty()) {
+    return marker_array;
+  }
+
+  visualization_msgs::msg::Marker marker = createPolygonMarker("obstacle_removal_area", c);
+  for (const auto & polygon : obstacle_removal_areas) {
+    pushPolygonMarker(&marker, polygon, c);
+  }
+
+  if (!marker.points.empty()) {
+    marker_array.markers.push_back(marker);
+  }
+  return marker_array;
+}
 }  // namespace format_v2
 }  // namespace visualization
 

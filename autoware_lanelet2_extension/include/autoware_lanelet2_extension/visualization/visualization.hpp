@@ -228,6 +228,14 @@ visualization_msgs::msg::MarkerArray noObstacleSegmentationAreaForRunOutAsMarker
 visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
   const lanelet::ConstPolygons3d & hatched_road_markings_area,
   const std_msgs::msg::ColorRGBA & area_color, const std_msgs::msg::ColorRGBA & line_color);
+
+/**
+ * [map creates marker array to visualize obstacle removal area]
+ * @param  obstacle_removal_area [obstacle removal area polygon]
+ * @param  c               [color of the marker]
+ */
+visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
+  const lanelet::ConstPolygons3d & obstacle_removal_area, const std_msgs::msg::ColorRGBA & c);
 }  // namespace format_v2
 
 /**
