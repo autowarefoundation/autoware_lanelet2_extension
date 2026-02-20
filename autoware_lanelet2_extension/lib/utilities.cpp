@@ -18,8 +18,14 @@
 
 #include "autoware_lanelet2_extension/utility/utilities.hpp"
 
+#include "./deprecated.hpp"
 #include "autoware_lanelet2_extension/utility/message_conversion.hpp"
 #include "autoware_lanelet2_extension/utility/query.hpp"
+
+#include <rclcpp/rclcpp.hpp>
+#include <tf2/utils.hpp>
+
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include <lanelet2_core/geometry/Lanelet.h>
 #include <lanelet2_core/geometry/LineString.h>
@@ -30,65 +36,13 @@
 #include <lanelet2_traffic_rules/TrafficRules.h>
 #include <lanelet2_traffic_rules/TrafficRulesFactory.h>
 
-#include <iostream>
-
-#ifdef ROS_DISTRO_GALACTIC
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#else
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-#endif
-
-#include <rclcpp/rclcpp.hpp>
-
 #include <algorithm>
+#include <iostream>
 #include <limits>
 #include <map>
 #include <set>
 #include <utility>
 #include <vector>
-
-namespace impl
-{
-lanelet::ConstLineString3d getClosestSegment(
-  const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring)
-{
-  if (linestring.size() < 2) {
-    return lanelet::LineString3d();
-  }
-
-  lanelet::ConstLineString3d closest_segment;
-  double min_distance = std::numeric_limits<double>::max();
-
-  for (size_t i = 1; i < linestring.size(); i++) {
-    lanelet::BasicPoint3d prev_basic_pt = linestring[i - 1].basicPoint();
-    lanelet::BasicPoint3d current_basic_pt = linestring[i].basicPoint();
-
-    lanelet::Point3d prev_pt(
-      lanelet::InvalId, prev_basic_pt.x(), prev_basic_pt.y(), prev_basic_pt.z());
-    lanelet::Point3d current_pt(
-      lanelet::InvalId, current_basic_pt.x(), current_basic_pt.y(), current_basic_pt.z());
-
-    lanelet::LineString3d current_segment(lanelet::InvalId, {prev_pt, current_pt});
-    double distance = lanelet::geometry::distance2d(
-      lanelet::utils::to2D(current_segment).basicLineString(), search_pt);
-    if (distance < min_distance) {
-      closest_segment = current_segment;
-      min_distance = distance;
-    }
-  }
-  return closest_segment;
-}
-
-double getLaneletAngle(
-  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point)
-{
-  lanelet::BasicPoint2d llt_search_point(search_point.x, search_point.y);
-  lanelet::ConstLineString3d segment =
-    ::impl::getClosestSegment(llt_search_point, lanelet.centerline());
-  return std::atan2(
-    segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
-}
-}  // namespace impl
 
 namespace lanelet::utils
 {
@@ -713,7 +667,7 @@ lanelet::ArcCoordinates getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
 {
   lanelet::ConstLanelet closest_lanelet;
-  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+  deprecated::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
 
   double length = 0;
   lanelet::ArcCoordinates arc_coordinates;
@@ -736,7 +690,7 @@ lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr)
 {
   lanelet::ConstLanelet closest_lanelet;
-  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+  deprecated::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
 
   double length = 0;
   lanelet::ArcCoordinates arc_coordinates;
@@ -827,7 +781,7 @@ double getLaneletAngle(
 {
   lanelet::BasicPoint2d llt_search_point(search_point.x, search_point.y);
   lanelet::ConstLineString3d segment =
-    ::impl::getClosestSegment(llt_search_point, lanelet.centerline());
+    deprecated::getClosestSegment(llt_search_point, lanelet.centerline());
   return std::atan2(
     segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
 }
@@ -859,7 +813,7 @@ geometry_msgs::msg::Pose getClosestCenterPose(
   }
 
   lanelet::ConstLineString3d segment =
-    ::impl::getClosestSegment(llt_search_point, lanelet.centerline());
+    deprecated::getClosestSegment(llt_search_point, lanelet.centerline());
   if (segment.empty()) {
     return geometry_msgs::msg::Pose{};
   }
@@ -875,7 +829,7 @@ geometry_msgs::msg::Pose getClosestCenterPose(
   closest_pose.position.y = p.y();
   closest_pose.position.z = search_point.z;
 
-  const double lane_yaw = ::impl::getLaneletAngle(lanelet, search_point);
+  const double lane_yaw = deprecated::getLaneletAngle(lanelet, search_point);
   tf2::Quaternion q;
   q.setRPY(0, 0, lane_yaw);
   closest_pose.orientation = tf2::toMsg(q);
@@ -896,7 +850,7 @@ double getLateralDistanceToClosestLanelet(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
 {
   lanelet::ConstLanelet closest_lanelet;
-  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+  deprecated::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
   return getLateralDistanceToCenterline(closest_lanelet, pose);
 }
 }  // namespace lanelet::utils
