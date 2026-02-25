@@ -19,6 +19,7 @@
 #include "autoware_lanelet2_extension/utility/message_conversion.hpp"
 
 #include "autoware_lanelet2_extension/projection/mgrs_projector.hpp"
+#include "deprecated.hpp"
 
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
@@ -39,10 +40,9 @@
 #include <string>
 #include <utility>
 
-namespace impl
+namespace deprecated
 {
-static void fromBinMsg(
-  const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
+void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map)
 {
   if (!map) {
     std::cerr << __FUNCTION__ << ": map is null pointer!";
@@ -71,7 +71,7 @@ void fromBinMsg(
     lanelet::Locations::Germany, lanelet::Participants::Vehicle);
   *routing_graph = lanelet::routing::RoutingGraph::build(*map, **traffic_rules);
 }
-}  // namespace impl
+}  // namespace deprecated
 
 namespace lanelet::utils::conversion
 {
@@ -119,7 +119,7 @@ void fromBinMsg(
   lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
   lanelet::routing::RoutingGraphPtr * routing_graph)
 {
-  ::impl::fromBinMsg(msg, map);
+  deprecated::fromBinMsg(msg, map);
   *traffic_rules = lanelet::traffic_rules::TrafficRulesFactory::create(
     lanelet::Locations::Germany, lanelet::Participants::Vehicle);
   *routing_graph = lanelet::routing::RoutingGraph::build(*map, **traffic_rules);
@@ -127,72 +127,41 @@ void fromBinMsg(
 
 void toGeomMsgPt(const geometry_msgs::msg::Point32 & src, geometry_msgs::msg::Point * dst)
 {
-  if (dst == nullptr) {
-    std::cerr << __FUNCTION__ << "pointer is null!";
-    return;
-  }
-  dst->x = src.x;
-  dst->y = src.y;
-  dst->z = src.z;
+  deprecated::toGeomMsgPt(src, dst);
 }
 void toGeomMsgPt(const Eigen::Vector3d & src, geometry_msgs::msg::Point * dst)
 {
-  if (dst == nullptr) {
-    std::cerr << __FUNCTION__ << "pointer is null!";
-    return;
-  }
-  dst->x = src.x();
-  dst->y = src.y();
-  dst->z = src.z();
+  deprecated::toGeomMsgPt(src, dst);
 }
 void toGeomMsgPt(const lanelet::ConstPoint3d & src, geometry_msgs::msg::Point * dst)
 {
-  if (dst == nullptr) {
-    std::cerr << __FUNCTION__ << "pointer is null!";
-    return;
-  }
-  dst->x = src.x();
-  dst->y = src.y();
-  dst->z = src.z();
+  deprecated::toGeomMsgPt(src, dst);
 }
 void toGeomMsgPt(const lanelet::ConstPoint2d & src, geometry_msgs::msg::Point * dst)
 {
-  if (dst == nullptr) {
-    std::cerr << __FUNCTION__ << "pointer is null!" << std::endl;
-    return;
-  }
-  dst->x = src.x();
-  dst->y = src.y();
-  dst->z = 0;
+  deprecated::toGeomMsgPt(src, dst);
 }
-
 void toGeomMsgPt32(const Eigen::Vector3d & src, geometry_msgs::msg::Point32 * dst)
 {
-  if (dst == nullptr) {
-    std::cerr << __FUNCTION__ << "pointer is null!" << std::endl;
-    return;
-  }
-  dst->x = static_cast<float>(src.x());
-  dst->y = static_cast<float>(src.y());
-  dst->z = static_cast<float>(src.z());
+  deprecated::toGeomMsgPt32(src, dst);
 }
 
 geometry_msgs::msg::Point toGeomMsgPt(const geometry_msgs::msg::Point32 & src)
 {
   geometry_msgs::msg::Point dst;
-  toGeomMsgPt(src, &dst);
+  deprecated::toGeomMsgPt(src, &dst);
   return dst;
 }
 geometry_msgs::msg::Point toGeomMsgPt(const Eigen::Vector3d & src)
 {
   geometry_msgs::msg::Point dst;
-  toGeomMsgPt(src, &dst);
+  deprecated::toGeomMsgPt(src, &dst);
   return dst;
 }
 geometry_msgs::msg::Point toGeomMsgPt(const lanelet::ConstPoint3d & src)
 {
   geometry_msgs::msg::Point dst;
-  toGeomMsgPt(src, &dst);
+  deprecated::toGeomMsgPt(src, &dst);
   return dst;
 }
 geometry_msgs::msg::Point toGeomMsgPt(const lanelet::ConstPoint2d & src)
@@ -205,13 +174,13 @@ geometry_msgs::msg::Point toGeomMsgPt(const lanelet::ConstPoint2d & src)
 lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src)
 {
   lanelet::ConstPoint3d dst;
-  toLaneletPoint(src, &dst);
+  deprecated::toLaneletPoint(src, &dst);
   return dst;
 }
 
 void toLaneletPoint(const geometry_msgs::msg::Point & src, lanelet::ConstPoint3d * dst)
 {
-  *dst = lanelet::Point3d(lanelet::InvalId, src.x, src.y, src.z);
+  deprecated::toLaneletPoint(src, dst);
 }
 
 void toGeomMsgPoly(const lanelet::ConstPolygon3d & ll_poly, geometry_msgs::msg::Polygon * geom_poly)
@@ -220,7 +189,7 @@ void toGeomMsgPoly(const lanelet::ConstPolygon3d & ll_poly, geometry_msgs::msg::
   geom_poly->points.reserve(ll_poly.size());
   for (const auto & ll_pt : ll_poly) {
     geometry_msgs::msg::Point32 geom_pt32;
-    utils::conversion::toGeomMsgPt32(ll_pt.basicPoint(), &geom_pt32);
+    deprecated::toGeomMsgPt32(ll_pt.basicPoint(), &geom_pt32);
     geom_poly->points.push_back(geom_pt32);
   }
 }
