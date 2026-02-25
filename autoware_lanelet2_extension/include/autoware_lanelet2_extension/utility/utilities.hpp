@@ -120,6 +120,7 @@ lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
 getClosestSegment(
   const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
 
+[[deprecated("please use autoware::lanelet2_utils::get_polygon_from_arc_length instead")]]
 lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2);
 [[deprecated("please use autoware::lanelet2_utils::get_lanelet_angle instead")]] double
