@@ -183,6 +183,11 @@ inline double normalize_radian(const double rad)
   return value - std::copysign(2 * pi, value);
 }
 
+// forward declaration
+bool getClosestLanelet(
+  const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
+  lanelet::ConstLanelet * closest_lanelet_ptr);
+
 /**
  * utilities.cpp
  */
@@ -304,7 +309,7 @@ lanelet::ArcCoordinates getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
 {
   lanelet::ConstLanelet closest_lanelet;
-  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+  impl::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
 
   double length = 0;
   lanelet::ArcCoordinates arc_coordinates;
@@ -335,7 +340,7 @@ double getLateralDistanceToClosestLanelet(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
 {
   lanelet::ConstLanelet closest_lanelet;
-  lanelet::utils::query::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
+  impl::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
   return getLateralDistanceToCenterline(closest_lanelet, pose);
 }
 
