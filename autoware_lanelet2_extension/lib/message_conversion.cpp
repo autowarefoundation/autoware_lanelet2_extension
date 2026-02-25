@@ -167,15 +167,13 @@ geometry_msgs::msg::Point toGeomMsgPt(const lanelet::ConstPoint3d & src)
 geometry_msgs::msg::Point toGeomMsgPt(const lanelet::ConstPoint2d & src)
 {
   geometry_msgs::msg::Point dst;
-  toGeomMsgPt(src, &dst);
+  deprecated::toGeomMsgPt(src, &dst);
   return dst;
 }
 
 lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src)
 {
-  lanelet::ConstPoint3d dst;
-  deprecated::toLaneletPoint(src, &dst);
-  return dst;
+  return deprecated::toLaneletPoint(src);
 }
 
 void toLaneletPoint(const geometry_msgs::msg::Point & src, lanelet::ConstPoint3d * dst)

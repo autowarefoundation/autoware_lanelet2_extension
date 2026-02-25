@@ -97,6 +97,7 @@ void toGeomMsgPt32(const Eigen::Vector3d & src, geometry_msgs::msg::Point32 * ds
 
 void toLaneletPoint(const geometry_msgs::msg::Point & src, lanelet::ConstPoint3d * dst);
 
+lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src);
 }  // namespace deprecated
 // NOLINTEND(readability-identifier-naming)
 

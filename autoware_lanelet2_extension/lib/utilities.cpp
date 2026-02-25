@@ -841,7 +841,7 @@ double getLateralDistanceToCenterline(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose)
 {
   const auto & centerline_2d = lanelet::utils::to2D(lanelet.centerline());
-  const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+  const auto lanelet_point = deprecated::toLaneletPoint(pose.position);
   return lanelet::geometry::signedDistance(
     centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
 }
