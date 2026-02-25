@@ -72,10 +72,6 @@ bool getClosestLanelet(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   lanelet::ConstLanelet * closest_lanelet_ptr);
 
-bool isInLanelet(
-  const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
-  const double radius);
-
 double getLateralDistanceToCenterline(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose);
 
