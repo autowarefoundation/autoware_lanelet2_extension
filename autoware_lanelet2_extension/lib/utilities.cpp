@@ -674,7 +674,7 @@ lanelet::ArcCoordinates getArcCoordinates(
   for (const auto & llt : lanelet_sequence) {
     const auto & centerline_2d = lanelet::utils::to2D(llt.centerline());
     if (llt == closest_lanelet) {
-      const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+      const auto lanelet_point = deprecated::toLaneletPoint(pose.position);
       arc_coordinates = lanelet::geometry::toArcCoordinates(
         centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
       arc_coordinates.length += length;
@@ -704,7 +704,7 @@ lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
     }
 
     if (llt == closest_lanelet) {
-      const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+      const auto lanelet_point = deprecated::toLaneletPoint(pose.position);
       arc_coordinates = lanelet::geometry::toArcCoordinates(
         centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
       arc_coordinates.length += length;
