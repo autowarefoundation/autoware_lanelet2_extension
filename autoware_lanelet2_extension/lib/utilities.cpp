@@ -506,7 +506,7 @@ lanelet::ConstLanelets getExpandedLanelets(
 {
   lanelet::ConstLanelets lanelets;
   for (const auto & llt : lanelet_obj) {
-    lanelets.push_back(getExpandedLanelet(llt, left_offset, right_offset));
+    lanelets.push_back(deprecated::getExpandedLanelet(llt, left_offset, right_offset));
   }
   return lanelets;
 }
@@ -748,7 +748,7 @@ lanelet::ConstLineString3d getClosestSegment(
 lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2)
 {
-  const auto combined_lanelet = combineLaneletsShape(lanelets);
+  const auto combined_lanelet = deprecated::combineLaneletsShape(lanelets);
   const auto total_length = lanelet::geometry::length2d(combined_lanelet);
 
   // make sure that s1, and s2 are between [0, lane_length]
@@ -851,7 +851,7 @@ double getLateralDistanceToClosestLanelet(
 {
   lanelet::ConstLanelet closest_lanelet;
   deprecated::getClosestLanelet(lanelet_sequence, pose, &closest_lanelet);
-  return getLateralDistanceToCenterline(closest_lanelet, pose);
+  return deprecated::getLateralDistanceToCenterline(closest_lanelet, pose);
 }
 }  // namespace lanelet::utils
 
