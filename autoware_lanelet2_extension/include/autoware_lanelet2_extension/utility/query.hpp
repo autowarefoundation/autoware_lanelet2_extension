@@ -287,7 +287,8 @@ ConstLanelets getAllNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point);
 
-bool getClosestLanelet(
+[[deprecated("please use autoware::lanelet2_utils::get_closest_lanelet instead")]] bool
+getClosestLanelet(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelet * closest_lanelet_ptr);
 
@@ -298,11 +299,13 @@ bool getClosestLaneletWithConstrains(
   const double dist_threshold = std::numeric_limits<double>::max(),
   const double yaw_threshold = std::numeric_limits<double>::max());
 
-bool getCurrentLanelets(
+[[deprecated("please use autoware::lanelet2_utils::get_closest_lanelet instead")]] bool
+getCurrentLanelets(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   ConstLanelets * current_lanelets_ptr);
 
-bool getCurrentLanelets(
+[[deprecated("please use autoware::lanelet2_utils::get_closest_lanelet instead")]] bool
+getCurrentLanelets(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelets * current_lanelets_ptr);
 

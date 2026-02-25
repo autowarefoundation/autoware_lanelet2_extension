@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(autoware_lanelet2_extension)
 
 find_package(autoware_cmake REQUIRED)
+find_package(tf2 REQUIRED)
 autoware_package()
 
 ament_auto_add_library(${PROJECT_NAME}_lib SHARED
@@ -21,6 +22,7 @@ ament_auto_add_library(${PROJECT_NAME}_lib SHARED
   lib/speed_bump.cpp
   lib/transverse_mercator_projector.cpp
   lib/utilities.cpp
+  lib/deprecated.cpp
   lib/virtual_traffic_light.cpp
   lib/visualization.cpp
   lib/route_checker.cpp
@@ -35,36 +37,21 @@ ament_auto_add_library(${PROJECT_NAME}_lib SHARED
 # and https://www.boost.org/doc/libs/1_89_0/libs/optional/doc/html/boost_optional/design/gotchas/false_positive_with__wmaybe_uninitialized.html
 target_compile_options(${PROJECT_NAME}_lib PRIVATE -Wno-error=maybe-uninitialized)
 
-ament_auto_add_executable(${PROJECT_NAME}_sample src/sample_code.cpp)
-target_link_libraries(${PROJECT_NAME}_sample
-  ${PROJECT_NAME}_lib
-)
-
-ament_auto_add_executable(autoware_lanelet2_validation src/validation.cpp)
-target_link_libraries(autoware_lanelet2_validation
-  ${PROJECT_NAME}_lib
-)
-
-ament_auto_add_executable(check_right_of_way src/check_right_of_way.cpp)
-target_link_libraries(check_right_of_way
-  ${PROJECT_NAME}_lib
-)
-
 if(BUILD_TESTING)
   ament_add_ros_isolated_gtest(message_conversion-test test/src/test_message_conversion.cpp)
-  target_link_libraries(message_conversion-test ${PROJECT_NAME}_lib)
+  target_link_libraries(message_conversion-test ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
   ament_add_ros_isolated_gtest(projector-test test/src/test_projector.cpp)
-  target_link_libraries(projector-test ${PROJECT_NAME}_lib)
+  target_link_libraries(projector-test ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
   ament_add_ros_isolated_gtest(query-test test/src/test_query.cpp)
-  target_link_libraries(query-test ${PROJECT_NAME}_lib)
+  target_link_libraries(query-test ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
   ament_add_ros_isolated_gtest(regulatory_elements-test test/src/test_regulatory_elements.cpp)
-  target_link_libraries(regulatory_elements-test ${PROJECT_NAME}_lib)
+  target_link_libraries(regulatory_elements-test ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
   ament_add_ros_isolated_gtest(utilities-test test/src/test_utilities.cpp)
-  target_link_libraries(utilities-test ${PROJECT_NAME}_lib)
+  target_link_libraries(utilities-test ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
   ament_add_ros_isolated_gtest(route-test test/src/test_route_checker.cpp)
-  target_link_libraries(route-test ${PROJECT_NAME}_lib)
+  target_link_libraries(route-test ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
   ament_add_ros_isolated_gtest(normalize-radian test/src/test_normalize_radian.cpp)
-  target_link_libraries(normalize-radian ${PROJECT_NAME}_lib)
+  target_link_libraries(normalize-radian ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
 endif()
 
 ament_auto_package()

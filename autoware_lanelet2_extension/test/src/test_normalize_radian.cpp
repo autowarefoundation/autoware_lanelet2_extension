@@ -14,13 +14,13 @@
 
 // NOLINTBEGIN(readability-identifier-naming)
 
-#include "../../lib/normalize_radian.hpp"
+#include "../../lib/deprecated.hpp"
 
 #include <gtest/gtest.h>
 
 TEST(normalize_radian, normalize_radian_test)
 {
-  EXPECT_FLOAT_EQ(impl::normalize_radian(M_PI * 1.5), M_PI * (-0.5));
+  EXPECT_FLOAT_EQ(deprecated::normalize_radian(M_PI * 1.5), M_PI * (-0.5));
 }
 
 int main(int argc, char ** argv)
