@@ -110,7 +110,7 @@ lanelet::ArcCoordinates getArcCoordinates(
  * - when the `use_waypoints` in the autoware_map_loader is false,
  *   - the centerline in the lanelet2::LaneletMapPtr is used.
  */
-[[deprecated("please use autoware::lanelet2_utils::get_arc_coordinates instead")]]
+[[deprecated("please use autoware::lanelet2_utils::get_arc_coordinates_on_ego_centerline instead")]]
 lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
