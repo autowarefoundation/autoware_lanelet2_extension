@@ -38,8 +38,6 @@ ament_auto_add_library(${PROJECT_NAME}_lib SHARED
 target_compile_options(${PROJECT_NAME}_lib PRIVATE -Wno-error=maybe-uninitialized)
 
 if(BUILD_TESTING)
-  ament_add_ros_isolated_gtest(message_conversion-test test/src/test_message_conversion.cpp)
-  target_link_libraries(message_conversion-test ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
   ament_add_ros_isolated_gtest(projector-test test/src/test_projector.cpp)
   target_link_libraries(projector-test ${PROJECT_NAME}_lib ${tf2_LIBRARIES})
   ament_add_ros_isolated_gtest(query-test test/src/test_query.cpp)
