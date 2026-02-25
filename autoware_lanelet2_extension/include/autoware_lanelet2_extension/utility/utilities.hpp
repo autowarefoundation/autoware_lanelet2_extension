@@ -37,6 +37,7 @@ namespace lanelet::utils
 [[deprecated("please use autoware::lanelet2_utils::combine_lanelets_shape instead")]]
 lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets);
 
+[[deprecated("please use autoware::lanelet2_utils::get_fine_centerline instead")]]
 lanelet::LineString3d generateFineCenterline(
   const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0);
 [[deprecated("please use autoware::lanelet2_utils::get_centerline_with_offset instead")]]

@@ -84,6 +84,9 @@ lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanele
 lanelet::ConstLanelet getExpandedLanelet(
   const lanelet::ConstLanelet & lanelet_obj, const double left_offset, const double right_offset);
 
+lanelet::LineString3d generateFineCenterline(
+  const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0);
+
 }  // namespace deprecated
 // NOLINTEND(readability-identifier-naming)
 

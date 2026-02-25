@@ -388,6 +388,34 @@ lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanele
   return combined_lanelet;
 }
 
+lanelet::LineString3d generateFineCenterline(
+  const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0)
+{
+  // Get length of longer border
+  const double left_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.leftBound()));
+  const double right_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.rightBound()));
+  const double longer_distance = (left_length > right_length) ? left_length : right_length;
+  const int num_segments = std::max(static_cast<int>(ceil(longer_distance / resolution)), 1);
+
+  // Resample points
+  const auto left_points = detail::resamplePoints(lanelet_obj.leftBound(), num_segments);
+  const auto right_points = detail::resamplePoints(lanelet_obj.rightBound(), num_segments);
+
+  // Create centerline
+  lanelet::LineString3d centerline(lanelet::utils::getId());
+  for (int i = 0; i < num_segments + 1; i++) {
+    // Add ID for the average point of left and right
+    const auto center_basic_point = (right_points.at(i) + left_points.at(i)) / 2;
+    const lanelet::Point3d center_point(
+      lanelet::utils::getId(), center_basic_point.x(), center_basic_point.y(),
+      center_basic_point.z());
+    centerline.push_back(center_point);
+  }
+  return centerline;
+}
+
 lanelet::ConstLineString3d getCenterlineWithOffset(
   const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0)
 {
@@ -1311,8 +1339,7 @@ lanelet::ConstLanelets getCurrentLanelets_pose(
 // for handling functions with default arguments
 /// utilities.cpp
 // NOLINTBEGIN(google-explicit-constructor)
-BOOST_PYTHON_FUNCTION_OVERLOADS(
-  generateFineCenterline_overload, lanelet::utils::generateFineCenterline, 1, 2)
+BOOST_PYTHON_FUNCTION_OVERLOADS(generateFineCenterline_overload, impl::generateFineCenterline, 1, 2)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
   getCenterlineWithOffset_overload, impl::getCenterlineWithOffset, 2, 3)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
@@ -1338,8 +1365,7 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
    */
   bp::def("combineLaneletsShape", impl::combineLaneletsShape);
   bp::def(
-    "generateFineCenterline", lanelet::utils::generateFineCenterline,
-    generateFineCenterline_overload());
+    "generateFineCenterline", impl::generateFineCenterline, generateFineCenterline_overload());
   bp::def(
     "getCenterlineWithOffset", impl::getCenterlineWithOffset, getCenterlineWithOffset_overload());
   bp::def(
