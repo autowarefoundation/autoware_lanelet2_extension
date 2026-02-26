@@ -167,6 +167,19 @@ void copyZ(const T1 & from, T2 & to)
     to[i_to].z() = from[i_from - 1].z() + ratio * (from[i_from].z() - from[i_from - 1].z());
   }
 }
+
+void toLaneletPoint(const geometry_msgs::msg::Point & src, lanelet::ConstPoint3d * dst)
+{
+  *dst = lanelet::Point3d(lanelet::InvalId, src.x, src.y, src.z);
+}
+
+lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src)
+{
+  lanelet::ConstPoint3d dst;
+  toLaneletPoint(src, &dst);
+  return dst;
+}
+
 }  // namespace detail
 
 inline double normalize_radian(const double rad)
@@ -316,7 +329,7 @@ lanelet::ArcCoordinates getArcCoordinates(
   for (const auto & llt : lanelet_sequence) {
     const auto & centerline_2d = lanelet::utils::to2D(llt.centerline());
     if (llt == closest_lanelet) {
-      const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+      const auto lanelet_point = detail::toLaneletPoint(pose.position);
       arc_coordinates = lanelet::geometry::toArcCoordinates(
         centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
       arc_coordinates.length += length;
@@ -331,7 +344,7 @@ static double getLateralDistanceToCenterline(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose)
 {
   const auto & centerline_2d = lanelet::utils::to2D(lanelet.centerline());
-  const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+  const auto lanelet_point = detail::toLaneletPoint(pose.position);
   return lanelet::geometry::signedDistance(
     centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
 }
