@@ -36,8 +36,8 @@ namespace lanelet::utils::conversion
  * @param map [lanelet map data]
  * @param msg [converted ROS message. Only "data" field is filled]
  */
-[[deprecated("please use autoware::lanelet2_utils::to_autoware_map_msgs instead")]]
-void toBinMsg(const lanelet::LaneletMapPtr & map, autoware_map_msgs::msg::LaneletMapBin * msg);
+[[deprecated("please use autoware::lanelet2_utils::to_autoware_map_msgs instead")]] void toBinMsg(
+  const lanelet::LaneletMapPtr & map, autoware_map_msgs::msg::LaneletMapBin * msg);
 
 /**
  * [fromBinMsg converts ROS message into lanelet2 data. Similar implementation
@@ -45,12 +45,12 @@ void toBinMsg(const lanelet::LaneletMapPtr & map, autoware_map_msgs::msg::Lanele
  * @param msg [ROS message for lanelet map]
  * @param map [Converted lanelet2 data]
  */
-[[deprecated("please use autoware::lanelet2_utils::from_autoware_map_msgs instead")]]
-void fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map);
+[[deprecated("please use autoware::lanelet2_utils::from_autoware_map_msgs instead")]] void
+fromBinMsg(const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map);
 [[deprecated(
   "please use autoware::lanelet2_utils::from_autoware_map_msgs and "
-  "autoware::lanelet2_utils::instantiate_routing_graph_and_traffic_rules instead")]]
-void fromBinMsg(
+  "autoware::lanelet2_utils::instantiate_routing_graph_and_traffic_rules instead")]] void
+fromBinMsg(
   const autoware_map_msgs::msg::LaneletMapBin & msg, lanelet::LaneletMapPtr map,
   lanelet::traffic_rules::TrafficRulesPtr * traffic_rules,
   lanelet::routing::RoutingGraphPtr * routing_graph);
@@ -61,10 +61,14 @@ void fromBinMsg(
  * Eigen::VEctor3d=lanelet::BasicPoint3d, lanelet::Point3d, lanelet::Point2d) ]
  * @param dst [converted geometry_msgs point]
  */
-void toGeomMsgPt(const geometry_msgs::msg::Point32 & src, geometry_msgs::msg::Point * dst);
-void toGeomMsgPt(const Eigen::Vector3d & src, geometry_msgs::msg::Point * dst);
-void toGeomMsgPt(const lanelet::ConstPoint3d & src, geometry_msgs::msg::Point * dst);
-void toGeomMsgPt(const lanelet::ConstPoint2d & src, geometry_msgs::msg::Point * dst);
+[[deprecated("please use geometry_msgs::build instead")]] void toGeomMsgPt(
+  const geometry_msgs::msg::Point32 & src, geometry_msgs::msg::Point * dst);
+[[deprecated("please use geometry_msgs::build instead")]] void toGeomMsgPt(
+  const Eigen::Vector3d & src, geometry_msgs::msg::Point * dst);
+[[deprecated("please use autoware::lanelet2_utils::to_ros")]] void toGeomMsgPt(
+  const lanelet::ConstPoint3d & src, geometry_msgs::msg::Point * dst);
+[[deprecated("please use autoware::lanelet2_utils::to_ros")]] void toGeomMsgPt(
+  const lanelet::ConstPoint2d & src, geometry_msgs::msg::Point * dst);
 
 /**
  * [toGeomMsgPt converts various point types to geometry_msgs point]
@@ -72,21 +76,29 @@ void toGeomMsgPt(const lanelet::ConstPoint2d & src, geometry_msgs::msg::Point * 
  * Eigen::VEctor3d=lanelet::BasicPoint3d, lanelet::Point3d, lanelet::Point2d) ]
  * @return    [converted geometry_msgs point]
  */
-geometry_msgs::msg::Point toGeomMsgPt(const geometry_msgs::msg::Point32 & src);
-geometry_msgs::msg::Point toGeomMsgPt(const Eigen::Vector3d & src);
-geometry_msgs::msg::Point toGeomMsgPt(const lanelet::ConstPoint3d & src);
-geometry_msgs::msg::Point toGeomMsgPt(const lanelet::ConstPoint2d & src);
+[[deprecated("please use geometry_msgs::build instead")]] geometry_msgs::msg::Point toGeomMsgPt(
+  const geometry_msgs::msg::Point32 & src);
+[[deprecated("please use geometry_msgs::build instead")]] geometry_msgs::msg::Point toGeomMsgPt(
+  const Eigen::Vector3d & src);
+[[deprecated("please use autoware::lanelet2_utils::to_ros")]] geometry_msgs::msg::Point toGeomMsgPt(
+  const lanelet::ConstPoint3d & src);
+[[deprecated("please use autoware::lanelet2_utils::to_ros")]] geometry_msgs::msg::Point toGeomMsgPt(
+  const lanelet::ConstPoint2d & src);
 
-lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src);
-void toLaneletPoint(const geometry_msgs::msg::Point & src, lanelet::ConstPoint3d * dst);
+[[deprecated("please use autoware::lanelet2_utils::from_ros")]] lanelet::ConstPoint3d
+toLaneletPoint(const geometry_msgs::msg::Point & src);
+[[deprecated("please use autoware::lanelet2_utils::from_ros")]] void toLaneletPoint(
+  const geometry_msgs::msg::Point & src, lanelet::ConstPoint3d * dst);
 
 /**
  * [toGeomMsgPoly converts lanelet polygon to geometry_msgs polygon]
  * @param ll_poly   [input polygon]
  * @param geom_poly [converted geometry_msgs point]
  */
-void toGeomMsgPoly(
-  const lanelet::ConstPolygon3d & ll_poly, geometry_msgs::msg::Polygon * geom_poly);
+[[deprecated(
+  "toGeomMsgPoly(const lanelet::ConstPolygon3d, geometry_msgs::msg::Polygon *) will be "
+  "deprecated")]] void
+toGeomMsgPoly(const lanelet::ConstPolygon3d & ll_poly, geometry_msgs::msg::Polygon * geom_poly);
 
 /**
  * [toGeomMsgPt32 converts Eigen::Vector3d(lanelet:BasicPoint3d to
@@ -94,7 +106,8 @@ void toGeomMsgPoly(
  * @param src [input point]
  * @param dst [converted point]
  */
-void toGeomMsgPt32(const Eigen::Vector3d & src, geometry_msgs::msg::Point32 * dst);
+[[deprecated("please use geometry_msgs::build instead")]] void toGeomMsgPt32(
+  const Eigen::Vector3d & src, geometry_msgs::msg::Point32 * dst);
 
 }  // namespace lanelet::utils::conversion
 

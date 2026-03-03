@@ -20,6 +20,7 @@
 #define AUTOWARE_LANELET2_EXTENSION__LIB__DEPRECATED_HPP_
 
 #include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/point32.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 
 #include <lanelet2_core/primitives/Lanelet.h>
@@ -80,9 +81,22 @@ lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanele
 lanelet::ConstLanelet getExpandedLanelet(
   const lanelet::ConstLanelet & lanelet_obj, const double left_offset, const double right_offset);
 
+void toGeomMsgPt(const geometry_msgs::msg::Point32 & src, geometry_msgs::msg::Point * dst);
+
+void toGeomMsgPt(const Eigen::Vector3d & src, geometry_msgs::msg::Point * dst);
+
+void toGeomMsgPt(const lanelet::ConstPoint3d & src, geometry_msgs::msg::Point * dst);
+
+void toGeomMsgPt(const lanelet::ConstPoint2d & src, geometry_msgs::msg::Point * dst);
+
+void toGeomMsgPt32(const Eigen::Vector3d & src, geometry_msgs::msg::Point32 * dst);
+
+void toLaneletPoint(const geometry_msgs::msg::Point & src, lanelet::ConstPoint3d * dst);
+
+lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src);
+
 lanelet::LineString3d generateFineCenterline(
   const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0);
-
 }  // namespace deprecated
 // NOLINTEND(readability-identifier-naming)
 

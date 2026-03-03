@@ -20,8 +20,6 @@
 
 #include "deprecated.hpp"
 
-// TODO(sarun-hub): lanelet2_extension will be removed when toLaneletPoint is deprecated.
-#include <autoware_lanelet2_extension/utility/message_conversion.hpp>  // For toLaneletPoint
 #include <tf2/utils.hpp>
 
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
@@ -337,7 +335,7 @@ double getLateralDistanceToCenterline(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose)
 {
   const auto & centerline_2d = lanelet::utils::to2D(lanelet.centerline());
-  const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(pose.position);
+  const auto lanelet_point = toLaneletPoint(pose.position);
   return lanelet::geometry::signedDistance(
     centerline_2d, lanelet::utils::to2D(lanelet_point).basicPoint());
 }
@@ -453,6 +451,70 @@ lanelet::ConstLanelet getExpandedLanelet(
   return lanelet;
 }
 
+void toGeomMsgPt(const geometry_msgs::msg::Point32 & src, geometry_msgs::msg::Point * dst)
+{
+  if (dst == nullptr) {
+    std::cerr << __FUNCTION__ << "pointer is null!";
+    return;
+  }
+  dst->x = src.x;
+  dst->y = src.y;
+  dst->z = src.z;
+}
+void toGeomMsgPt(const Eigen::Vector3d & src, geometry_msgs::msg::Point * dst)
+{
+  if (dst == nullptr) {
+    std::cerr << __FUNCTION__ << "pointer is null!";
+    return;
+  }
+  dst->x = src.x();
+  dst->y = src.y();
+  dst->z = src.z();
+}
+void toGeomMsgPt(const lanelet::ConstPoint3d & src, geometry_msgs::msg::Point * dst)
+{
+  if (dst == nullptr) {
+    std::cerr << __FUNCTION__ << "pointer is null!";
+    return;
+  }
+  dst->x = src.x();
+  dst->y = src.y();
+  dst->z = src.z();
+}
+void toGeomMsgPt(const lanelet::ConstPoint2d & src, geometry_msgs::msg::Point * dst)
+{
+  if (dst == nullptr) {
+    std::cerr << __FUNCTION__ << "pointer is null!" << std::endl;
+    return;
+  }
+  dst->x = src.x();
+  dst->y = src.y();
+  dst->z = 0;
+}
+
+void toGeomMsgPt32(const Eigen::Vector3d & src, geometry_msgs::msg::Point32 * dst)
+{
+  if (dst == nullptr) {
+    std::cerr << __FUNCTION__ << "pointer is null!" << std::endl;
+    return;
+  }
+  dst->x = static_cast<float>(src.x());
+  dst->y = static_cast<float>(src.y());
+  dst->z = static_cast<float>(src.z());
+}
+
+void toLaneletPoint(const geometry_msgs::msg::Point & src, lanelet::ConstPoint3d * dst)
+{
+  *dst = lanelet::Point3d(lanelet::InvalId, src.x, src.y, src.z);
+}
+
+lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src)
+{
+  lanelet::ConstPoint3d dst;
+  toLaneletPoint(src, &dst);
+  return dst;
+}
+
 lanelet::LineString3d generateFineCenterline(
   const lanelet::ConstLanelet & lanelet_obj, const double resolution)
 {
@@ -480,5 +542,4 @@ lanelet::LineString3d generateFineCenterline(
   }
   return centerline;
 }
-
 }  // namespace deprecated
