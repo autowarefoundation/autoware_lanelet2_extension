@@ -180,7 +180,6 @@ lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src)
   return dst;
 }
 
-
 lanelet::LineString3d getLineStringFromArcLength(
   const lanelet::ConstLineString3d & linestring, const double s1, const double s2)
 {
