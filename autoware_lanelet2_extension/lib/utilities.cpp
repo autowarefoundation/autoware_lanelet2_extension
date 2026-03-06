@@ -516,7 +516,7 @@ void overwriteLaneletsCenterline(
 {
   for (auto & lanelet_obj : lanelet_map->laneletLayer) {
     if (force_overwrite || !lanelet_obj.hasCustomCenterline()) {
-      const auto fine_center_line = generateFineCenterline(lanelet_obj, resolution);
+      const auto fine_center_line = deprecated::generateFineCenterline(lanelet_obj, resolution);
       lanelet_obj.setCenterline(fine_center_line);
     }
   }
@@ -527,7 +527,7 @@ void overwriteLaneletsCenterlineWithWaypoints(
 {
   for (auto & lanelet_obj : lanelet_map->laneletLayer) {
     if (force_overwrite) {
-      const auto fine_center_line = generateFineCenterline(lanelet_obj, resolution);
+      const auto fine_center_line = deprecated::generateFineCenterline(lanelet_obj, resolution);
       lanelet_obj.setCenterline(fine_center_line);
     } else {
       if (lanelet_obj.hasCustomCenterline()) {
@@ -535,7 +535,7 @@ void overwriteLaneletsCenterlineWithWaypoints(
         lanelet_obj.setAttribute("waypoints", centerline.id());
       }
 
-      const auto fine_center_line = generateFineCenterline(lanelet_obj, resolution);
+      const auto fine_center_line = deprecated::generateFineCenterline(lanelet_obj, resolution);
       lanelet_obj.setCenterline(fine_center_line);
     }
   }

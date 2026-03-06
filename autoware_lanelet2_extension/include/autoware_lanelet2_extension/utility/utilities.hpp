@@ -37,6 +37,7 @@ namespace lanelet::utils
 [[deprecated("please use autoware::lanelet2_utils::combine_lanelets_shape instead")]]
 lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets);
 
+[[deprecated("please use autoware::lanelet2_utils::get_fine_centerline instead")]]
 lanelet::LineString3d generateFineCenterline(
   const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0);
 [[deprecated("please use autoware::lanelet2_utils::get_centerline_with_offset instead")]]
@@ -109,6 +110,7 @@ lanelet::ArcCoordinates getArcCoordinates(
  * - when the `use_waypoints` in the autoware_map_loader is false,
  *   - the centerline in the lanelet2::LaneletMapPtr is used.
  */
+[[deprecated("please use autoware::lanelet2_utils::get_arc_coordinates_on_ego_centerline instead")]]
 lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
@@ -118,11 +120,13 @@ lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
 getClosestSegment(
   const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
 
+[[deprecated("please use autoware::lanelet2_utils::get_polygon_from_arc_length instead")]]
 lanelet::CompoundPolygon3d getPolygonFromArcLength(
   const lanelet::ConstLanelets & lanelets, const double s1, const double s2);
 [[deprecated("please use autoware::lanelet2_utils::get_lanelet_angle instead")]] double
 getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
+[[deprecated("please use autoware::lanelet2_utils::is_in_lanelet instead")]]
 bool isInLanelet(
   const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
   const double radius = 0.0);

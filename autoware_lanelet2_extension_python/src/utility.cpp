@@ -180,6 +180,64 @@ lanelet::ConstPoint3d toLaneletPoint(const geometry_msgs::msg::Point & src)
   return dst;
 }
 
+lanelet::LineString3d getLineStringFromArcLength(
+  const lanelet::ConstLineString3d & linestring, const double s1, const double s2)
+{
+  lanelet::Points3d points;
+  double accumulated_length = 0;
+  size_t start_index = linestring.size();
+  if (start_index == 0) {
+    return lanelet::LineString3d{lanelet::InvalId, points};
+  }
+  for (size_t i = 0; i < linestring.size() - 1; i++) {
+    const auto & p1 = linestring[i];
+    const auto & p2 = linestring[i + 1];
+    const double length = boost::geometry::distance(p1.basicPoint(), p2.basicPoint());
+    if (accumulated_length + length > s1) {
+      start_index = i;
+      break;
+    }
+    accumulated_length += length;
+  }
+  if (start_index < linestring.size() - 1) {
+    const auto & p1 = linestring[start_index];
+    const auto & p2 = linestring[start_index + 1];
+    const double residue = s1 - accumulated_length;
+    const auto direction_vector = (p2.basicPoint() - p1.basicPoint()).normalized();
+    const auto start_basic_point = p1.basicPoint() + residue * direction_vector;
+    const auto start_point = lanelet::Point3d(lanelet::InvalId, start_basic_point);
+    points.push_back(start_point);
+  }
+
+  accumulated_length = 0;
+  size_t end_index = linestring.size();
+  for (size_t i = 0; i < linestring.size() - 1; i++) {
+    const auto & p1 = linestring[i];
+    const auto & p2 = linestring[i + 1];
+    const double length = boost::geometry::distance(p1.basicPoint(), p2.basicPoint());
+    if (accumulated_length + length > s2) {
+      end_index = i;
+      break;
+    }
+    accumulated_length += length;
+  }
+
+  for (size_t i = start_index + 1; i < end_index; i++) {
+    const auto p = lanelet::Point3d(linestring[i]);
+    points.push_back(p);
+  }
+  if (end_index < linestring.size() - 1) {
+    const auto & p1 = linestring[end_index];
+    const auto & p2 = linestring[end_index + 1];
+    const double residue = s2 - accumulated_length;
+    const auto direction_vector = (p2.basicPoint() - p1.basicPoint()).normalized();
+    const auto end_basic_point = p1.basicPoint() + residue * direction_vector;
+    const auto end_point = lanelet::Point3d(lanelet::InvalId, end_basic_point);
+    points.push_back(end_point);
+  }
+  return lanelet::LineString3d{lanelet::InvalId, points};
+}
+
 }  // namespace detail
 
 inline double normalize_radian(const double rad)
@@ -318,6 +376,15 @@ double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence)
   return length;
 }
 
+bool isInLanelet(
+  const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
+  const double radius)
+{
+  constexpr double eps = 1.0e-9;
+  const lanelet::BasicPoint2d p(current_pose.position.x, current_pose.position.y);
+  return boost::geometry::distance(p, lanelet.polygon2d().basicPolygon()) < radius + eps;
+}
+
 lanelet::ArcCoordinates getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose)
 {
@@ -390,6 +457,34 @@ lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanele
   auto combined_lanelet = lanelet::Lanelet(lanelet::InvalId, left_bound, right_bound);
   combined_lanelet.setCenterline(center_line);
   return combined_lanelet;
+}
+
+lanelet::LineString3d generateFineCenterline(
+  const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0)
+{
+  // Get length of longer border
+  const double left_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.leftBound()));
+  const double right_length =
+    static_cast<double>(lanelet::geometry::length(lanelet_obj.rightBound()));
+  const double longer_distance = (left_length > right_length) ? left_length : right_length;
+  const int num_segments = std::max(static_cast<int>(ceil(longer_distance / resolution)), 1);
+
+  // Resample points
+  const auto left_points = detail::resamplePoints(lanelet_obj.leftBound(), num_segments);
+  const auto right_points = detail::resamplePoints(lanelet_obj.rightBound(), num_segments);
+
+  // Create centerline
+  lanelet::LineString3d centerline(lanelet::utils::getId());
+  for (int i = 0; i < num_segments + 1; i++) {
+    // Add ID for the average point of left and right
+    const auto center_basic_point = (right_points.at(i) + left_points.at(i)) / 2;
+    const lanelet::Point3d center_point(
+      lanelet::utils::getId(), center_basic_point.x(), center_basic_point.y(),
+      center_basic_point.z());
+    centerline.push_back(center_point);
+  }
+  return centerline;
 }
 
 lanelet::ConstLineString3d getCenterlineWithOffset(
@@ -572,6 +667,37 @@ lanelet::ConstLanelets getExpandedLanelets(
     lanelets.push_back(impl::getExpandedLanelet(llt, left_offset, right_offset));
   }
   return lanelets;
+}
+
+lanelet::CompoundPolygon3d getPolygonFromArcLength(
+  const lanelet::ConstLanelets & lanelets, const double s1, const double s2)
+{
+  const auto combined_lanelet = combineLaneletsShape(lanelets);
+  const auto total_length = lanelet::geometry::length2d(combined_lanelet);
+
+  // make sure that s1, and s2 are between [0, lane_length]
+  const auto s1_saturated = std::max(0.0, std::min(s1, total_length));
+  const auto s2_saturated = std::max(0.0, std::min(s2, total_length));
+
+  const auto ratio_s1 = s1_saturated / total_length;
+  const auto ratio_s2 = s2_saturated / total_length;
+
+  const auto s1_left = static_cast<double>(
+    ratio_s1 * boost::geometry::length(combined_lanelet.leftBound().basicLineString()));
+  const auto s2_left = static_cast<double>(
+    ratio_s2 * boost::geometry::length(combined_lanelet.leftBound().basicLineString()));
+  const auto s1_right = static_cast<double>(
+    ratio_s1 * boost::geometry::length(combined_lanelet.rightBound().basicLineString()));
+  const auto s2_right = static_cast<double>(
+    ratio_s2 * boost::geometry::length(combined_lanelet.rightBound().basicLineString()));
+
+  const auto left_bound =
+    detail::getLineStringFromArcLength(combined_lanelet.leftBound(), s1_left, s2_left);
+  const auto right_bound =
+    detail::getLineStringFromArcLength(combined_lanelet.rightBound(), s1_right, s2_right);
+
+  const auto & lanelet = lanelet::Lanelet(lanelet::InvalId, left_bound, right_bound);
+  return lanelet.polygon3d();
 }
 
 /**
@@ -1038,7 +1164,7 @@ bool isInLanelet(
   geometry_msgs::msg::Pose pose;
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
-  return lanelet::utils::isInLanelet(pose, lanelet, radius);
+  return impl::isInLanelet(pose, lanelet, radius);
 }
 
 std::vector<double> getClosestCenterPose(
@@ -1315,8 +1441,7 @@ lanelet::ConstLanelets getCurrentLanelets_pose(
 // for handling functions with default arguments
 /// utilities.cpp
 // NOLINTBEGIN(google-explicit-constructor)
-BOOST_PYTHON_FUNCTION_OVERLOADS(
-  generateFineCenterline_overload, lanelet::utils::generateFineCenterline, 1, 2)
+BOOST_PYTHON_FUNCTION_OVERLOADS(generateFineCenterline_overload, impl::generateFineCenterline, 1, 2)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
   getCenterlineWithOffset_overload, impl::getCenterlineWithOffset, 2, 3)
 BOOST_PYTHON_FUNCTION_OVERLOADS(
@@ -1342,8 +1467,7 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
    */
   bp::def("combineLaneletsShape", impl::combineLaneletsShape);
   bp::def(
-    "generateFineCenterline", lanelet::utils::generateFineCenterline,
-    generateFineCenterline_overload());
+    "generateFineCenterline", impl::generateFineCenterline, generateFineCenterline_overload());
   bp::def(
     "getCenterlineWithOffset", impl::getCenterlineWithOffset, getCenterlineWithOffset_overload());
   bp::def(
@@ -1364,7 +1488,7 @@ BOOST_PYTHON_MODULE(_autoware_lanelet2_extension_python_boost_python_utility)
   bp::def<double(const lanelet::ConstLanelets &)>("getLaneletLength3d", impl::getLaneletLength3d);
   bp::def("getArcCoordinates", ::getArcCoordinates);  // depends ros msg
   bp::def("getClosestSegment", impl::getClosestSegment);
-  bp::def("getPolygonFromArcLength", lanelet::utils::getPolygonFromArcLength);
+  bp::def("getPolygonFromArcLength", impl::getPolygonFromArcLength);
   bp::def("getLaneletAngle", ::getLaneletAngle);                  // depends on ros msg
   bp::def("isInLanelet", ::isInLanelet, isInLanelet_overload());  // depends ros msg
   bp::def("getClosestCenterPose", ::getClosestCenterPose);        // depends ros msg
