@@ -32,7 +32,11 @@ bool route::isRouteValid(
     for (const auto & primitive : route_section.primitives) {
       const auto id = primitive.id;
       try {
-        lanelet_map_ptr_->laneletLayer.get(id);
+        if (primitive.primitive_type == "area") {
+          lanelet_map_ptr_->areaLayer.get(id);
+        } else {
+          lanelet_map_ptr_->laneletLayer.get(id);
+        }
       } catch (const std::exception & e) {
         std::cerr
           << e.what()
