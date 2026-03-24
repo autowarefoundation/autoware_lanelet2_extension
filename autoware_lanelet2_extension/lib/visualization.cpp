@@ -34,9 +34,9 @@
 #include <cmath>
 #include <iostream>
 #include <string>
-#include <utility>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 namespace
@@ -398,15 +398,17 @@ bool areaOuterToPolygon3d(const lanelet::ConstArea & area, lanelet::Polygon3d * 
   llt_poly->clear();
   for (const auto & ls : area.outerBound()) {
     for (const auto & pt : ls) {
-      llt_poly->push_back(lanelet::Point3d(
-        lanelet::InvalId, pt.basicPoint().x(), pt.basicPoint().y(), pt.basicPoint().z()));
+      llt_poly->push_back(
+        lanelet::Point3d(
+          lanelet::InvalId, pt.basicPoint().x(), pt.basicPoint().y(), pt.basicPoint().z()));
     }
   }
   if (llt_poly->size() >= 2U) {
     const auto & f = llt_poly->front();
     const auto & b = llt_poly->back();
-    if (std::abs(f.basicPoint().x() - b.basicPoint().x()) < 1e-6 &&
-        std::abs(f.basicPoint().y() - b.basicPoint().y()) < 1e-6) {
+    if (
+      std::abs(f.basicPoint().x() - b.basicPoint().x()) < 1e-6 &&
+      std::abs(f.basicPoint().y() - b.basicPoint().y()) < 1e-6) {
       llt_poly->pop_back();
     }
   }
@@ -1276,7 +1278,8 @@ visualization_msgs::msg::MarkerArray laneletAreasAsMarkerArray(
     return marker_array;
   }
 
-  visualization_msgs::msg::Marker fill_marker = createPolygonMarker("lanelet_routing_area", fill_color);
+  visualization_msgs::msg::Marker fill_marker =
+    createPolygonMarker("lanelet_routing_area", fill_color);
   std::vector<visualization_msgs::msg::Marker> outline_markers;
   outline_markers.reserve(areas.size());
   int outline_id = 0;
