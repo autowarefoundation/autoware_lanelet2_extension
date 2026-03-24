@@ -31,6 +31,7 @@
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include <lanelet2_core/LaneletMap.h>
+#include <lanelet2_core/primitives/Area.h>
 #include <lanelet2_core/primitives/Lanelet.h>
 
 #include <string>
@@ -236,6 +237,17 @@ visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
  */
 visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
   const lanelet::ConstPolygons3d & obstacle_removal_area, const std_msgs::msg::ColorRGBA & c);
+
+/**
+ * [laneletAreasAsMarkerArray creates marker array to visualize Lanelet2 Area layer primitives
+ * (e.g. routing through lane-area-lane connections).]
+ * @param areas         [Lanelet2 ConstArea from map areaLayer]
+ * @param fill_color    [TRIANGLE_LIST fill color; namespace lanelet_routing_area]
+ * @param outline_color [LINE_STRIP boundary color; namespace lanelet_routing_area_outline]
+ */
+visualization_msgs::msg::MarkerArray laneletAreasAsMarkerArray(
+  const std::vector<lanelet::ConstArea> & areas, const std_msgs::msg::ColorRGBA & fill_color,
+  const std_msgs::msg::ColorRGBA & outline_color);
 }  // namespace format_v2
 
 /**

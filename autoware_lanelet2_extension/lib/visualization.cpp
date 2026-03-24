@@ -31,8 +31,10 @@
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -386,6 +388,60 @@ void pushPolygonMarker(
       marker->colors.push_back(color);
     }
   }
+}
+
+bool areaOuterToPolygon3d(const lanelet::ConstArea & area, lanelet::Polygon3d * llt_poly)
+{
+  if (llt_poly == nullptr) {
+    return false;
+  }
+  llt_poly->clear();
+  for (const auto & ls : area.outerBound()) {
+    for (const auto & pt : ls) {
+      llt_poly->push_back(lanelet::Point3d(
+        lanelet::InvalId, pt.basicPoint().x(), pt.basicPoint().y(), pt.basicPoint().z()));
+    }
+  }
+  if (llt_poly->size() >= 2U) {
+    const auto & f = llt_poly->front();
+    const auto & b = llt_poly->back();
+    if (std::abs(f.basicPoint().x() - b.basicPoint().x()) < 1e-6 &&
+        std::abs(f.basicPoint().y() - b.basicPoint().y()) < 1e-6) {
+      llt_poly->pop_back();
+    }
+  }
+  return llt_poly->size() >= 3U;
+}
+
+visualization_msgs::msg::Marker makeLaneletRoutingAreaOutlineMarker(
+  const int id, const lanelet::Polygon3d & poly, const std_msgs::msg::ColorRGBA & outline_color)
+{
+  visualization_msgs::msg::Marker line;
+  line.header.frame_id = "map";
+  line.header.stamp = rclcpp::Time();
+  line.ns = "lanelet_routing_area_outline";
+  line.id = id;
+  line.action = visualization_msgs::msg::Marker::ADD;
+  line.type = visualization_msgs::msg::Marker::LINE_STRIP;
+  line.scale.x = 0.05;
+  line.scale.y = 0.0;
+  line.scale.z = 0.0;
+  line.color = outline_color;
+  line.pose.orientation.w = 1.0;
+  line.lifetime = rclcpp::Duration(0, 0);
+  line.frame_locked = false;
+  line.points.reserve(poly.size() + 1U);
+  for (const auto & pt : poly) {
+    geometry_msgs::msg::Point p;
+    p.x = pt.x();
+    p.y = pt.y();
+    p.z = pt.z();
+    line.points.push_back(p);
+  }
+  if (!line.points.empty()) {
+    line.points.push_back(line.points.front());
+  }
+  return line;
 }
 
 }  // anonymous namespace
@@ -1207,6 +1263,39 @@ visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
 
   if (!marker.points.empty()) {
     marker_array.markers.push_back(marker);
+  }
+  return marker_array;
+}
+
+visualization_msgs::msg::MarkerArray laneletAreasAsMarkerArray(
+  const std::vector<lanelet::ConstArea> & areas, const std_msgs::msg::ColorRGBA & fill_color,
+  const std_msgs::msg::ColorRGBA & outline_color)
+{
+  visualization_msgs::msg::MarkerArray marker_array;
+  if (areas.empty()) {
+    return marker_array;
+  }
+
+  visualization_msgs::msg::Marker fill_marker = createPolygonMarker("lanelet_routing_area", fill_color);
+  std::vector<visualization_msgs::msg::Marker> outline_markers;
+  outline_markers.reserve(areas.size());
+  int outline_id = 0;
+
+  for (const auto & area : areas) {
+    lanelet::Polygon3d llt_poly;
+    if (!areaOuterToPolygon3d(area, &llt_poly)) {
+      continue;
+    }
+    pushPolygonMarker(&fill_marker, llt_poly, fill_color);
+    outline_markers.push_back(
+      makeLaneletRoutingAreaOutlineMarker(outline_id++, llt_poly, outline_color));
+  }
+
+  if (!fill_marker.points.empty()) {
+    marker_array.markers.push_back(std::move(fill_marker));
+  }
+  for (auto & om : outline_markers) {
+    marker_array.markers.push_back(std::move(om));
   }
   return marker_array;
 }
