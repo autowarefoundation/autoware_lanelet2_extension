@@ -18,6 +18,7 @@ namespace lanelet::autoware
 {
 
 // Register AutowareVehicle for the Autoware location + Vehicle participant.
-static traffic_rules::RegisterTrafficRules<AutowareVehicle> reg(DefaultLocation, Participants::Vehicle);
+static traffic_rules::RegisterTrafficRules<AutowareVehicle> reg(
+  DefaultLocation, Participants::Vehicle);
 
 }  // namespace lanelet::autoware

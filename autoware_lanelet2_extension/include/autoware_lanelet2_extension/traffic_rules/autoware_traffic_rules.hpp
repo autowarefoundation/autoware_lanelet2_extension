@@ -26,17 +26,15 @@ static constexpr const char DefaultLocation[] = "autoware";
 
 /// @brief Vehicle traffic rules for Autoware based on GermanVehicle, but allowing areas in normal
 /// driving mode. GermanVehicle unconditionally disallows canPass(ConstArea), which prevents routing
-/// through areas. This class restores the GenericTrafficRules behavior that checks participant tags.
+/// through areas. This class restores the GenericTrafficRules behavior that checks participant
+/// tags.
 class AutowareVehicle : public traffic_rules::GermanVehicle
 {
 public:
   using GermanVehicle::GermanVehicle;
 
   // Allow passing through areas based on participant tags (GenericTrafficRules default behavior)
-  bool canPass(const ConstArea & area) const override
-  {
-    return GenericTrafficRules::canPass(area);
-  }
+  bool canPass(const ConstArea & area) const override { return GenericTrafficRules::canPass(area); }
 };
 
 }  // namespace lanelet::autoware
