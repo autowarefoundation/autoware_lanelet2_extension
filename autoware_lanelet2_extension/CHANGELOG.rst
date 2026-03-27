@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2026-03-27)
+------------------
 * feat(lanelet2_extension): deprecate lanelet2_extension utilities functions (final)  (`#103 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/103>`_)
   Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
 * feat(lanelet2_extension): deprecate toGeomMsgPt/toLaneltPoint (`#102 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/102>`_)
