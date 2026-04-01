@@ -2,6 +2,9 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.0.0 (2026-03-27)
 ------------------
 * chore: cleanup ported functions (`#107 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/107>`_)
