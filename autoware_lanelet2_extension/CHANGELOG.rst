@@ -2,6 +2,24 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.0 (2026-03-27)
+------------------
+* chore: cleanup ported functions (`#107 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/107>`_)
+* feat(lanelet2_extension): deprecate lanelet2_extension utilities functions (final)  (`#103 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/103>`_)
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+* feat(lanelet2_extension): deprecate toGeomMsgPt/toLaneltPoint (`#102 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/102>`_)
+  * feat(lanelet2_extension): deprecate toGeomMsgPt/toLaneltPoint
+  * fix build error
+  * fix build error 2
+  * fix build error 3
+  * fix build error 4
+  * fix build error 5
+  ---------
+* feat(lanelet2_extension): deprecate remaining functions in utilities  (`#95 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/95>`_)
+* feat(lanelet2_extension): deprecate getClosestLanelet and others (`#97 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/97>`_)
+  Co-authored-by: Junya Sasaki <j2sasaki1990@gmail.com>
+* Contributors: Mamoru Sobue, Sarun MUKDAPITAK
+
 0.12.0 (2026-02-17)
 -------------------
 * feat(visualizer): change a tag name; map_area_filter to obstacle_removal_area (`#100 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/100>`_)
