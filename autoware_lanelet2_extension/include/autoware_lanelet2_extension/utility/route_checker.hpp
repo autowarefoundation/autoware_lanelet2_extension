@@ -27,7 +27,9 @@ using autoware_planning_msgs::msg::LaneletRoute;
 
 /// @param allow_area If false, routes containing any primitive with primitive_type "area" are
 /// invalid (lane-only validation). If true, area ids are resolved on areaLayer.
-bool isRouteValid(const LaneletRoute & route, const lanelet::LaneletMapPtr lanelet_map_ptr_, bool allow_area = false);
+bool isRouteValid(
+  const LaneletRoute & route, const lanelet::LaneletMapPtr lanelet_map_ptr_,
+  bool allow_area = false);
 }  // namespace lanelet::utils::route
 
 // NOLINTEND(readability-identifier-naming)
