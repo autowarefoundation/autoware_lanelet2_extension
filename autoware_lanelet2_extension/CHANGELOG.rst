@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2026-04-27)
+------------------
 * feat: add traffic rules to enable driving for areas (`#104 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/104>`_)
 * Contributors: emmeyteja
 
