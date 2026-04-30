@@ -290,6 +290,63 @@ For more details about the `no_drivable_lane` concept and design, please refer t
 If there is a polygon area that has `obstacle_removal_area` tag, the pointcloud and objects in this area are removed.
 For more details, please refer <https://github.com/tier4/l4_toolkit/tree/main/obstacle_removal_area_filter>
 
+### Direction Change Area
+
+The direction change module uses dedicated lanelets and a Lanelet2 Area primitive to represent a feasible maneuver where the vehicle reverses driving direction (e.g., turn-around at a narrow space). Separate lanelets are authored for each **forward** travel direction and each **reverse** direction. The Area primitive (`type=multipolygon`) connects two lanelets at their **tips** (the transition patch between approaches).
+
+**Lane specifications**
+
+- **Separate lanelets per direction**: Use different lanelets for each forward direction and each reverse direction.
+- **Node continuity**: The end nodes of the predecessor lanelet must match the start nodes of the successor lanelet along the intended path (shared vertices where lanes meet).
+- **Tag on lanelets**: Lanelets intended for the direction change module should carry `<tag k="direction_change" v="yes"/>`.
+- **Path length at the cusp**: The lane path must provide enough length at the direction-change cusp so the vehicle can complete the maneuver without **dry steering**.
+
+**Area specifications**
+
+- **Outer boundary (LineStrings)**: The Area boundary is built from outer LineStrings that together form a closed ring (end nodes of consecutive segments must match; the ring closes). Use two or more linestrings to form the outer.
+- **Coincidence with lanelet boundaries**: Any edge of the Area that coincides with the physical limit at a lanelet **tip** must reuse the **same ordered nodes** as that lanelet’s **left** or **right** boundary LineString—not a duplicated, copied, or offset polyline.
+- **Cross-lane edge for planning**: The Area boundary segment that is shared between the two connecting lanelets (the edge built from nodes belonging to both lanes) must be tagged so planning can traverse through the Area. On that LineString (`way`), set `<tag k="lane_change" v="yes"/>`.
+- **No holes**: Do not define inner rings. The region enclosed by the outer ring is treated as drivable from the connected lanelets.
+- **Tags (Area relation)**: On the Area `relation`, set `type=multipolygon` and `direction_change=yes` or `no` (use `yes` for a direction change area); any other Lanelet2 / toolchain tags required for multipolygon Areas still apply.
+
+**Shape and size**
+
+- **Shape**: Prefer a **convex** polygon for the Area outline so the drivable patch is unambiguous and easy to validate; avoid pinched or highly non-convex outlines that imply non-drivable corners.
+- **Length**: On the order of **~1.5–2×** the design vehicle length, so there is margin for footprint and motion planning at the tip.
+- **Width**: **Same** as the nominal width of the connecting lanes.
+
+_An example (conceptual fragments):_
+
+```xml
+  <!-- Lanelets used in the maneuver: direction_change=yes -->
+  <relation id='100' visible='true' version='1'>
+    <member type='way' ref='201' role='left' />
+    <member type='way' ref='202' role='right' />
+    <tag k='type' v='lanelet' />
+    <tag k='subtype' v='road' />
+    <tag k='one_way' v='yes' />
+    <tag k='direction_change' v='yes' />
+  </relation>
+
+  <!-- Shared boundary segment between lanes through the patch: lane_change=yes -->
+  <way id='310' visible='true' version='1'>
+    <nd ref='501' />
+    <nd ref='502' />
+    <tag k='type' v='line_thin' />
+    <tag k='lane_change' v='yes' />
+  </way>
+
+  <!-- Area: multipolygon, outer ring only -->
+  <relation id='400' visible='true' version='1'>
+    <member type='way' ref='301' role='outer' />
+    <member type='way' ref='302' role='outer' />
+    <member type='way' ref='303' role='outer' />
+    <member type='way' ref='304' role='outer' />
+    <tag k='type' v='multipolygon' />
+    <tag k='direction_change' v='yes' />
+  </relation>
+```
+
 ### Localization Landmarks
 
 Landmarks, such as AR-Tags, can be defined into the lanelet map to aid localization module.
