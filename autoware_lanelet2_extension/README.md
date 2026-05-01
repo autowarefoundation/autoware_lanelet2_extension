@@ -49,7 +49,9 @@ Autoware intersection module requires the information on which lanes can be igno
 
 ### Utility
 
-#### Message Conversion
+Please use `autoware_lanelet2_utils` package for deprecated functions.
+
+#### Message Conversion(deprecated)
 
 This contains functions to convert lanelet map objects into ROS messages.
 Currently it contains following conversions:
@@ -59,12 +61,11 @@ Currently it contains following conversions:
 - lanelet::Point2d to geometry_msgs::Point
 - lanelet::BasicPoint3d to geometry_msgs::Point
 
-#### Query
+#### Query(some functions are deprecated)
 
-This module contains functions to retrieve various information from maps.
-e.g. crosswalks, trafficlights, stoplines
+This module contains functions to retrieve various information from maps, such as crosswalks, trafficlights, stoplines, etc.
 
-#### Utilities
+#### Utilities(most of the functions are deprecated)
 
 This module contains other useful functions related to Lanelet.
 e.g. matching waypoint with lanelets

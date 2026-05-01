@@ -26,13 +26,21 @@
 namespace lanelet::utils
 {
 bool route::isRouteValid(
-  const LaneletRoute & route_msg, const lanelet::LaneletMapPtr lanelet_map_ptr_)
+  const LaneletRoute & route_msg, const lanelet::LaneletMapPtr lanelet_map_ptr_, bool allow_area)
 {
   for (const auto & route_section : route_msg.segments) {
     for (const auto & primitive : route_section.primitives) {
+      // If area is not allowed, and the primitive is an area, return false
+      if (primitive.primitive_type == "area" && !allow_area) {
+        return false;
+      }
       const auto id = primitive.id;
       try {
-        lanelet_map_ptr_->laneletLayer.get(id);
+        if (primitive.primitive_type == "area") {
+          lanelet_map_ptr_->areaLayer.get(id);
+        } else {
+          lanelet_map_ptr_->laneletLayer.get(id);
+        }
       } catch (const std::exception & e) {
         std::cerr
           << e.what()

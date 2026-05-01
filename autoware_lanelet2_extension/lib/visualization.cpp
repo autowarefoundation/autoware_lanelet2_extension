@@ -31,10 +31,12 @@
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 namespace
@@ -119,12 +121,10 @@ bool inputLightMarker(visualization_msgs::msg::Marker * marker, const lanelet::C
 
   marker->id = static_cast<int32_t>(p.id());
 
-  geometry_msgs::msg::Point point;
   marker->pose.position.x = p.x();
   marker->pose.position.y = p.y();
   marker->pose.position.z = p.z();
 
-  std_msgs::msg::ColorRGBA color;
   marker->color.r = 0.0f;
   marker->color.g = 0.0f;
   marker->color.b = 0.0f;
@@ -317,6 +317,50 @@ visualization_msgs::msg::Marker createPolygonMarker(
   return marker;
 }
 
+void toGeomMsgPt(const geometry_msgs::msg::Point32 & src, geometry_msgs::msg::Point * dst)
+{
+  if (dst == nullptr) {
+    std::cerr << __FUNCTION__ << "pointer is null!";
+    return;
+  }
+  dst->x = src.x;
+  dst->y = src.y;
+  dst->z = src.z;
+}
+
+void toGeomMsgPt(const Eigen::Vector3d & src, geometry_msgs::msg::Point * dst)
+{
+  if (dst == nullptr) {
+    std::cerr << __FUNCTION__ << "pointer is null!";
+    return;
+  }
+  dst->x = src.x();
+  dst->y = src.y();
+  dst->z = src.z();
+}
+
+void toGeomMsgPt32(const Eigen::Vector3d & src, geometry_msgs::msg::Point32 * dst)
+{
+  if (dst == nullptr) {
+    std::cerr << __FUNCTION__ << "pointer is null!" << std::endl;
+    return;
+  }
+  dst->x = static_cast<float>(src.x());
+  dst->y = static_cast<float>(src.y());
+  dst->z = static_cast<float>(src.z());
+}
+
+void toGeomMsgPoly(const lanelet::ConstPolygon3d & ll_poly, geometry_msgs::msg::Polygon * geom_poly)
+{
+  geom_poly->points.clear();
+  geom_poly->points.reserve(ll_poly.size());
+  for (const auto & ll_pt : ll_poly) {
+    geometry_msgs::msg::Point32 geom_pt32;
+    ::toGeomMsgPt32(ll_pt.basicPoint(), &geom_pt32);
+    geom_poly->points.push_back(geom_pt32);
+  }
+}
+
 void pushPolygonMarker(
   visualization_msgs::msg::Marker * marker, const lanelet::ConstPolygon3d & polygon,
   const std_msgs::msg::ColorRGBA & color)
@@ -331,7 +375,7 @@ void pushPolygonMarker(
   }
 
   geometry_msgs::msg::Polygon geom_poly;
-  lanelet::utils::conversion::toGeomMsgPoly(polygon, &geom_poly);
+  ::toGeomMsgPoly(polygon, &geom_poly);
 
   std::vector<geometry_msgs::msg::Polygon> triangles;
   lanelet::visualization::polygon2Triangle(geom_poly, &triangles);
@@ -339,11 +383,67 @@ void pushPolygonMarker(
   for (const auto & tri : triangles) {
     geometry_msgs::msg::Point geom_pts[3];
     for (int i = 0; i < 3; i++) {
-      lanelet::utils::conversion::toGeomMsgPt(tri.points[i], &geom_pts[i]);
+      ::toGeomMsgPt(tri.points[i], &geom_pts[i]);
       marker->points.push_back(geom_pts[i]);
       marker->colors.push_back(color);
     }
   }
+}
+
+bool areaOuterToPolygon3d(const lanelet::ConstArea & area, lanelet::Polygon3d * llt_poly)
+{
+  if (llt_poly == nullptr) {
+    return false;
+  }
+  llt_poly->clear();
+  for (const auto & ls : area.outerBound()) {
+    for (const auto & pt : ls) {
+      llt_poly->push_back(
+        lanelet::Point3d(
+          lanelet::InvalId, pt.basicPoint().x(), pt.basicPoint().y(), pt.basicPoint().z()));
+    }
+  }
+  if (llt_poly->size() >= 2U) {
+    const auto & f = llt_poly->front();
+    const auto & b = llt_poly->back();
+    if (
+      std::abs(f.basicPoint().x() - b.basicPoint().x()) < 1e-6 &&
+      std::abs(f.basicPoint().y() - b.basicPoint().y()) < 1e-6) {
+      llt_poly->pop_back();
+    }
+  }
+  return llt_poly->size() >= 3U;
+}
+
+visualization_msgs::msg::Marker makeLaneletRoutingAreaOutlineMarker(
+  const int id, const lanelet::Polygon3d & poly, const std_msgs::msg::ColorRGBA & outline_color)
+{
+  visualization_msgs::msg::Marker line;
+  line.header.frame_id = "map";
+  line.header.stamp = rclcpp::Time();
+  line.ns = "lanelet_routing_area_outline";
+  line.id = id;
+  line.action = visualization_msgs::msg::Marker::ADD;
+  line.type = visualization_msgs::msg::Marker::LINE_STRIP;
+  line.scale.x = 0.05;
+  line.scale.y = 0.0;
+  line.scale.z = 0.0;
+  line.color = outline_color;
+  line.pose.orientation.w = 1.0;
+  line.lifetime = rclcpp::Duration(0, 0);
+  line.frame_locked = false;
+  line.points.reserve(poly.size() + 1U);
+  for (const auto & pt : poly) {
+    geometry_msgs::msg::Point p;
+    p.x = pt.x();
+    p.y = pt.y();
+    p.z = pt.z();
+    line.points.push_back(p);
+  }
+  if (!line.points.empty()) {
+    line.points.push_back(line.points.front());
+  }
+  return line;
 }
 
 }  // anonymous namespace
@@ -576,7 +676,7 @@ visualization_msgs::msg::MarkerArray detectionAreasAsMarkerArray(
     const auto detection_areas = da_reg_elem->detectionAreas();
     for (const auto & detection_area : detection_areas) {
       geometry_msgs::msg::Polygon geom_poly;
-      utils::conversion::toGeomMsgPoly(detection_area, &geom_poly);
+      ::toGeomMsgPoly(detection_area, &geom_poly);
 
       std::vector<geometry_msgs::msg::Polygon> triangles;
       polygon2Triangle(geom_poly, &triangles);
@@ -585,7 +685,7 @@ visualization_msgs::msg::MarkerArray detectionAreasAsMarkerArray(
         geometry_msgs::msg::Point tri0[3];
 
         for (int i = 0; i < 3; i++) {
-          utils::conversion::toGeomMsgPt(tri.points[i], &tri0[i]);
+          ::toGeomMsgPt(tri.points[i], &tri0[i]);
           marker.points.push_back(tri0[i]);
           marker.colors.push_back(c);
         }
@@ -643,7 +743,7 @@ visualization_msgs::msg::MarkerArray noParkingAreasAsMarkerArray(
     const auto no_parking_areas = no_reg_elem->noParkingAreas();
     for (const auto & no_parking_area : no_parking_areas) {
       geometry_msgs::msg::Polygon geom_poly;
-      utils::conversion::toGeomMsgPoly(no_parking_area, &geom_poly);
+      ::toGeomMsgPoly(no_parking_area, &geom_poly);
 
       std::vector<geometry_msgs::msg::Polygon> triangles;
       polygon2Triangle(geom_poly, &triangles);
@@ -652,7 +752,7 @@ visualization_msgs::msg::MarkerArray noParkingAreasAsMarkerArray(
         geometry_msgs::msg::Point tri0[3];
 
         for (int i = 0; i < 3; i++) {
-          utils::conversion::toGeomMsgPt(tri.points[i], &tri0[i]);
+          ::toGeomMsgPt(tri.points[i], &tri0[i]);
           marker.points.push_back(tri0[i]);
           marker.colors.push_back(c);
         }
@@ -705,7 +805,7 @@ visualization_msgs::msg::MarkerArray busStopAreasAsMarkerArray(
     const auto bus_stop_areas = bus_stop_reg_elem->busStopAreas();
     for (const auto & bus_stop_area : bus_stop_areas) {
       geometry_msgs::msg::Polygon geom_poly;
-      utils::conversion::toGeomMsgPoly(bus_stop_area, &geom_poly);
+      ::toGeomMsgPoly(bus_stop_area, &geom_poly);
 
       std::vector<geometry_msgs::msg::Polygon> triangles;
       polygon2Triangle(geom_poly, &triangles);
@@ -714,7 +814,7 @@ visualization_msgs::msg::MarkerArray busStopAreasAsMarkerArray(
         geometry_msgs::msg::Point tri0[3];
 
         for (int i = 0; i < 3; i++) {
-          utils::conversion::toGeomMsgPt(tri.points[i], &tri0[i]);
+          ::toGeomMsgPt(tri.points[i], &tri0[i]);
           marker.points.push_back(tri0[i]);
           marker.colors.push_back(c);
         }
@@ -775,7 +875,7 @@ visualization_msgs::msg::MarkerArray noStoppingAreasAsMarkerArray(
     const auto no_stopping_areas = no_reg_elem->noStoppingAreas();
     for (const auto & no_stopping_area : no_stopping_areas) {
       geometry_msgs::msg::Polygon geom_poly;
-      utils::conversion::toGeomMsgPoly(no_stopping_area, &geom_poly);
+      ::toGeomMsgPoly(no_stopping_area, &geom_poly);
 
       std::vector<geometry_msgs::msg::Polygon> triangles;
       polygon2Triangle(geom_poly, &triangles);
@@ -784,7 +884,7 @@ visualization_msgs::msg::MarkerArray noStoppingAreasAsMarkerArray(
         geometry_msgs::msg::Point tri0[3];
 
         for (int i = 0; i < 3; i++) {
-          utils::conversion::toGeomMsgPt(tri.points[i], &tri0[i]);
+          ::toGeomMsgPt(tri.points[i], &tri0[i]);
           marker.points.push_back(tri0[i]);
           marker.colors.push_back(c);
         }
@@ -846,7 +946,7 @@ visualization_msgs::msg::MarkerArray speedBumpsAsMarkerArray(
     const auto speed_bump = sb_reg_elem->speedBump();
 
     geometry_msgs::msg::Polygon geom_poly;
-    utils::conversion::toGeomMsgPoly(speed_bump, &geom_poly);
+    ::toGeomMsgPoly(speed_bump, &geom_poly);
 
     std::vector<geometry_msgs::msg::Polygon> triangles;
     polygon2Triangle(geom_poly, &triangles);
@@ -855,7 +955,7 @@ visualization_msgs::msg::MarkerArray speedBumpsAsMarkerArray(
       geometry_msgs::msg::Point tri0[3];
 
       for (int i = 0; i < 3; i++) {
-        utils::conversion::toGeomMsgPt(tri.points[i], &tri0[i]);
+        ::toGeomMsgPt(tri.points[i], &tri0[i]);
         marker.points.push_back(tri0[i]);
         marker.colors.push_back(c);
       }
@@ -910,7 +1010,7 @@ visualization_msgs::msg::MarkerArray crosswalkAreasAsMarkerArray(
     const auto crosswalk_areas = cw_reg_elem->crosswalkAreas();
     for (const auto & crosswalk_area : crosswalk_areas) {
       geometry_msgs::msg::Polygon geom_poly;
-      utils::conversion::toGeomMsgPoly(crosswalk_area, &geom_poly);
+      ::toGeomMsgPoly(crosswalk_area, &geom_poly);
 
       std::vector<geometry_msgs::msg::Polygon> triangles;
       polygon2Triangle(geom_poly, &triangles);
@@ -919,7 +1019,7 @@ visualization_msgs::msg::MarkerArray crosswalkAreasAsMarkerArray(
         geometry_msgs::msg::Point tri0[3];
 
         for (int i = 0; i < 3; i++) {
-          utils::conversion::toGeomMsgPt(tri.points[i], &tri0[i]);
+          ::toGeomMsgPt(tri.points[i], &tri0[i]);
           marker.points.push_back(tri0[i]);
           marker.colors.push_back(c);
         }
@@ -1149,6 +1249,59 @@ visualization_msgs::msg::MarkerArray hatchedRoadMarkingsAreaAsMarkerArray(
 
   return marker_array;
 }
+
+visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
+  const lanelet::ConstPolygons3d & obstacle_removal_areas, const std_msgs::msg::ColorRGBA & c)
+{
+  visualization_msgs::msg::MarkerArray marker_array;
+  if (obstacle_removal_areas.empty()) {
+    return marker_array;
+  }
+
+  visualization_msgs::msg::Marker marker = createPolygonMarker("obstacle_removal_area", c);
+  for (const auto & polygon : obstacle_removal_areas) {
+    pushPolygonMarker(&marker, polygon, c);
+  }
+
+  if (!marker.points.empty()) {
+    marker_array.markers.push_back(marker);
+  }
+  return marker_array;
+}
+
+visualization_msgs::msg::MarkerArray laneletAreasAsMarkerArray(
+  const std::vector<lanelet::ConstArea> & areas, const std_msgs::msg::ColorRGBA & fill_color,
+  const std_msgs::msg::ColorRGBA & outline_color)
+{
+  visualization_msgs::msg::MarkerArray marker_array;
+  if (areas.empty()) {
+    return marker_array;
+  }
+
+  visualization_msgs::msg::Marker fill_marker =
+    createPolygonMarker("lanelet_routing_area", fill_color);
+  std::vector<visualization_msgs::msg::Marker> outline_markers;
+  outline_markers.reserve(areas.size());
+  int outline_id = 0;
+
+  for (const auto & area : areas) {
+    lanelet::Polygon3d llt_poly;
+    if (!areaOuterToPolygon3d(area, &llt_poly)) {
+      continue;
+    }
+    pushPolygonMarker(&fill_marker, llt_poly, fill_color);
+    outline_markers.push_back(
+      makeLaneletRoutingAreaOutlineMarker(outline_id++, llt_poly, outline_color));
+  }
+
+  if (!fill_marker.points.empty()) {
+    marker_array.markers.push_back(std::move(fill_marker));
+  }
+  for (auto & om : outline_markers) {
+    marker_array.markers.push_back(std::move(om));
+  }
+  return marker_array;
+}
 }  // namespace format_v2
 }  // namespace visualization
 
@@ -1277,7 +1430,7 @@ void visualization::lanelet2Polygon(
 
   for (const auto & pt : ll_poly) {
     geometry_msgs::msg::Point32 pt32;
-    utils::conversion::toGeomMsgPt32(pt.basicPoint(), &pt32);
+    ::toGeomMsgPt32(pt.basicPoint(), &pt32);
     polygon->points.push_back(pt32);
   }
 }
@@ -1470,7 +1623,7 @@ visualization_msgs::msg::MarkerArray visualization::laneletsAsTriangleMarkerArra
       geometry_msgs::msg::Point tri0[3];
 
       for (int i = 0; i < 3; i++) {
-        utils::conversion::toGeomMsgPt(tri.points[i], &tri0[i]);
+        ::toGeomMsgPt(tri.points[i], &tri0[i]);
 
         marker.points.push_back(tri0[i]);
         marker.colors.push_back(c);
@@ -1549,13 +1702,13 @@ void visualization::pushTrafficLightTriangleMarker(
     }
   }
   geometry_msgs::msg::Point tri0[3];
-  utils::conversion::toGeomMsgPt(v[0], &tri0[0]);
-  utils::conversion::toGeomMsgPt(v[1], &tri0[1]);
-  utils::conversion::toGeomMsgPt(v[2], &tri0[2]);
+  ::toGeomMsgPt(v[0], &tri0[0]);
+  ::toGeomMsgPt(v[1], &tri0[1]);
+  ::toGeomMsgPt(v[2], &tri0[2]);
   geometry_msgs::msg::Point tri1[3];
-  utils::conversion::toGeomMsgPt(v[0], &tri1[0]);
-  utils::conversion::toGeomMsgPt(v[2], &tri1[1]);
-  utils::conversion::toGeomMsgPt(v[3], &tri1[2]);
+  ::toGeomMsgPt(v[0], &tri1[0]);
+  ::toGeomMsgPt(v[2], &tri1[1]);
+  ::toGeomMsgPt(v[3], &tri1[2]);
 
   for (const auto & i : tri0) {
     marker->points.push_back(i);

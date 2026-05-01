@@ -48,6 +48,12 @@ inline namespace format_v2
  * @return     [crosswalk lanelets]
  */
 lanelet::ConstLanelets crosswalkLanelets(const lanelet::ConstLanelets & lls);
+
+/**
+ * [walkwayLanelets extracts walkway lanelets]
+ * @param  lls [input lanelets with various subtypes]
+ * @return     [crosswalk lanelets]
+ */
 lanelet::ConstLanelets walkwayLanelets(const lanelet::ConstLanelets & lls);
 
 /**
@@ -165,6 +171,7 @@ lanelet::ConstLineStrings3d getLinkedParkingSpaces(
 lanelet::ConstLineStrings3d getLinkedParkingSpaces(
   const lanelet::ConstLanelet & lanelet, const lanelet::ConstLineStrings3d & all_parking_spaces,
   const lanelet::ConstPolygons3d & all_parking_lots);
+
 // query linked lanelets from parking space
 bool getLinkedLanelet(
   const lanelet::ConstLineString3d & parking_space,
@@ -173,6 +180,7 @@ bool getLinkedLanelet(
 bool getLinkedLanelet(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr, lanelet::ConstLanelet * linked_lanelet);
+
 lanelet::ConstLanelets getLinkedLanelets(
   const lanelet::ConstLineString3d & parking_space,
   const lanelet::ConstLanelets & all_road_lanelets,
@@ -258,29 +266,39 @@ lanelet::ConstLanelets roadLanelets(const lanelet::ConstLanelets & lls);
 lanelet::ConstPolygons3d getAllPolygonsByType(
   const lanelet::LaneletMapConstPtr & lanelet_map_ptr, const std::string & polygon_type);
 
-ConstLanelets getLaneletsWithinRange(
+[[deprecated("use LaneletLayer R-tree API instead")]] ConstLanelets getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const lanelet::BasicPoint2d & search_point,
   const double range);
+
+[[deprecated("use LaneletLayer R-tree API instead")]]
 ConstLanelets getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   const double range);
 
-ConstLanelets getLaneChangeableNeighbors(
-  const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+[[deprecated("please use autoware::lanelet2_utils::lane_changeable_neighbors")]] ConstLanelets
+getLaneChangeableNeighbors(const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+
+[[deprecated("please use autoware::lanelet2_utils::lane_changeable_neighbors")]]
 ConstLanelets getLaneChangeableNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point);
 
-ConstLanelets getAllNeighbors(const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
-ConstLanelets getAllNeighborsLeft(
-  const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
-ConstLanelets getAllNeighborsRight(
-  const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+[[deprecated("please use autoware::lanelet2_utils::all_neighbor_lanelets instead")]] ConstLanelets
+getAllNeighbors(const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+
+[[deprecated("please use autoware::lanelet2_utils::left_lanelets instead")]] ConstLanelets
+getAllNeighborsLeft(const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+
+[[deprecated("please use autoware::lanelet2_utils::right_lanelets instead")]] ConstLanelets
+getAllNeighborsRight(const routing::RoutingGraphPtr & graph, const ConstLanelet & lanelet);
+
+[[deprecated]]
 ConstLanelets getAllNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point);
 
-bool getClosestLanelet(
+[[deprecated("please use autoware::lanelet2_utils::get_closest_lanelet instead")]] bool
+getClosestLanelet(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelet * closest_lanelet_ptr);
 
@@ -291,11 +309,13 @@ bool getClosestLaneletWithConstrains(
   const double dist_threshold = std::numeric_limits<double>::max(),
   const double yaw_threshold = std::numeric_limits<double>::max());
 
-bool getCurrentLanelets(
+[[deprecated("please use autoware::lanelet2_utils::get_closest_lanelet instead")]] bool
+getCurrentLanelets(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   ConstLanelets * current_lanelets_ptr);
 
-bool getCurrentLanelets(
+[[deprecated("please use autoware::lanelet2_utils::get_closest_lanelet instead")]] bool
+getCurrentLanelets(
   const ConstLanelets & lanelets, const geometry_msgs::msg::Pose & search_pose,
   ConstLanelets * current_lanelets_ptr);
 
@@ -308,6 +328,7 @@ bool getCurrentLanelets(
  * @param length [minimum length of retrieved lanelet sequence]
  * @return   [lanelet sequence that follows given lanelet]
  */
+[[deprecated("please use autoware::lanelet2_utils::get_succeeding_lanelet_sequences instead")]]
 std::vector<lanelet::ConstLanelets> getSucceedingLaneletSequences(
   const routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
   const double length);
@@ -321,6 +342,7 @@ std::vector<lanelet::ConstLanelets> getSucceedingLaneletSequences(
  * @param length [minimum length of retrieved lanelet sequence]
  * @return   [lanelet sequence that leads to given lanelet]
  */
+[[deprecated("please use autoware::lanelet2_utils::get_preceding_lanelet_sequences instead")]]
 std::vector<lanelet::ConstLanelets> getPrecedingLaneletSequences(
   const routing::RoutingGraphPtr & graph, const lanelet::ConstLanelet & lanelet,
   const double length, const lanelet::ConstLanelets & exclude_lanelets = {});

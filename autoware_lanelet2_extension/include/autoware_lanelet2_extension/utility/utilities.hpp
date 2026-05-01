@@ -28,37 +28,45 @@
 
 #include <map>
 
-namespace impl
-{
-lanelet::ConstLineString3d getClosestSegment(
-  const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
-
-double getLaneletAngle(
-  const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
-}  // namespace impl
-
 namespace lanelet::utils
 {
 
 // @brief combine multiple lanelets into one, solely focusing on the shape and discarding any
 // associated information such as ID and attributes. InvalId is set for the ID.
 // @param lanelets to be combined.
-lanelet::ConstLanelet combineLaneletsShape(const lanelet::ConstLanelets & lanelets);
+[[deprecated(
+  "please use autoware::lanelet2_utils::combine_lanelets_shape instead")]] lanelet::ConstLanelet
+combineLaneletsShape(const lanelet::ConstLanelets & lanelets);
 
-lanelet::LineString3d generateFineCenterline(
-  const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0);
-lanelet::ConstLineString3d getCenterlineWithOffset(
-  const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
-lanelet::ConstLineString3d getRightBoundWithOffset(
-  const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
-lanelet::ConstLineString3d getLeftBoundWithOffset(
-  const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
+[[deprecated(
+  "please use autoware::lanelet2_utils::get_fine_centerline instead")]] lanelet::LineString3d
+generateFineCenterline(const lanelet::ConstLanelet & lanelet_obj, const double resolution = 5.0);
 
-lanelet::ConstLanelet getExpandedLanelet(
+[[deprecated("please use autoware::lanelet2_utils::get_centerline_with_offset instead")]] lanelet::
+  ConstLineString3d
+  getCenterlineWithOffset(
+    const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
+
+[[deprecated("please use autoware::lanelet2_utils::get_right_bound_with_offset instead")]] lanelet::
+  ConstLineString3d
+  getRightBoundWithOffset(
+    const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
+
+[[deprecated("please use autoware::lanelet2_utils::get_left_bound_with_offset instead")]] lanelet::
+  ConstLineString3d
+  getLeftBoundWithOffset(
+    const lanelet::ConstLanelet & lanelet_obj, const double offset, const double resolution = 5.0);
+
+[[deprecated(
+  "please use autoware::lanelet2_utils::get_dirty_expanded_lanelet instead")]] lanelet::ConstLanelet
+getExpandedLanelet(
   const lanelet::ConstLanelet & lanelet_obj, const double left_offset, const double right_offset);
 
-lanelet::ConstLanelets getExpandedLanelets(
-  const lanelet::ConstLanelets & lanelet_obj, const double left_offset, const double right_offset);
+[[deprecated("please use autoware::lanelet2_utils::get_dirty_expanded_lanelets instead")]] lanelet::
+  ConstLanelets
+  getExpandedLanelets(
+    const lanelet::ConstLanelets & lanelet_obj, const double left_offset,
+    const double right_offset);
 
 /**
  * @brief  Apply a patch for centerline because the original implementation
@@ -78,8 +86,9 @@ void overwriteLaneletsCenterlineWithWaypoints(
   lanelet::LaneletMapPtr lanelet_map, const double resolution = 5.0,
   const bool force_overwrite = false);
 
-[[deprecated("please use autoware::lanelet2_utils::get_conflicting_lanelets instead")]]
-lanelet::ConstLanelets getConflictingLanelets(
+[[deprecated(
+  "please use autoware::lanelet2_utils::get_conflicting_lanelets instead")]] lanelet::ConstLanelets
+getConflictingLanelets(
   const lanelet::routing::RoutingGraphConstPtr & graph, const lanelet::ConstLanelet & lanelet);
 
 bool lineStringWithWidthToPolygon(
@@ -88,19 +97,21 @@ bool lineStringWithWidthToPolygon(
 bool lineStringToPolygon(
   const lanelet::ConstLineString3d & linestring, lanelet::ConstPolygon3d * polygon);
 
-[[deprecated("please use lanelet::geometry::length2d instead")]]
-double getLaneletLength2d(const lanelet::ConstLanelet & lanelet);
+[[deprecated("please use lanelet::geometry::length2d instead")]] double getLaneletLength2d(
+  const lanelet::ConstLanelet & lanelet);
 
-[[deprecated("please use lanelet::geometry::length2d instead")]]
-double getLaneletLength2d(const lanelet::ConstLanelets & lanelet_sequence);
+[[deprecated("please use lanelet::geometry::length2d instead")]] double getLaneletLength2d(
+  const lanelet::ConstLanelets & lanelet_sequence);
 
-[[deprecated("please use lanelet::geometry::length3d instead")]]
-double getLaneletLength3d(const lanelet::ConstLanelet & lanelet);
+[[deprecated("please use lanelet::geometry::length3d instead")]] double getLaneletLength3d(
+  const lanelet::ConstLanelet & lanelet);
 
-[[deprecated("please use lanelet::geometry::length3d instead")]]
-double getLaneletLength3d(const lanelet::ConstLanelets & lanelet_sequence);
+[[deprecated("please use lanelet::geometry::length3d instead")]] double getLaneletLength3d(
+  const lanelet::ConstLanelets & lanelet_sequence);
 
-lanelet::ArcCoordinates getArcCoordinates(
+[[deprecated(
+  "please use autoware::lanelet2_utils::get_arc_coordinates instead")]] lanelet::ArcCoordinates
+getArcCoordinates(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 
 /**
@@ -110,27 +121,42 @@ lanelet::ArcCoordinates getArcCoordinates(
  * - when the `use_waypoints` in the autoware_map_loader is false,
  *   - the centerline in the lanelet2::LaneletMapPtr is used.
  */
-lanelet::ArcCoordinates getArcCoordinatesOnEgoCenterline(
-  const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
-  const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
+[[deprecated(
+  "please use autoware::lanelet2_utils::get_arc_coordinates_on_ego_centerline instead")]] lanelet::
+  ArcCoordinates
+  getArcCoordinatesOnEgoCenterline(
+    const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose,
+    const lanelet::LaneletMapConstPtr & lanelet_map_ptr);
 
-[[deprecated("please use autoware::lanelet2_utils::get_closest_segment instead")]]
-lanelet::ConstLineString3d getClosestSegment(
+[[deprecated(
+  "please use autoware::lanelet2_utils::get_closest_segment instead")]] lanelet::ConstLineString3d
+getClosestSegment(
   const lanelet::BasicPoint2d & search_pt, const lanelet::ConstLineString3d & linestring);
 
-lanelet::CompoundPolygon3d getPolygonFromArcLength(
-  const lanelet::ConstLanelets & lanelets, const double s1, const double s2);
-[[deprecated("please use autoware::lanelet2_utils::get_lanelet_angle instead")]]
-double getLaneletAngle(
+[[deprecated("please use autoware::lanelet2_utils::get_polygon_from_arc_length instead")]] lanelet::
+  CompoundPolygon3d
+  getPolygonFromArcLength(
+    const lanelet::ConstLanelets & lanelets, const double s1, const double s2);
+
+[[deprecated("please use autoware::lanelet2_utils::get_lanelet_angle instead")]] double
+getLaneletAngle(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
-bool isInLanelet(
+
+[[deprecated("please use autoware::lanelet2_utils::is_in_lanelet instead")]] bool isInLanelet(
   const geometry_msgs::msg::Pose & current_pose, const lanelet::ConstLanelet & lanelet,
   const double radius = 0.0);
-[[deprecated("please use autoware::lanelet2_utils::get_closest_center_pose instead")]]
-geometry_msgs::msg::Pose getClosestCenterPose(
+
+[[deprecated(
+  "please use autoware::lanelet2_utils::get_closest_center_pose instead")]] geometry_msgs::msg::Pose
+getClosestCenterPose(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Point & search_point);
-double getLateralDistanceToCenterline(
+
+[[deprecated(
+  "please use autoware::lanelet2_utils::get_lateral_distance_to_centerline instead")]] double
+getLateralDistanceToCenterline(
   const lanelet::ConstLanelet & lanelet, const geometry_msgs::msg::Pose & pose);
+
+[[deprecated("please use autoware::lanelet2_utils::get_lateral_distance_to_centerline instead")]]
 double getLateralDistanceToClosestLanelet(
   const lanelet::ConstLanelets & lanelet_sequence, const geometry_msgs::msg::Pose & pose);
 }  // namespace lanelet::utils

@@ -22,11 +22,14 @@
 
 #include <gtest/gtest.h>
 #include <lanelet2_core/LaneletMap.h>
+#include <lanelet2_core/primitives/Area.h>
 
 #include <memory>
 
+using lanelet::Area;
 using lanelet::Lanelet;
 using lanelet::LineString3d;
+using lanelet::LineStrings3d;
 using lanelet::Point3d;
 using lanelet::utils::getId;
 
@@ -86,6 +89,60 @@ TEST_F(TestSuite, isRouteValid)  // NOLINT for gtest
   ASSERT_FALSE(lanelet::utils::route::isRouteValid(*route_ptr2, sample_map_ptr))
     << "The route should be invalid, which should be created on the different map from the current "
        "one";
+}
+
+TEST_F(TestSuite, isRouteValid_rejects_area_when_allow_area_false)  // NOLINT for gtest
+{
+  autoware_planning_msgs::msg::LaneletRoute route_with_area;
+  autoware_planning_msgs::msg::LaneletSegment segment;
+  autoware_planning_msgs::msg::LaneletPrimitive prim;
+  prim.primitive_type = "area";
+  prim.id = 99999;  // id is irrelevant when allow_area is false
+  segment.primitives.push_back(prim);
+  route_with_area.segments.push_back(segment);
+
+  ASSERT_FALSE(lanelet::utils::route::isRouteValid(route_with_area, sample_map_ptr, false))
+    << "Route with area primitive must be invalid when allow_area is false";
+  ASSERT_FALSE(lanelet::utils::route::isRouteValid(route_with_area, sample_map_ptr))
+    << "Default allow_area should be false for mixed routes";
+}
+
+TEST_F(TestSuite, isRouteValid_unknown_area_id_fails_when_allow_area_true)  // NOLINT for gtest
+{
+  autoware_planning_msgs::msg::LaneletRoute route_with_area;
+  autoware_planning_msgs::msg::LaneletSegment segment;
+  autoware_planning_msgs::msg::LaneletPrimitive prim;
+  prim.primitive_type = "area";
+  prim.id = 99999;  // not on map
+  segment.primitives.push_back(prim);
+  route_with_area.segments.push_back(segment);
+
+  ASSERT_FALSE(lanelet::utils::route::isRouteValid(route_with_area, sample_map_ptr, true))
+    << "Missing area id on map should fail validation";
+}
+
+TEST_F(TestSuite, isRouteValid_resolves_area_when_allow_area_true)  // NOLINT for gtest
+{
+  const lanelet::Id area_id = getId();
+  const Point3d a1(getId(), 10.0, 0.0, 0.0);
+  const Point3d a2(getId(), 12.0, 0.0, 0.0);
+  const Point3d a3(getId(), 12.0, 2.0, 0.0);
+  const Point3d a4(getId(), 10.0, 2.0, 0.0);
+  const LineString3d ring(getId(), {a1, a2, a3, a4, a1});
+  const LineStrings3d outer{ring};
+  const Area test_area(area_id, outer);
+  sample_map_ptr->add(test_area);
+
+  autoware_planning_msgs::msg::LaneletRoute route_with_area;
+  autoware_planning_msgs::msg::LaneletSegment segment;
+  autoware_planning_msgs::msg::LaneletPrimitive prim;
+  prim.primitive_type = "area";
+  prim.id = area_id;
+  segment.primitives.push_back(prim);
+  route_with_area.segments.push_back(segment);
+
+  ASSERT_TRUE(lanelet::utils::route::isRouteValid(route_with_area, sample_map_ptr, true))
+    << "Valid area id on map should pass when allow_area is true";
 }
 
 int main(int argc, char ** argv)

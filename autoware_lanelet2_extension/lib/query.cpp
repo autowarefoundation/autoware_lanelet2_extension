@@ -18,6 +18,7 @@
 
 #include "autoware_lanelet2_extension/utility/query.hpp"
 
+#include "./deprecated.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/autoware_traffic_light.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/bus_stop_area.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/crosswalk.hpp"
@@ -25,31 +26,23 @@
 #include "autoware_lanelet2_extension/regulatory_elements/no_parking_area.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/no_stopping_area.hpp"
 #include "autoware_lanelet2_extension/regulatory_elements/speed_bump.hpp"
-#include "autoware_lanelet2_extension/utility/message_conversion.hpp"
-#include "autoware_lanelet2_extension/utility/utilities.hpp"
 
 #include <tf2/utils.hpp>
+
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include <lanelet2_core/LaneletMap.h>
 #include <lanelet2_core/geometry/Lanelet.h>
 #include <lanelet2_core/primitives/Lanelet.h>
 #include <lanelet2_routing/RoutingGraph.h>
 
-#include <iostream>
-#include <utility>
-#ifdef ROS_DISTRO_GALACTIC
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-#else
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-#endif
-
-#include "./normalize_radian.hpp"
-
 #include <deque>
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 using lanelet::utils::to2D;
@@ -826,7 +819,7 @@ ConstLanelets query::getLaneletsWithinRange(
   const lanelet::ConstLanelets & lanelets, const geometry_msgs::msg::Point & search_point,
   const double range)
 {
-  return getLaneletsWithinRange(
+  return deprecated::getLaneletsWithinRange(
     lanelets, lanelet::BasicPoint2d(search_point.x, search_point.y), range);
 }
 
@@ -840,11 +833,11 @@ ConstLanelets query::getLaneChangeableNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point)
 {
-  const auto lanelets =
-    getLaneletsWithinRange(road_lanelets, search_point, std::numeric_limits<double>::epsilon());
+  const auto lanelets = deprecated::getLaneletsWithinRange(
+    road_lanelets, search_point, std::numeric_limits<double>::epsilon());
   ConstLanelets road_slices;
   for (const auto & llt : lanelets) {
-    const auto tmp_road_slice = getLaneChangeableNeighbors(graph, llt);
+    const auto tmp_road_slice = deprecated::getLaneChangeableNeighbors(graph, llt);
     road_slices.insert(road_slices.end(), tmp_road_slice.begin(), tmp_road_slice.end());
   }
   return road_slices;
@@ -855,8 +848,8 @@ ConstLanelets query::getAllNeighbors(
 {
   ConstLanelets lanelets;
 
-  ConstLanelets left_lanelets = getAllNeighborsLeft(graph, lanelet);
-  ConstLanelets right_lanelets = getAllNeighborsRight(graph, lanelet);
+  ConstLanelets left_lanelets = deprecated::getAllNeighborsLeft(graph, lanelet);
+  ConstLanelets right_lanelets = deprecated::getAllNeighborsRight(graph, lanelet);
 
   std::reverse(left_lanelets.begin(), left_lanelets.end());
   lanelets.insert(lanelets.end(), left_lanelets.begin(), left_lanelets.end());
@@ -897,11 +890,11 @@ ConstLanelets query::getAllNeighbors(
   const routing::RoutingGraphPtr & graph, const ConstLanelets & road_lanelets,
   const geometry_msgs::msg::Point & search_point)
 {
-  const auto lanelets =
-    getLaneletsWithinRange(road_lanelets, search_point, std::numeric_limits<double>::epsilon());
+  const auto lanelets = deprecated::getLaneletsWithinRange(
+    road_lanelets, search_point, std::numeric_limits<double>::epsilon());
   ConstLanelets road_slices;
   for (const auto & llt : lanelets) {
-    const auto tmp_road_slice = getAllNeighbors(graph, llt);
+    const auto tmp_road_slice = deprecated::getAllNeighbors(graph, llt);
     road_slices.insert(road_slices.end(), tmp_road_slice.begin(), tmp_road_slice.end());
   }
   return road_slices;
@@ -955,12 +948,12 @@ bool query::getClosestLanelet(
     double pose_yaw = tf2::getYaw(search_pose.orientation);
     for (const auto & llt : candidate_lanelets) {
       lanelet::ConstLineString3d segment =
-        ::impl::getClosestSegment(search_point, llt.centerline());
+        deprecated::getClosestSegment(search_point, llt.centerline());
       double angle_diff = M_PI;
       if (!segment.empty()) {
         double segment_angle = std::atan2(
           segment.back().y() - segment.front().y(), segment.back().x() - segment.front().x());
-        angle_diff = std::abs(::impl::normalize_radian(segment_angle - pose_yaw));
+        angle_diff = std::abs(deprecated::normalize_radian(segment_angle - pose_yaw));
       }
       if (angle_diff < min_angle) {
         min_angle = angle_diff;
@@ -1021,8 +1014,8 @@ bool query::getClosestLaneletWithConstrains(
     for (const auto & llt_pair : candidate_lanelets) {
       const auto & distance = llt_pair.second;
 
-      double lanelet_angle = ::impl::getLaneletAngle(llt_pair.first, search_pose.position);
-      double angle_diff = std::abs(::impl::normalize_radian(lanelet_angle - pose_yaw));
+      double lanelet_angle = deprecated::getLaneletAngle(llt_pair.first, search_pose.position);
+      double angle_diff = std::abs(deprecated::normalize_radian(lanelet_angle - pose_yaw));
 
       if (angle_diff > std::abs(yaw_threshold)) continue;
       if (min_distance < distance) break;

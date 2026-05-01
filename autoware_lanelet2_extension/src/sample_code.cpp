@@ -33,7 +33,6 @@ void loadingAutowareOSMFile(const std::string & map_file_path)
   lanelet::GPSPoint gps_point;
   gps_point.lat = 49.0;
   gps_point.lon = 8.4;
-  lanelet::Origin origin(gps_point);
   lanelet::projection::UtmProjector projector(lanelet::Origin(gps_point), true, false);
 
   // Autoware OSM file parser is registered into lanelet2 library.

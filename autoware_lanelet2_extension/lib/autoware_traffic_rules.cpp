@@ -1,4 +1,4 @@
-// Copyright 2025 Autoware Foundation
+// Copyright 2025 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// NOLINTBEGIN(readability-identifier-naming)
+#include "autoware_lanelet2_extension/traffic_rules/autoware_traffic_rules.hpp"
 
-#include "../../lib/deprecated.hpp"
-
-#include <gtest/gtest.h>
-
-TEST(normalize_radian, normalize_radian_test)
+namespace lanelet::autoware
 {
-  EXPECT_FLOAT_EQ(deprecated::normalize_radian(M_PI * 1.5), M_PI * (-0.5));
-}
 
-int main(int argc, char ** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+// Register AutowareVehicle for the Autoware location + Vehicle participant.
+static traffic_rules::RegisterTrafficRules<AutowareVehicle> reg(
+  DefaultLocation, Participants::Vehicle);
 
-// NOLINTEND(readability-identifier-naming)
+}  // namespace lanelet::autoware
