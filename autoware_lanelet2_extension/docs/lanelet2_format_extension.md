@@ -311,7 +311,7 @@ The following figure illustrates how lanelets and the direction-change Area rela
 
 - **Outer boundary (LineStrings)**: The Area boundary is built from outer LineStrings that together form a closed ring (end nodes of consecutive segments must match; the ring closes). Use two or more linestrings to form the outer.
 - **Coincidence with lanelet boundaries**: Any edge of the Area that coincides with the physical limit at a lanelet **tip** must reuse the **same ordered nodes** as that lanelet’s **left** or **right** boundary LineString—not a duplicated, copied, or offset polyline.
-- **Cross-lane edge for planning**: The Area boundary segment that is shared between the two connecting lanelets (the edge built from nodes belonging to both lanes) must be tagged so planning can traverse through the Area. On that LineString (`way`), set `<tag k="lane_change" v="yes"/>`.
+- **Cross-lane edge for planning**: The Area boundary segment shared between the two connecting lanelets, formed by nodes belonging to both lanelets, must be tagged with `<tag k="subtype" v="dashed"/>` to enable planning traversal through the Area.
 - **No holes**: Do not define inner rings. The region enclosed by the outer ring is treated as drivable from the connected lanelets.
 - **Tags (Area relation)**: On the Area `relation`, set `type=multipolygon` and `direction_change=yes` or `no` (use `yes` for a direction change area); any other Lanelet2 / toolchain tags required for multipolygon Areas still apply.
 
