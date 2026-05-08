@@ -2,6 +2,9 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.0 (2026-04-27)
+------------------
+
 1.0.0 (2026-03-27)
 ------------------
 * feat(lanelet2_extension): deprecate lanelet2_extension utilities functions (final)  (`#103 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/103>`_)
