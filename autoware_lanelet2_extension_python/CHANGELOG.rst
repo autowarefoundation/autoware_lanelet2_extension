@@ -2,6 +2,12 @@
 Changelog for package autoware_lanelet2_extension_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* refactor(autoware_lanelet2_extension): add USE_SCOPED_HEADER_INSTALL_DIR (`#105 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/105>`_)
+  Co-authored-by: github-actions <github-actions@github.com>
+* Contributors: Vishal Chauhan
+
 1.1.0 (2026-04-27)
 ------------------
 

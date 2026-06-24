@@ -2,6 +2,20 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* refactor(autoware_lanelet2_extension): add USE_SCOPED_HEADER_INSTALL_DIR (`#105 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/105>`_)
+  Co-authored-by: github-actions <github-actions@github.com>
+* feat(lanelet2_format_extension.md): add direction change module's map… (`#112 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/112>`_)
+  * feat(lanelet2_format_extension.md): add direction change module's map specifications
+  * feat: added direction_change map specifications' illustration and fixed ci errors
+  * style(pre-commit): autofix
+  * feat: remove lane_change=yes tag specification, add subtype=dashed tag for route traversing through area
+  * style(pre-commit): autofix
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+* Contributors: Vishal Chauhan, emmeyteja
+
 1.1.0 (2026-04-27)
 ------------------
 * feat: add traffic rules to enable driving for areas (`#104 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/104>`_)
