@@ -446,6 +446,34 @@ visualization_msgs::msg::Marker makeLaneletRoutingAreaOutlineMarker(
   return line;
 }
 
+double getHeightAttribute(
+  const lanelet::ConstPolygon3d & polygon, const std::string & key, const double default_value)
+{
+  if (polygon.hasAttribute(key)) {
+    const auto value = polygon.attribute(key).asDouble();
+    if (value) {
+      return *value;
+    }
+  }
+  return default_value;
+}
+
+// Collect the object classes removed by this polygon (attributes whose value is "remove").
+std::string getRemovalTargetLabels(const lanelet::ConstPolygon3d & polygon)
+{
+  std::string labels;
+  for (const auto & attribute : polygon.attributes()) {
+    if (attribute.second.value() != "remove") {
+      continue;
+    }
+    if (!labels.empty()) {
+      labels += ", ";
+    }
+    labels += attribute.first;
+  }
+  return labels;
+}
+
 }  // anonymous namespace
 
 namespace lanelet
@@ -1258,14 +1286,91 @@ visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
     return marker_array;
   }
 
-  visualization_msgs::msg::Marker marker = createPolygonMarker("obstacle_removal_area", c);
+  const auto make_point = [](const lanelet::ConstPoint3d & p, const double z) {
+    geometry_msgs::msg::Point pt;
+    pt.x = p.x();
+    pt.y = p.y();
+    pt.z = z;
+    return pt;
+  };
+
+  int32_t marker_id = 0;
   for (const auto & polygon : obstacle_removal_areas) {
-    pushPolygonMarker(&marker, polygon, c);
+    if (polygon.size() < 3) {
+      continue;
+    }
+    const std::size_t n = polygon.size();
+
+    // reference height = centroid (average) height of the polygon vertices, matching the height
+    // reference used by the obstacle_removal_area_filter node.
+    double sum_x = 0.0;
+    double sum_y = 0.0;
+    double sum_z = 0.0;
+    for (const auto & p : polygon) {
+      sum_x += p.x();
+      sum_y += p.y();
+      sum_z += p.z();
+    }
+    const double centroid_z = sum_z / static_cast<double>(n);
+    // Intentionally do NOT clamp or reorder the two thresholds: if remove_below_height and
+    // remove_above_height are equal, the prism collapses to a flat outline. That is unexpected
+    // configuration, and the collapsed marker makes it easy to notice.
+    const double lower_z = centroid_z + getHeightAttribute(polygon, "remove_below_height", 0.0);
+    const double upper_z = centroid_z + getHeightAttribute(polygon, "remove_above_height", 0.0);
+
+    // 3D wireframe (prism): bottom ring, top ring, and vertical edges.
+    visualization_msgs::msg::Marker wire_marker;
+    wire_marker.header.frame_id = "map";
+    wire_marker.header.stamp = rclcpp::Time();
+    wire_marker.frame_locked = false;
+    wire_marker.ns = "obstacle_removal_area";
+    wire_marker.id = marker_id;
+    wire_marker.type = visualization_msgs::msg::Marker::LINE_LIST;
+    wire_marker.action = visualization_msgs::msg::Marker::ADD;
+    wire_marker.lifetime = rclcpp::Duration(0, 0);
+    wire_marker.pose.orientation.w = 1.0;
+    wire_marker.scale.x = 0.25;  // line width
+    wire_marker.color = c;
+
+    for (std::size_t i = 0; i < n; ++i) {
+      const auto & cur = polygon[i];
+      const auto & next = polygon[(i + 1) % n];
+      // bottom ring edge
+      wire_marker.points.push_back(make_point(cur, lower_z));
+      wire_marker.points.push_back(make_point(next, lower_z));
+      // top ring edge
+      wire_marker.points.push_back(make_point(cur, upper_z));
+      wire_marker.points.push_back(make_point(next, upper_z));
+      // vertical edge
+      wire_marker.points.push_back(make_point(cur, lower_z));
+      wire_marker.points.push_back(make_point(cur, upper_z));
+    }
+    marker_array.markers.push_back(wire_marker);
+
+    // text label: polygon ID and the object classes removed by this polygon.
+    visualization_msgs::msg::Marker text_marker;
+    text_marker.header.frame_id = "map";
+    text_marker.header.stamp = rclcpp::Time();
+    text_marker.frame_locked = false;
+    text_marker.ns = "obstacle_removal_area_info";
+    text_marker.id = marker_id;
+    text_marker.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+    text_marker.action = visualization_msgs::msg::Marker::ADD;
+    text_marker.lifetime = rclcpp::Duration(0, 0);
+    text_marker.pose.orientation.w = 1.0;
+    text_marker.pose.position.x = sum_x / static_cast<double>(n);
+    text_marker.pose.position.y = sum_y / static_cast<double>(n);
+    text_marker.pose.position.z = upper_z + 1.0;
+    text_marker.scale.z = 1.0;  // text height
+    text_marker.color = c;
+    const std::string labels = getRemovalTargetLabels(polygon);
+    text_marker.text =
+      "ID: " + std::to_string(polygon.id()) + "\n[" + (labels.empty() ? "-" : labels) + "]";
+    marker_array.markers.push_back(text_marker);
+
+    ++marker_id;
   }
 
-  if (!marker.points.empty()) {
-    marker_array.markers.push_back(marker);
-  }
   return marker_array;
 }
 
