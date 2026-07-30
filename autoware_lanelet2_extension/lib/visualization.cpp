@@ -446,16 +446,20 @@ visualization_msgs::msg::Marker makeLaneletRoutingAreaOutlineMarker(
   return line;
 }
 
-double getHeightAttribute(
-  const lanelet::ConstPolygon3d & polygon, const std::string & key, const double default_value)
+bool getHeightAttribute(
+  const lanelet::ConstPolygon3d & polygon, const std::string & key, double * height)
 {
-  if (polygon.hasAttribute(key)) {
-    const auto value = polygon.attribute(key).asDouble();
-    if (value) {
-      return *value;
-    }
+  if (height == nullptr || !polygon.hasAttribute(key)) {
+    return false;
   }
-  return default_value;
+
+  const auto value = polygon.attribute(key).asDouble();
+  if (!value) {
+    return false;
+  }
+
+  *height = *value;
+  return true;
 }
 
 // Collect the object classes removed by this polygon (attributes whose value is "remove").
@@ -1312,11 +1316,33 @@ visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
       sum_z += p.z();
     }
     const double centroid_z = sum_z / static_cast<double>(n);
-    // Intentionally do NOT clamp or reorder the two thresholds: if remove_below_height and
-    // remove_above_height are equal, the prism collapses to a flat outline. That is unexpected
-    // configuration, and the collapsed marker makes it easy to notice.
-    const double lower_z = centroid_z + getHeightAttribute(polygon, "remove_below_height", 0.0);
-    const double upper_z = centroid_z + getHeightAttribute(polygon, "remove_above_height", 0.0);
+
+    double below_height = 0.0;
+    double above_height = 0.0;
+    const bool has_below_height = getHeightAttribute(polygon, "remove_below_height", &below_height);
+    const bool has_above_height = getHeightAttribute(polygon, "remove_above_height", &above_height);
+
+    constexpr double default_lower_height = -5.0;
+    constexpr double default_upper_height = 10.0;
+    double lower_z = centroid_z + default_lower_height;
+    double upper_z = centroid_z + default_upper_height;
+
+    if (has_below_height && has_above_height) {
+      if (below_height <= above_height) {
+        RCLCPP_WARN_STREAM(
+          rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
+          "obstacle_removal_area polygon "
+            << polygon.id() << " has invalid height range: remove_below_height=" << below_height
+            << ", remove_above_height=" << above_height << ". Skip visualization.");
+        continue;
+      }
+      lower_z = centroid_z + above_height;
+      upper_z = centroid_z + below_height;
+    } else if (has_below_height) {
+      upper_z = centroid_z + below_height;
+    } else if (has_above_height) {
+      lower_z = centroid_z + above_height;
+    }
 
     // 3D wireframe (prism): bottom ring, top ring, and vertical edges.
     visualization_msgs::msg::Marker wire_marker;
