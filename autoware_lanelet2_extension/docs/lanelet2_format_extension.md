@@ -313,7 +313,7 @@ The following figure illustrates how lanelets and the direction-change Area rela
 - **Coincidence with lanelet boundaries**: Any edge of the Area that coincides with the physical limit at a lanelet **tip** must reuse the **same ordered nodes** as that lanelet’s **left** or **right** boundary LineString—not a duplicated, copied, or offset polyline.
 - **Cross-lane edge for planning**: The Area boundary segment shared between the two connecting lanelets, formed by nodes belonging to both lanelets, must be tagged with `<tag k="subtype" v="dashed"/>` to enable planning traversal through the Area.
 - **No holes**: Do not define inner rings. The region enclosed by the outer ring is treated as drivable from the connected lanelets.
-- **Tags (Area relation)**: On the Area `relation`, set `type=multipolygon` and `direction_change=yes` or `no` (use `yes` for a direction change area); any other Lanelet2 / toolchain tags required for multipolygon Areas still apply.
+- **Tags (Area relation)**: On the Area `relation`, set `type=multipolygon`, `participant:vehicle=yes`, and `direction_change=yes` or `no` (use `yes` for a direction change area).
 
 - **Shape and size**:
   - Outer ring is **convex** shaped (no pinched or strongly non-convex outlines).
@@ -324,31 +324,40 @@ _An example (conceptual fragments):_
 
 ```xml
   <!-- Lanelets used in the maneuver: direction_change=yes -->
-  <relation id='100' visible='true' version='1'>
-    <member type='way' ref='201' role='left' />
-    <member type='way' ref='202' role='right' />
-    <tag k='type' v='lanelet' />
-    <tag k='subtype' v='road' />
-    <tag k='one_way' v='yes' />
-    <tag k='direction_change' v='yes' />
+  <relation id="100">
+    <member type="way" role="left" ref="201"/>
+    <member type="way" role="right" ref="202"/>
+    <tag k="type" v="lanelet"/>
+    <tag k="subtype" v="road"/>
+    <tag k="one_way" v="yes"/>
+    <tag k="direction_change" v="yes"/>
   </relation>
 
-  <!-- Shared boundary segment between lanes through the patch: lane_change=yes -->
-  <way id='310' visible='true' version='1'>
-    <nd ref='501' />
-    <nd ref='502' />
-    <tag k='type' v='line_thin' />
-    <tag k='lane_change' v='yes' />
+  <!-- Shared cross-lane edge through the patch: subtype=dashed -->
+  <way id="310">
+    <nd ref="501"/>
+    <nd ref="502"/>
+    <tag k="type" v="line_thin"/>
+    <tag k="subtype" v="dashed"/>
   </way>
 
-  <!-- Area: multipolygon, outer ring only -->
-  <relation id='400' visible='true' version='1'>
-    <member type='way' ref='301' role='outer' />
-    <member type='way' ref='302' role='outer' />
-    <member type='way' ref='303' role='outer' />
-    <member type='way' ref='304' role='outer' />
-    <tag k='type' v='multipolygon' />
-    <tag k='direction_change' v='yes' />
+  <!-- Remaining outer ring segment(s): subtype=solid -->
+  <way id="311">
+    <nd ref="502"/>
+    <nd ref="503"/>
+    <nd ref="504"/>
+    <nd ref="501"/>
+    <tag k="type" v="line_thin"/>
+    <tag k="subtype" v="solid"/>
+  </way>
+
+  <!-- Area: multipolygon, outer ring only (no holes) -->
+  <relation id="400">
+    <member type="way" role="outer" ref="311"/>
+    <member type="way" role="outer" ref="310"/>
+    <tag k="type" v="multipolygon"/>
+    <tag k="participant:vehicle" v="yes"/>
+    <tag k="direction_change" v="yes"/>
   </relation>
 ```
 
