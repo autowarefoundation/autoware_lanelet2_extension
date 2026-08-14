@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -444,22 +445,6 @@ visualization_msgs::msg::Marker makeLaneletRoutingAreaOutlineMarker(
     line.points.push_back(line.points.front());
   }
   return line;
-}
-
-bool getHeightAttribute(
-  const lanelet::ConstPolygon3d & polygon, const std::string & key, double * height)
-{
-  if (height == nullptr || !polygon.hasAttribute(key)) {
-    return false;
-  }
-
-  const auto value = polygon.attribute(key).asDouble();
-  if (!value) {
-    return false;
-  }
-
-  *height = *value;
-  return true;
 }
 
 // Collect the object classes removed by this polygon (attributes whose value is "remove").
@@ -1317,31 +1302,35 @@ visualization_msgs::msg::MarkerArray obstacleRemovalAreaAsMarkerArray(
     }
     const double centroid_z = sum_z / static_cast<double>(n);
 
-    double below_height = 0.0;
-    double above_height = 0.0;
-    const bool has_below_height = getHeightAttribute(polygon, "remove_below_height", &below_height);
-    const bool has_above_height = getHeightAttribute(polygon, "remove_above_height", &above_height);
-
     constexpr double default_lower_height = -5.0;
     constexpr double default_upper_height = 10.0;
-    double lower_z = centroid_z + default_lower_height;
-    double upper_z = centroid_z + default_upper_height;
-
-    if (has_below_height && has_above_height) {
-      if (below_height <= above_height) {
-        RCLCPP_WARN_STREAM(
-          rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
-          "obstacle_removal_area polygon "
-            << polygon.id() << " has invalid height range: remove_below_height=" << below_height
-            << ", remove_above_height=" << above_height << ". Skip visualization.");
-        continue;
+    const auto get_height = [&polygon](const std::string & key) -> std::optional<double> {
+      if (polygon.hasAttribute(key)) {
+        const auto height = polygon.attribute(key).asDouble();
+        if (height.has_value()) {
+          return height.value();
+        }
       }
-      lower_z = centroid_z + above_height;
-      upper_z = centroid_z + below_height;
-    } else if (has_below_height) {
-      upper_z = centroid_z + below_height;
-    } else if (has_above_height) {
-      lower_z = centroid_z + above_height;
+      return std::nullopt;
+    };
+
+    const auto above_height = get_height("remove_above_height");
+    const auto below_height = get_height("remove_below_height");
+    const double lower_z =
+      centroid_z + (above_height.has_value() ? above_height.value() : default_lower_height);
+    const double upper_z =
+      centroid_z + (below_height.has_value() ? below_height.value() : default_upper_height);
+
+    if (
+      below_height.has_value() && above_height.has_value() &&
+      below_height.value() <= above_height.value()) {
+      RCLCPP_WARN_STREAM(
+        rclcpp::get_logger("autoware_lanelet2_extension.visualization"),
+        "obstacle_removal_area polygon "
+          << polygon.id()
+          << " has invalid height range: remove_below_height=" << below_height.value()
+          << ", remove_above_height=" << above_height.value() << ". Skip visualization.");
+      continue;
     }
 
     // 3D wireframe (prism): bottom ring, top ring, and vertical edges.
