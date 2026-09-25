@@ -2,6 +2,29 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* feat(visualization): draw obstacle_removal_area as 3D wireframe with info label (`#115 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/115>`_)
+  * feat(visualization): draw obstacle_removal_area as 3D wireframe with info label
+  Replace the triangle-fill polygon marker for obstacle_removal_area with a
+  3D wireframe prism (bottom ring, top ring and vertical edges) so the height
+  range is visualized. Add a text label showing the polygon ID and the object
+  classes removed by the polygon.
+  The two height thresholds are intentionally not clamped or reordered: when
+  remove_below_height and remove_above_height are equal the prism collapses to
+  a flat outline, making the unexpected configuration easy to notice.
+  Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+  * fix: update obstacle removal area wireframe height
+  * refactor: simplify obstacle removal height parsing
+  ---------
+  Co-authored-by: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+* fix: mistakes in the example map tags in direction_change map specs (`#116 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/116>`_)
+  * fix: mistakes in the example map tags in direction_change map specs
+  * style(pre-commit): autofix
+  ---------
+  Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+* Contributors: Satoshi OTA, emmeyteja
+
 1.2.0 (2026-06-24)
 ------------------
 * refactor(autoware_lanelet2_extension): add USE_SCOPED_HEADER_INSTALL_DIR (`#105 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/105>`_)
