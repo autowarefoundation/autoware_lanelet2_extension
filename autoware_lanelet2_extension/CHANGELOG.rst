@@ -2,8 +2,8 @@
 Changelog for package autoware_lanelet2_extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.2.1 (2026-09-25)
+------------------
 * feat(visualization): draw obstacle_removal_area as 3D wireframe with info label (`#115 <https://github.com/autowarefoundation/autoware_lanelet2_extension/issues/115>`_)
   * feat(visualization): draw obstacle_removal_area as 3D wireframe with info label
   Replace the triangle-fill polygon marker for obstacle_removal_area with a
