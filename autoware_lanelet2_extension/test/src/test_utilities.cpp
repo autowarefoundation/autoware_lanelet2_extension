@@ -21,8 +21,11 @@
 #include <lanelet2_routing/RoutingGraphContainer.h>
 #include <lanelet2_traffic_rules/TrafficRulesFactory.h>
 
+#include <cmath>
 #include <map>
+#include <memory>
 #include <unordered_map>
+#include <vector>
 
 using lanelet::Lanelet;
 using lanelet::LineString3d;
@@ -156,6 +159,54 @@ TEST_F(TestSuite, OverwriteLaneletsCenterline)  // NOLINT for gtest
   // check if all the lanelets have a centerline
   for (const auto & lanelet : sample_map_ptr->laneletLayer) {
     ASSERT_TRUE(lanelet.hasCustomCenterline()) << "failed to calculate fine centerline";
+  }
+}
+
+namespace
+{
+/// A 10 m straight lanelet, 2 m wide, whose left bound draws `duplicate` (0: its first point, 1:
+/// a middle one, 2: its last one) twice in a row: two points on one spot.
+Lanelet laneletWithDuplicatePoint(const int duplicate)
+{
+  std::vector<Point3d> left{
+    Point3d(getId(), 0., 1., 0.), Point3d(getId(), 5., 1., 0.), Point3d(getId(), 10., 1., 0.)};
+  const auto & twice = left.at(static_cast<size_t>(duplicate));
+  left.insert(left.begin() + duplicate + 1, Point3d(getId(), twice.x(), twice.y(), twice.z()));
+  LineString3d left_bound(getId(), {left.begin(), left.end()});
+  LineString3d right_bound(
+    getId(), {Point3d(getId(), 0., -1., 0.), Point3d(getId(), 10., -1., 0.)});
+  return Lanelet(getId(), left_bound, right_bound);
+}
+}  // namespace
+
+TEST(Utilities, OverwriteLaneletsCenterlineOverAZeroLengthBoundSegment)  // NOLINT for gtest
+{
+  // What the map loader does to every lanelet: its centerline is resampled from its bounds.
+  for (const int duplicate : {0, 1, 2}) {
+    auto map = std::make_shared<lanelet::LaneletMap>();
+    map->add(laneletWithDuplicatePoint(duplicate));
+    lanelet::utils::overwriteLaneletsCenterline(map, 1.0, false);
+
+    for (const auto & lanelet : map->laneletLayer) {
+      ASSERT_TRUE(lanelet.hasCustomCenterline());
+      const auto centerline = lanelet.centerline();
+      ASSERT_GE(centerline.size(), 2u) << "duplicate at " << duplicate;
+      double length = 0.0;
+      for (size_t i = 0; i < centerline.size(); ++i) {
+        const auto & point = centerline[i];
+        EXPECT_TRUE(
+          std::isfinite(point.x()) && std::isfinite(point.y()) && std::isfinite(point.z()))
+          << "duplicate at " << duplicate << ", point " << i;
+        EXPECT_NEAR(point.y(), 0.0, 1e-9) << "duplicate at " << duplicate << ", point " << i;
+        if (i > 0) {
+          length +=
+            std::hypot(point.x() - centerline[i - 1].x(), point.y() - centerline[i - 1].y());
+        }
+      }
+      EXPECT_NEAR(centerline.front().x(), 0.0, 1e-9) << "duplicate at " << duplicate;
+      EXPECT_NEAR(centerline.back().x(), 10.0, 1e-9) << "duplicate at " << duplicate;
+      EXPECT_NEAR(length, 10.0, 1e-9) << "duplicate at " << duplicate;
+    }
   }
 }
 

@@ -71,7 +71,9 @@ void copyZ(const T1 & from, T2 & to)
       s_from_prev = s_from;
       s_from += lanelet::geometry::distance2d(from[i_from], from[i_from + 1]);
     }
-    const auto ratio = (s_to - s_from_prev) / (s_from - s_from_prev);
+    // A zero-length segment of `from` (two points on one spot) has no slope to follow.
+    const auto segment_length = s_from - s_from_prev;
+    const auto ratio = segment_length > 0.0 ? (s_to - s_from_prev) / segment_length : 0.0;
     to[i_to].z() = from[i_from - 1].z() + ratio * (from[i_from].z() - from[i_from - 1].z());
   }
 }
@@ -198,8 +200,13 @@ std::vector<lanelet::BasicPoint3d> resamplePoints(
     const auto back_length = accumulated_lengths.at(index_pair.first);
     const auto front_length = accumulated_lengths.at(index_pair.second);
     const auto segment_length = front_length - back_length;
-    const auto target_point =
-      back_point + (direction_vector * (target_length - back_length) / segment_length);
+    // A bound may step from one point to another on the very same spot. Such a segment is a
+    // point: interpolating along it would divide zero by zero and make the centerline NaN.
+    const lanelet::BasicPoint3d target_point =
+      segment_length > 0.0
+        ? lanelet::BasicPoint3d(
+            back_point + (direction_vector * (target_length - back_length) / segment_length))
+        : back_point;
 
     // Add to list
     resampled_points.emplace_back(target_point);
