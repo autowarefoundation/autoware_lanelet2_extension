@@ -1242,8 +1242,9 @@ lanelet::Optional<lanelet::ConstLanelet> getLinkedLanelet(
   const lanelet::ConstPolygons3d & all_parking_lots)
 {
   lanelet::ConstLanelet linked_lanelet;
-  if (lanelet::utils::query::getLinkedLanelet(
-        parking_space, all_road_lanelets, all_parking_lots, &linked_lanelet)) {
+  if (
+    lanelet::utils::query::getLinkedLanelet(
+      parking_space, all_road_lanelets, all_parking_lots, &linked_lanelet)) {
     return linked_lanelet;
   }
   return {};
@@ -1274,8 +1275,9 @@ lanelet::Optional<lanelet::ConstPolygon3d> getLinkedParkingLot(
   const lanelet::BasicPoint2d & current_position, const lanelet::ConstPolygons3d & all_parking_lots)
 {
   lanelet::ConstPolygon3d linked_parking_lot;
-  if (lanelet::utils::query::getLinkedParkingLot(
-        current_position, all_parking_lots, &linked_parking_lot)) {
+  if (
+    lanelet::utils::query::getLinkedParkingLot(
+      current_position, all_parking_lots, &linked_parking_lot)) {
     return linked_parking_lot;
   }
   return {};
@@ -1286,8 +1288,9 @@ lanelet::Optional<lanelet::ConstPolygon3d> getLinkedParkingLot(
   const lanelet::ConstPolygons3d & all_parking_lots)
 {
   lanelet::ConstPolygon3d linked_parking_lot;
-  if (lanelet::utils::query::getLinkedParkingLot(
-        parking_space, all_parking_lots, &linked_parking_lot)) {
+  if (
+    lanelet::utils::query::getLinkedParkingLot(
+      parking_space, all_parking_lots, &linked_parking_lot)) {
     return linked_parking_lot;
   }
   return {};
@@ -1389,8 +1392,9 @@ lanelet::Optional<lanelet::ConstLanelet> getClosestLaneletWithConstrains(
   static rclcpp::Serialization<geometry_msgs::msg::Pose> serializer;
   serializer.deserialize_message(&serialized_msg, &pose);
   lanelet::ConstLanelet closest_lanelet{};
-  if (impl::getClosestLaneletWithConstrains(
-        lanelets, pose, &closest_lanelet, dist_threshold, yaw_threshold)) {
+  if (
+    impl::getClosestLaneletWithConstrains(
+      lanelets, pose, &closest_lanelet, dist_threshold, yaw_threshold)) {
     return closest_lanelet;
   }
   return {};
